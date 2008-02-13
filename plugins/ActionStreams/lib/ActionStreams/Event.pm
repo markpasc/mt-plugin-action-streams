@@ -93,6 +93,28 @@ sub update_events {
             }
         }
     }
+    elsif (my $rss_params - $stream->{rss}) {
+        my $get = {
+            title => 'title/child::text()',
+            url => 'link/child::text()',
+            created_on => 'pubDate/child::text()',
+        };
+        $rss_params = {} if !ref $rss_params;
+        @$get{keys %$rss_params} = values %$rss_params;
+
+        $items = $class->fetch_xpath(
+            foreach => '//item',
+            get => $get,
+            %$fetch,
+            %profile
+        );
+
+        for my $item (@$items) {
+            if ($item->{modified_on} && !$item->{created_on}) {
+                $item->{created_on} = $item->{modified_on};
+            }
+        }
+    }
     elsif (my $scraper_params = $stream->{scraper}) {
         my ($foreach, $get) = @$scraper_params{qw( foreach get )};
         my $scraper = scraper {
