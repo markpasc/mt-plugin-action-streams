@@ -1,0 +1,48 @@
+<mt:setvar name="mt_author_display_name" value="Melody Nelson">
+<mt:setvar name="mt_author_username" value="melody123">
+<mt:setvar name="author_short_name" value="Melody">
+<mt:setvar name="past_days" value="5">
+ 
+<mt:setvar name="body_class" value="mt-main-index">
+<mt:setvar name="main_template" value="1">
+<mt:setvar name="main_index" value="1">
+<mt:setvar name="sidebar" value="1">
+<mt:setvarblock name="title"><$mt:blogname encode_html="1"$></mt:setvarblock>
+
+<$mt:include module="Header"$>
+
+<mt:setvarblock name="today_date"><mt:date format="%A"></mt:setvarblock>
+<mt:setvarblock name="name_regex">/<mt:var name="mt_author_display_name">/</mt:setvarblock>
+<mt:ActionStreams display_name="$mt_author_display_name" days="$past_days">
+    <mt:if name="__first__">
+<div class="action-stream hfeed">
+    </mt:if>
+    <mt:DateHeader>
+    <mt:setvarblock name="this_date"><mt:StreamActionDate format="%A"></mt:setvarblock>
+    <h2 class="action-stream-header asset-name">
+    <mt:if var="this_date" eq="$today_date">
+        Today
+    <mt:else>
+        <mt:var name="this_date">
+    </mt:if>
+    </h2>
+    <ul class="action-stream-list">
+    </mt:DateHeader>
+        <li class="hentry service-icon service-<mt:var name="service_type">">
+            <mt:StreamAction regex_replace="$name_regex","$author_short_name">
+            <mt:ignore><!-- hAtom for the win! Remove the following 4 spans if you don't want hAtom. --></mt:ignore>
+            <span class="entry-title" style="display: none"><mt:StreamAction remove_html="1" regex_replace="$name_regex","$author_short_name"></span>
+            <span class="entry-content" style="display: none"><mt:StreamAction regex_replace="$name_regex","$author_short_name"></span>
+            <span class="updated" style="display: none"><mt:StreamActionModifiedDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
+            <span class="published" style="display: none"><mt:StreamActionDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
+        </li>
+    <mt:DateFooter>
+    </ul>
+    </mt:DateFooter>
+    <mt:if name="__last__">
+    <p><a href='action-stream-archive.html'>More...</a></p>
+</div>
+    </mt:if>
+</mt:ActionStreams>
+
+<$mt:include module="Footer"$>

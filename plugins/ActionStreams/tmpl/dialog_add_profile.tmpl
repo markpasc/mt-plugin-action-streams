@@ -1,0 +1,209 @@
+<mt:setvarblock name="page_title"><__trans phrase="Add Profile"></mt:setvarblock>
+<mt:setvarblock name="html_head" append="1">
+    <link rel="stylesheet" type="text/css" href="<mt:var name="static_uri">plugins/ActionStreams/css/action-streams.css" />
+
+    <mt:loop name="service_styles">
+    <mt:if name="__first__">
+        <style type="text/css">
+        <!--
+    </mt:if>
+        .service-<mt:var name="service_type"> { background-image: url(<mt:var name="service_icon">); }
+    <mt:if name="__last__">
+        // -->
+        </style>
+    </mt:if>
+    </mt:loop>
+
+    <script type="text/javascript">
+    <!--
+
+    function validate(f) {
+        if (!f.profile_id.value) {
+            alert('<__trans phrase="Your user name or ID is required." escape="singlequotes">');
+            return false;
+        }
+        return true;
+    }
+    
+    // -->
+    </script>
+</mt:setvarblock>
+<mt:include name="dialog/header.tmpl">
+
+<script type="text/javascript" src="<mt:var name="static_uri">js/tc/client.js"></script>
+<script type="text/javascript" src="<mt:var name="static_uri">js/dialog.js"></script>
+
+<p>Add a profile on a social networking or instant messaging service.</p>
+
+<form id="add-network" method="post" action="<mt:var name="script_url">" onsubmit="return validate(this)" target="_top">
+    <input type="hidden" name="__mode" value="add_other_profile" />
+    <input type="hidden" name="author_id" value="<mt:var name="edit_author_id">" />
+    <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
+
+    <mtapp:setting
+        id="profile_type"
+        label="<__trans phrase="Service">"
+        hint="<__trans phrase="Select a service where you already have an account.">"
+        show_hint="1"
+        content_class="field-content-text">
+        <select name="profile_type" id="profile_type">
+            <mt:loop name="networks">
+                <mt:if name="user_has_account">
+                    <mt:if name="can_many">
+                        <option value="<mt:var name="type" escape="html">"><mt:var name="label" escape="html"></option>
+                    </mt:if>
+                <mt:else>
+                    <option value="<mt:var name="type" escape="html">"><mt:var name="label" escape="html"></option>
+                </mt:if>
+            </mt:loop>
+        </select>
+    </mtapp:setting>
+
+    <script type="text/javascript">
+        var last_network;
+
+        var networks = {
+            <mt:loop name="networks">
+            '<mt:var name="type" escape="js">': {
+                <mt:if name="ident_example">
+                    example: '<mt:var name="ident_example" escape="js">',
+                </mt:if>
+                <mt:if name="ident_prefix">
+                    prefix: '<mt:var name="ident_prefix" escape="js">',
+                </mt:if>
+                <mt:if name="ident_suffix">
+                    suffix: '<mt:var name="ident_suffix" escape="js">',
+                </mt:if>
+                label: '<mt:var name="ident_label" escape="js">'
+            }<mt:unless var="__last__">,</mt:unless>
+            </mt:loop>
+        };
+
+        function update_ident_field () {
+            var v = getByID('profile_type');
+
+            var data = new Object();
+            data.label = "Username";
+            data.example = "melody";
+            data.prefix = "";
+            data.suffix = "";
+
+            var fields = ['label', 'example', 'prefix', 'suffix'];
+            for(var i = 0; i < 4; i++) {
+                var l = fields[i];
+                var datum = data[l];
+                if (networks[v.value] && networks[v.value][l]) {
+                    datum = networks[v.value][l];
+                }
+
+                var f = getByID('profile_id-' + l);
+                f.innerHTML = datum;
+            }
+
+            if (last_network) {
+                hide('help-' + last_network, document);
+                hide('streams-' + last_network, document);
+
+                var streams = getByID('streams-' + last_network);
+                var stream_boxes = streams.getElementsByTagName('input');
+                for (var i = 0; i < stream_boxes.length; i++) {
+                    if (stream_boxes[i].type != 'checkbox') continue;
+                    stream_boxes[i].checked = false;
+                }
+            }
+            show('help-' + v.value, document);
+            show('streams-' + v.value, document);
+            var streams = getByID('streams-' + v.value);
+            var stream_boxes = streams.getElementsByTagName('input');
+            for (var i = 0; i < stream_boxes.length; i++) {
+                if (stream_boxes[i].type != 'checkbox') continue;
+                stream_boxes[i].checked = true;
+            }
+
+            var icon = getByID('profile-id-service-icon');
+            if (last_network) {
+                DOM.removeClassName(icon, 'service-' + last_network);
+            }
+            DOM.addClassName(icon, 'service-' + v.value);
+
+            last_network = v.value;
+        }
+
+        function add_in_update (e) {
+            var v = getByID('profile_type');
+            DOM.addEventListener(v, 'change', update_ident_field);
+            update_ident_field();
+        }
+
+        TC.attachLoadEvent(add_in_update);
+    </script>
+
+    <mtapp:setting
+        id="profile_id"
+        label="<__trans phrase="Username">"
+        hint="<__trans phrase="Enter your account on the selected service."><br /><__trans phrase="For example:"> <strong id='profile_id-example'>melody</strong>"
+        show_hint="1"
+        content_class="field-content-text">
+        <span id="profile-id-service-icon" class="service-icon">
+            <span id="profile_id-prefix"></span>
+            <input type="text" name="profile_id" size="30" value="" />
+            <span id="profile_id-suffix"></span>
+        </span>
+    </mtapp:setting>
+
+    <div id="help-facebook" class="hidden">
+        <div class="hint">You can find your Facebook userid within your profile URL.  For example, http://www.facebook.com/profile.php?id=24400320.</div>
+    </div>
+
+    <h3>Action Streams</h3>
+
+    <p>Select the action streams to collect from the selected service.</p>
+
+    <mt:loop name="networks">
+        <div id="streams-<mt:var name="type" escape="html">" class="hidden">
+            <mt:if name="streams">
+                <mt:loop name="streams">
+                    <mt:setvarblock name="stream_id">stream_<mt:var name="type" escape="html">_<mt:var name="stream" escape="html"></mt:setvarblock>
+                    <mtapp:setting
+                        id="<mt:var name="stream_id">"
+                        label="<mt:var name="name" escape="html">">
+                        <label><input type="checkbox" id="<mt:var name="stream_id">" name="<mt:var name="stream_id">" value="1" /> <mt:var name="description" escape="html"></label>
+                    </mtapp:setting>
+                </mt:loop>
+            <mt:else>
+                <mtapp:statusmsg class="info zero-state">No streams are available for this service.</mtapp:statusmsg>
+            </mt:if>
+        </div>
+    </mt:loop>
+
+    <mt:setvarblock name="action_buttons">
+        <button
+            type="submit"
+            accesskey="s"
+            title="<__trans phrase="Add Service (s)">"
+            class="primary-button"
+            ><__trans phrase="Add Service"></button>
+        <button
+            onclick="closeDialog(); return false"
+            type="submit"
+            accesskey="x"
+            title="<__trans phrase="Cancel (x)">"
+            class="cancel"
+            ><__trans phrase="Cancel"></button>
+    </mt:setvarblock>
+    <mt:include name="include/actions_bar.tmpl" bar_position="normal" 
+        hide_pager="1" settings_bar="1">
+</form>
+
+<div class="modal_width" id="add-profile">
+
+<form name="members" id="members" action="<mt:var name="script_url">" method="post" target="_top">
+<input type="hidden" name="__mode" value="add_member" />
+<input type="hidden" name="ids" value="" />
+<input type="hidden" name="group_id" value="<mt:var name="group_id">" />
+<input type="hidden" name="magic_token" value="<mt:var name="magic_token" escape="html">" />
+</form>
+
+</div>
+
+<mt:include name="dialog/footer.tmpl">

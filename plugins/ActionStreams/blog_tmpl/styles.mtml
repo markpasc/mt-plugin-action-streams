@@ -1,0 +1,12 @@
+/* This is the StyleCatcher theme addition. Do not remove this block. */
+@import url(<$MTStaticWebPath$>themes-base/blog.css);
+@import url(<$MTStaticWebPath$>themes/minimalist-red/screen.css);
+/* end StyleCatcher imports */
+
+@import url(<MT:StaticWebPath>plugins/ActionStreams/css/action-streams.css);
+
+/* hide machine fields for hAtom */
+.hentry .entry-title, .hentry .updated, .hentry .published { display: none; }
+
+<mt:ProfileServices extra="1"><mt:if name="icon_url">
+.service-<mt:var name="type"> { background-image: url(<mt:var name="icon_url">); }</mt:if></mt:ProfileServices>

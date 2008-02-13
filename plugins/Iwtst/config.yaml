@@ -1,0 +1,35 @@
+name: I want to see that!
+id: Iwtst
+key: Iwtst
+author_link: http://markpasc.org/mark/
+author_name: Mark Paschal
+description: Adds profile service and activity stream for I Want To See That! (iwanttoseethat.com).
+version: 1.0
+plugin_link: http://markpasc.org/code/mt/iwtst/
+
+profile_services:
+    iwtst:
+        name: I Want To See That!
+        url: http://iwanttoseethat.com/people/%s
+        icon: images/iwtst.png
+
+action_streams:
+    iwtst:
+        want:
+            name: Movies
+            description: The movies you want to see
+            html_form: '[_1] wants to see <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://iwanttoseethat.com/people/{{ident}}'
+            identifier: url
+            scraper:
+                foreach: 'div.seethat div.seethat_yes'
+                get:
+                    url:
+                      - a
+                      - @href
+                    title:
+                      - a
+                      - TEXT

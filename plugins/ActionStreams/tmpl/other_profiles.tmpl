@@ -1,0 +1,111 @@
+<mt:setvar name="edit_author" value="1">
+<mt:setvar name="other_profiles" value="1">
+<mt:setvarblock name="page_title"><__trans phrase="Other Profiles"></mt:setvarblock>
+
+<mt:setvarblock name="html_head" append="1">
+<link rel="stylesheet" type="text/css" href="<mt:var name="static_uri">plugins/ActionStreams/css/action-streams.css" />
+
+<style type="text/css">
+.content-nav #main-content .msg { margin-left: 0px; }
+#main-content {
+    padding-top:5px;
+}
+
+<mt:loop name="service_styles">
+.service-<mt:var name="service_type"> { background-image: url(<mt:var name="service_icon">); }
+</mt:loop>
+</style>
+
+<script type="text/javascript">
+<!--
+
+function verifyDelete( delete_item ){
+    conf = confirm( "Are you sure you want to delete " + delete_item + "?" );
+    if ( conf ) {
+        return true;
+    }
+    return false;
+}
+
+    var tableSelect;
+    function init() {
+        // set up table select awesomeness
+        tableSelect = new TC.TableSelect("profile-listing-table");
+        tableSelect.rowSelect = true;
+    }
+
+    TC.attachLoadEvent(init);
+
+// -->
+</script>
+</mt:setvarblock>
+
+<mt:setvarblock name="system_msg">
+    <mt:if name="added">
+        <mtapp:statusmsg
+            id="added"
+            class="success">
+            <__trans phrase="The selected profile was added.">
+        </mtapp:statusmsg>
+    </mt:if>
+    <mt:if name="removed">
+        <mtapp:statusmsg
+            id="removed"
+            class="success">
+            <__trans phrase="The selected profiles were removed.">
+        </mtapp:statusmsg>
+    </mt:if>
+</mt:setvarblock>
+
+<mt:setvarblock name="content_nav">
+    <mt:include name="include/users_content_nav.tmpl">
+</mt:setvarblock>
+
+<mt:setvarblock name="content_header">
+    <ul class="action-link-list">
+        <li>
+            <a href="javascript:void(0)" onclick="return openDialog(this.form, 'dialog_add_profile', 'author_id=<mt:var name="edit_author_id">&amp;return_args=<mt:var name="return_args" escape="url">%26author_id=<mt:var name="edit_author_id">')" class="icon-left icon-create"><__trans phrase="Add Profile"></a>
+        </li>
+    </ul>
+</mt:setvarblock>
+
+<mt:setvarblock name="action_buttons">
+    <a href="javascript:void(0)"
+        onclick="doRemoveItems(getByID('profile-listing-form'), '<__trans phrase="profile">', '<__trans phrase="profiles">', null, null, { mode: 'remove_other_profile' }); return false"
+        accesskey="x"
+        title="<__trans phrase="Delete selected profiles (x)">"
+        ><__trans phrase="Delete"></a>
+</mt:setvarblock>
+<mt:var name="position_actions_top" value="1">
+
+<mt:include name="include/header.tmpl">
+
+<mtapp:listing type="profile" loop="profiles" empty_message="No profiles were found." hide_pager="1">
+    <mt:if __first__>
+        <thead>
+            <tr>
+                <th class="cb"><input type="checkbox" name="id-head" value="all" class="select" /></th>
+                <th class="service"><span class="service-icon"><__trans phrase="Service"></span></th>
+                <th class="userid"><__trans phrase="Username"></th>
+                <th class="view"><__trans phrase="View"></th>
+            </tr>
+        </thead>
+        <tbody>
+    </mt:if>
+
+    <tr class="<mt:if __odd__>odd<mt:else>even</mt:if>">
+        <td class="cb"><input type="checkbox" name="id" class="select" value="<mt:var name="edit_author_id" escape="html">:<mt:var name="type" escape="html">:<mt:var name="ident" escape="html">" /></td>
+        <td class="service network"><span class="service-icon service-<mt:var name="type">"><mt:var name="label" escape="html"></span></td>
+        <td class="userid"><mt:var name="ident" escape="html"></td>
+        <td class="view si status-view">
+            <a href="<mt:var name="uri" escape="html">" target="<__trans phrase="external_link_target">" title="<__trans phrase="View Profile">"><img src="<mt:var name="static_uri">images/spacer.gif" alt="<__trans phrase="View Profile">" width="13" height="9" /></a>
+        </td>
+    </tr>
+
+    <mt:if __last__>
+        </tbody>
+    </mt:if>
+</mtapp:listing>
+
+<mt:include name="include/footer.tmpl">
+

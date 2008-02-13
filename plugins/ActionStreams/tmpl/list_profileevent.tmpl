@@ -1,0 +1,155 @@
+<mt:setvar name="edit_author" value="1">
+<mt:setvar name="list_profileevent" value="1">
+<mt:setvar name="page_title" value="<__trans phrase="Action Stream">">
+
+<mt:setvarblock name="html_head" append="1">
+<link rel="stylesheet" type="text/css" href="<mt:var name="static_uri">plugins/ActionStreams/css/action-streams.css" />
+    <script type="text/javascript">
+    <!--
+
+    var tableSelect;
+    function init() {
+        // set up table select awesomeness
+        tableSelect = new TC.TableSelect("profileevent-listing-table");
+        tableSelect.rowSelect = true;
+    }
+
+    TC.attachLoadEvent(init);
+
+    function finishPluginActionAll(f, action) {
+        var select_all = getByID('select-all-checkbox')
+        if (select_all) {
+            select_all.checked = true;
+            tableSelect.select(select_all);
+        }
+        return doForMarkedInThisWindow(f, '', 'profileevents', 'id', 'itemset_action',
+            {'action_name': action}, 'to act upon');
+    }
+
+    // -->
+    </script>
+
+    <style type="text/css">
+    <!--
+        #profileevent-listing-table .date { white-space: nowrap; }
+        #profileevent-listing-table .service { width: 8em; }
+        #main-content { padding-top: 5px; }
+        .content-nav #main-content .msg { margin-left: 0px; }
+
+        <mt:loop name="service_styles">
+        .service-<mt:var name="service_type"> { background-image: url(<mt:var name="service_icon">); }
+        </mt:loop>
+    // -->
+    </style>
+</mt:setvarblock>
+
+<mt:setvarblock name="content_nav">
+    <mt:include name="include/users_content_nav.tmpl">
+</mt:setvarblock>
+
+<mt:setvarblock name="system_msg">
+    <mt:if name="saved_deleted">
+        <mtapp:statusmsg
+            id="saved_deleted"
+            class="success">
+            <__trans phrase="The selected events were deleted.">
+        </mtapp:statusmsg>
+    </mt:if>
+    <mt:if name="hidden">
+        <mtapp:statusmsg
+            id="hidden"
+            class="success">
+            <__trans phrase="The selected events were hidden.">
+        </mtapp:statusmsg>
+    </mt:if>
+    <mt:if name="shown">
+        <mtapp:statusmsg
+            id="shown"
+            class="success">
+            <__trans phrase="The selected events were shown.">
+        </mtapp:statusmsg>
+    </mt:if>
+    <mt:if name="all_hidden">
+        <mtapp:statusmsg
+            id="all_hidden"
+            class="success">
+            <__trans phrase="All action stream events were hidden.">
+        </mtapp:statusmsg>
+    </mt:if>
+    <mt:if name="all_shown">
+        <mtapp:statusmsg
+            id="all_shown"
+            class="sucess">
+            <__trans phrase="All action stream events were shown.">
+        </mtapp:statusmsg>
+    </mt:if>
+</mt:setvarblock>
+
+<mt:setvarblock name="html_body_footer">
+    <mt:include name="include/display_options.tmpl">
+</mt:setvarblock>
+
+<mt:setvarblock name="action_buttons">
+    <a href="javascript:void(0)"
+        onclick="doForMarkedInThisWindow(getByID('profileevent-listing-form'), '<__trans phrase="event">', '<__trans phrase="events">', 'id', 'itemset_hide_events'); return false"
+        accesskey="h"
+        title="<__trans phrase="Hide selected events (h)">"
+        ><__trans phrase="Hide"></a>
+    <a href="javascript:void(0)"
+        onclick="doForMarkedInThisWindow(getByID('profileevent-listing-form'), '<__trans phrase="event">', '<__trans phrase="events">', 'id', 'itemset_show_events'); return false"
+        accesskey="h"
+        title="<__trans phrase="Show selected events (h)">"
+        ><__trans phrase="Show"></a>
+</mt:setvarblock>
+
+<mt:include name="include/header.tmpl">
+
+<mtapp:listing type="profileevent" default="<__trans phrase="No events could be found.">" empty_message="<__trans phrase="No events could be found.">">
+    <mt:if name="__first__">
+        <thead>
+            <tr>
+                <th class="cb"><input type="checkbox" id="select-all-checkbox" name="id-head" value="all" class="select" /></th>
+                <th class="status">
+                    <img src="<mt:var name="static_uri">images/status_icons/invert-flag.gif" alt="<__trans phrase="Status">" title="<__trans phrase="Status">" width="9" height="9" />
+                </th>
+                <th class="event"><__trans phrase="Event"></th>
+                <th class="service"><span class="service-icon"><__trans phrase="Service"></span></th>
+                <th class="date"><__trans phrase="Created"></th>
+                <th class="view"><__trans phrase="View"></th>
+            </tr>
+        </thead>
+        <tbody>
+    </mt:if>
+    <tr class="<mt:if name="__odd__">odd<mt:else>even</mt:if>">
+        <td class="cb">
+            <input type="checkbox" name="id" value="<mt:var name="id">" class="select" />
+        </td>
+        <td class="status si status-<mt:if name="visible">publish<mt:else>pending</mt:if>">
+            <img src="<mt:var name="static_uri">images/spacer.gif" width="13" height="9" alt="<mt:if name="visible"><__trans phrase="Shown"><mt:else><__trans phrase="Hidden"></mt:if>" />
+        </td>
+        <td class="event">
+            <mt:var name="as_html" remove_html="1">
+        </td>
+        <td class="service">
+            <span class="service-icon service-<mt:var name="type" escape="html">"><mt:var name="service" escape="html"></span>
+        </td>
+        <td class="date">
+            <span title="<mt:var name="created_on_time_formatted">">
+                <mt:if name="dates_relative">
+                    <mt:var name="created_on_relative">
+                <mt:else>
+                    <mt:var name="created_on_formatted">
+                </mt:if>
+            </span>
+        </td>
+        <td class="view si status-view">
+            <mt:if name="url">
+                <a href="<mt:var name="url" escape="html">" target="<__trans phrase="_external_link_target">" title="<__trans phrase="View action link">"><img src="<mt:var name="static_uri">images/spacer.gif" alt="<__trans phrase="View action link">" width="13" height="9" /></a>
+            <mt:else>
+                &#160;
+            </mt:if>
+        </td>
+    </tr>
+</mtapp:listing>
+
+<mt:include name="include/footer.tmpl">

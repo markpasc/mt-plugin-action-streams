@@ -1,0 +1,624 @@
+name: Action Streams
+id: ActionStreams
+key: ActionStreams
+author_link: http://www.sixapart.com/
+author_name: Six Apart, Ltd.
+description: Manages authors' accounts and actions on sites elsewhere around the web
+schema_version: 9
+version: 1.0
+plugin_link: http://www.sixapart.com/
+settings:
+    rebuild_for_action_stream_events:
+        Default: 0
+        Scope: blog
+blog_config_template: blog_config_template.tmpl
+
+init_app: $ActionStreams::ActionStreams::Init::init_app
+applications:
+    cms:
+        methods:
+            list_profileevent:       $ActionStreams::ActionStreams::Plugin::list_profileevent
+            other_profiles:          $ActionStreams::ActionStreams::Plugin::other_profiles
+            dialog_add_profile:      $ActionStreams::ActionStreams::Plugin::dialog_add_profile
+            add_other_profile:       $ActionStreams::ActionStreams::Plugin::add_other_profile
+            remove_other_profile:    $ActionStreams::ActionStreams::Plugin::remove_other_profile
+            itemset_hide_events:     $ActionStreams::ActionStreams::Plugin::itemset_hide_events
+            itemset_show_events:     $ActionStreams::ActionStreams::Plugin::itemset_show_events
+            itemset_hide_all_events: $ActionStreams::ActionStreams::Plugin::itemset_hide_all_events
+            itemset_show_all_events: $ActionStreams::ActionStreams::Plugin::itemset_show_all_events
+callbacks:
+    MT::App::CMS::template_source.users_content_nav: $ActionStreams::ActionStreams::Plugin::users_content_nav
+    MT::App::CMS::post_add_profile: $ActionStreams::ActionStreams::Plugin::first_profile_update
+    post_update_action_streams: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
+    pre_update_action_streams_profile.flickr: $ActionStreams::ActionStreams::Event::Flickr::ident_to_nsid
+    pre_build_action_streams_event.twitter_tweets: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
+    pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
+object_types:
+    profileevent: ActionStreams::Event
+list_actions:
+    profileevent:
+        hide_all:
+            label: Hide All
+            order: 100
+            js:    finishPluginActionAll
+            code:  $ActionStreams::ActionStreams::Plugin::itemset_hide_all_events
+            continue_prompt: 'Are you sure you want to hide EVERY event in EVERY action stream?'
+        show_all:
+            label: Show All
+            order: 200
+            js:    finishPluginActionAll
+            code:  $ActionStreams::ActionStreams::Plugin::itemset_show_all_events
+            continue_prompt: 'Are you sure you want to show EVERY event in EVERY action stream?'
+        delete:
+            label: Delete
+            order: 300
+            code:  $core::MT::App::CMS::delete
+            continue_prompt: 'Deleted events that are still available from the remote service will be added back in the next scan. Only events that are no longer available from your profile will remain deleted. Are you sure you want to delete the selected event(s)?'
+tags:
+    function:
+        StreamAction:             $ActionStreams::ActionStreams::Plugin::tag_stream_action
+        StreamActionVar:          $ActionStreams::ActionStreams::Plugin::tag_stream_action_var
+        StreamActionDate:         $ActionStreams::ActionStreams::Plugin::tag_stream_action_date
+        StreamActionModifiedDate: $ActionStreams::ActionStreams::Plugin::tag_stream_action_modified_date
+        StreamActionTitle:        $ActionStreams::ActionStreams::Plugin::tag_stream_action_title
+        StreamActionURL:          $ActionStreams::ActionStreams::Plugin::tag_stream_action_url
+        StreamActionThumbnailURL: $ActionStreams::ActionStreams::Plugin::tag_stream_action_thumbnail_url
+        OtherProfileVar:          $ActionStreams::ActionStreams::Plugin::tag_other_profile_var
+    block:
+        ActionStreams:    $ActionStreams::ActionStreams::Plugin::tag_action_streams_block
+        StreamActionTags: $ActionStreams::ActionStreams::Plugin::tag_stream_action_tags
+        OtherProfiles:    $ActionStreams::ActionStreams::Plugin::tag_other_profiles
+        ProfileServices:  $ActionStreams::ActionStreams::Plugin::tag_profile_services
+tasks:
+    UpdateEvents:
+        frequency: 1800
+        label: Poll for new events
+        code: $ActionStreams::ActionStreams::Plugin::update_events
+template_sets:
+    streams:
+        label: 'Action Stream'
+        base_path: 'blog_tmpl'
+        order: 100
+        templates:
+            index:
+                main_index:
+                    label: Main Index (Recent Actions)
+                    outfile: index.html
+                    rebuild_me: 1
+                archive:
+                    label: Action Archive
+                    outfile: archive.html
+                    rebuild_me: 1
+                styles:
+                    label: Stylesheet
+                    outfile: styles.css
+                    rebuild_me: 1
+                atom:
+                    label: Atom
+                    outfile: atom.xml
+                    rebuild_me: 1
+            module:
+                header:
+                    label: Header
+                    filename: ../../../default_templates/header.mtml
+                footer:
+                    label: Footer
+                    filename: ../../../default_templates/footer.mtml
+                sidebar:
+                    label: Sidebar
+                    filename: ../../../default_templates/sidebar.mtml
+            widget:
+                elsewhere:
+                    label: Find Authors Elsewhere
+                Action:
+                    label: Authors Action Stream
+upgrade_functions:
+    enable_existing_streams:
+        version_limit: 9
+        updater:
+            type: author
+            label: 'Enabling default action streams for selected profiles...'
+            code: $ActionStreams::ActionStreams::Plugin::upgrade_enable_existing_streams
+
+profile_services:
+    oneup:
+        name: 1up.com
+        url: http://%s.1up.com/
+    fortythreethings:
+        name: 43Things
+        url: http://www.43things.com/person/%s/
+    aim:
+        name: AIM
+        url: aim:goim?screenname=%s
+        ident_label: Screen name
+    bebo:
+        name: Bebo
+        url: http://www.bebo.com/Profile.jsp?MemberId=%s
+    catster:
+        name: Catster
+        url: http://www.catster.com/cats/%s
+    delicious:
+        name: del.icio.us
+        url: http://del.icio.us/%s/
+    digg:
+        name: Digg
+        url: http://digg.com/users/%s/
+    dodgeball:
+        name: Dodgeball
+        url: http://www.dodgeball.com/user?uid=%s
+    dogster:
+        name: Dogster
+        url: http://www.dogster.com/dogs/%s
+    dopplr:
+        name: Dopplr
+        url: http://www.dopplr.com/traveller/%s/
+    facebook:
+        name: Facebook
+        url: http://www.facebook.com/profile.php?id=%s
+        ident_label: User ID
+        ident_example: 12345
+    flickr:
+        name: Flickr
+        url: http://flickr.com/photos/%s/
+        ident_example: 36381329@N00
+    goodreads:
+        name: Goodreads
+        url: http://www.goodreads.com/user/show/%s
+        ident_label: User ID
+        ident_example: 12345
+    googlereader:
+        name: Google Reader
+        url: http://www.google.com/reader/shared/%s
+        ident_label: Sharing ID
+        ident_example: http://www.google.com/reader/shared/16793324975410272738
+    hi5:
+        name: Hi5
+        url: http://hi5.com/friend/profile/displayProfile.do?userid=%s
+    iconbuffet:
+        name: IconBuffet
+        url: http://www.iconbuffet.com/people/%s
+    icq:
+        name: ICQ
+        url: http://www.icq.com/people/about_me.php?uin=%s
+        ident_label: UIN
+        ident_example: 12345
+    iusethis:
+        name: IUseThis
+        url: http://osx.iusethis.com/user/%s
+    jabber:
+        name: Jabber
+        url: jabber://%s
+        ident_label: Jabber ID
+        ident_example: melody@example.com
+    jaiku:
+        name: Jaiku
+        url: http://%s.jaiku.com/
+    lastfm:
+        name: Last.fm
+        url: http://www.last.fm/user/%s/
+    linkedin:
+        name: LinkedIn
+        url: http://www.linkedin.com/in/%s
+        ident_example: MelodyNelson
+    livejournal:
+        name: LiveJournal
+        url: http://%s.livejournal.com/
+        ident_suffix: .livejournal.com
+    magnolia:
+        name: Ma.gnolia
+        url: http://ma.gnolia.com/people/%s
+    mog:
+        name: MOG
+        url: http://mog.com/%s
+    msn:
+        name: 'MSN Messenger'
+        url: msnim:chat?contact=%s
+    multiply:
+        name: Multiply
+        url: http://%s.multiply.com/
+    myspace:
+        name: MySpace
+        url: http://www.myspace.com/%s
+    newsvine:
+        name: Newsvine
+        url: http://%s.newsvine.com/
+    ning:
+        name: Ning
+        url: http://%s.ning.com/
+    ohloh:
+        name: Ohloh
+        url: http://ohloh.net/accounts/%s
+    orkut:
+        name: Orkut
+        url: http://www.orkut.com/Profile.aspx?uid=%s
+    pandora:
+        name: Pandora
+        url: http://pandora.com/people/%s
+    pownce:
+        name: Pownce
+        url: http://pownce.com/%s/
+    reddit:
+        name: Reddit
+        url: http://reddit.com/user/%s/
+    skype:
+        name: Skype
+        url: callto://%s
+    smugmug:
+        name: Smugmug
+        url: http://%s.smugmug.com/
+    sonicliving:
+        name: SonicLiving
+        url: http://www.sonicliving.com/user/%s/
+    steam:
+        name: Steam
+        url: http://steamcommunity.com/id/%s
+    stumbleupon:
+        name: StumbleUpon
+        url: http://%s.stumbleupon.com/
+    tabblo:
+        name: Tabblo
+        url: http://www.tabblo.com/studio/person/%s/
+    technorati:
+        name: Technorati
+        url: http://technorati.com/people/technorati/%s
+    tribe:
+        name: Tribe
+        url: http://people.tribe.net/%s
+    twitter:
+        name: Twitter
+        url: http://twitter.com/%s
+    uncrate:
+        name: Uncrate
+        url: http://uncrate.com/stuff/%s
+    upcoming:
+        name: Upcoming
+        url: http://upcoming.yahoo.com/user/%s
+        ident_label: User ID
+        ident_example: 12345
+    virb:
+        name: Virb
+        url: http://www.virb.com/%s
+    vox:
+        name: Vox
+        url: http://%s.vox.com/
+        ident_label: Vox name
+        ident_suffix: .vox.com
+    website:
+        name: Website
+        url: %s
+        ident_label: URL
+        ident_example: http://www.example.com/
+        ident_exact: 1
+        can_many: 1
+    xboxlive:
+        name: 'Xbox Live'
+        url: http://live.xbox.com/member/%s
+        ident_label: Gamertag
+    yahoo:
+        name: 'Yahoo! Messenger'
+        url: http://edit.yahoo.com/config/send_webmesg?.target=%s
+    youtube:
+        name: YouTube
+        url: http://www.youtube.com/user/%s
+    zooomr:
+        name: Zooomr
+        url: http://www.zooomr.com/photos/%s
+
+action_streams:
+    delicious:
+        links:
+            name: Links
+            description: Your public links
+            html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://del.icio.us/rss/{{ident}}'
+            identifier: url
+            xpath:
+                foreach: //item
+                get:
+                    created_on: dc:date/child::text()
+                    title: title/child::text()
+                    url: link/child::text()
+    digg:
+        links:
+            name: Dugg
+            description: Links you dugg
+            html_form: '[_1] dugg the link <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://digg.com/users/{{ident}}/history/diggs.rss'
+            identifier: url
+            fetch:
+                default_useragent: 1
+            xpath:
+                foreach: //item
+                get:
+                    created_on: pubDate/child::text()
+                    title: title/child::text()
+                    url: link/child::text()
+        submitted:
+            name: Submissions
+            description: Links you submitted
+            html_form: '[_1] submitted the link <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: http://digg.com/users/{{ident}}/history/submissions.rss
+            identifier: url
+            fetch:
+                default_useragent: 1
+            xpath:
+                foreach: //item
+                get:
+                    created_on: pubDate/child::text()
+                    title: title/child::text()
+                    url: link/child::text()
+    iusethis:
+        osxapps:
+            name: Apps you use
+            description: The applications you saved as ones you use
+            fields:
+                - favorite
+            html_form: '[_1] started using <a href="[_2]">[_3]</a>[quant,_4, (and loves it),,]'
+            html_params:
+                - url
+                - title
+                - favorite
+            identifier: url
+            scraper:
+                foreach: "//a[starts-with(@href, 'http://osx.iusethis.com/app/')]/ancestor::td[@class='iconview']/ancestor::table"
+                get:
+                    loved:
+                        - "img[alt='loved']"
+                        - '@alt'
+                    title:
+                        - td.titleview
+                        - TEXT
+                    url:
+                        - td.iconview a
+                        - '@href'
+            url: 'http://osx.iusethis.com/user/{{ident}}'
+    magnolia:
+        links:
+            name: Links
+            description: Your public links
+            html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://ma.gnolia.com/atom/full/people/{{ident}}'
+            identifier: url
+            atom:
+                tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
+    twitter:
+        tweets:
+            name: Tweets
+            description: Your public tweets
+            fields:
+                - tweet
+            html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
+            html_params:
+                - url
+                - tweet
+            url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
+            atom:
+                tweet: title/child::text()
+    vox:
+        favorites:
+            name: Favorites
+            description: Public assets you saved as favorites
+            class: Vox
+        posts:
+            name: Posts
+            description: Your public posts to your Vox
+            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://{{ident}}.vox.com/library/posts/atom.xml'
+            atom:
+                tags: category/@label
+    youtube:
+        favorites:
+            name: Favorites
+            description: Videos you saved as favorites
+            fields:
+                - by
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite video'
+            html_params:
+                - url
+                - title
+            url: 'http://gdata.youtube.com/feeds/users/{{ident}}/favorites'
+            atom:
+                by: author/name/child::text()
+                url: "link[@rel='alternate' and @type='text/html']/@href"
+                thumbnail: "media:group/media:thumbnail[position()=1]/@url"
+                created_on: ''
+                modified_on: ''
+    livejournal:
+        posts:
+            name: Posts
+            description: Your public posts to your journal
+            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://users.livejournal.com/{{ident}}/data/atom'
+            atom: 1
+    iconbuffet:
+        icons:
+            name: Deliveries
+            description: Icon sets you were delivered
+            html_form: '[_1] received the icon set <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.iconbuffet.com/people/{{ident}};received_packages'
+            identifier: url
+            scraper:
+                foreach: 'div#icons div.preview-sm'
+                get:
+                    title:
+                        - a span
+                        - TEXT
+                    url:
+                        - a
+                        - '@href'
+    goodreads:
+        toread:
+            name: To read
+            description: Books on your "to-read" shelf
+            fields:
+                - by
+            html_form: '[_1] saved <a href="[_2]"><i>[_3]</i> by [_4]</a> to read'
+            html_params:
+                - url
+                - title
+                - by
+            url: 'http://www.goodreads.com/review/list_rss/{{ident}}?shelf=to-read'
+            identifier: url
+            xpath:
+                foreach: //item
+                get:
+                    title: title/child::text()
+                    url: link/child::text()
+                    created_on: pubDate/child::text()
+                    modified_on: pubDate/child::text()
+                    by: author_name/child::text()
+        reading:
+            name: Reading
+            description: Books on your "currently-reading" shelf
+            fields:
+                - by
+            html_form: '[_1] started reading <a href="[_2]"><i>[_3]</i> by [_4]</a>'
+            html_params:
+                - url
+                - title
+                - by
+            url: 'http://www.goodreads.com/review/list_rss/{{ident}}?shelf=currently-reading'
+            identifier: url
+            xpath:
+                foreach: //item
+                get:
+                    title: title/child::text()
+                    url: link/child::text()
+                    created_on: pubDate/child::text()
+                    modified_on: pubDate/child::text()
+                    by: author_name/child::text()
+        read:
+            name: Read
+            description: Books on your "read" shelf
+            fields:
+                - by
+            html_form: '[_1] finished reading <a href="[_2]"><i>[_3]</i> by [_4]</a>'
+            html_params:
+                - url
+                - title
+                - by
+            url: 'http://www.goodreads.com/review/list_rss/{{ident}}?shelf=read'
+            identifier: url
+            xpath:
+                foreach: //item
+                get:
+                    title: title/child::text()
+                    url: link/child::text()
+                    created_on: pubDate/child::text()
+                    modified_on: pubDate/child::text()
+                    by: author_name/child::text()
+    upcoming:
+        events:
+            name: Events
+            description: Events you are watching or attending
+            fields:
+                - venue
+            html_form: '[_1] is attending <a href="[_2]">[_3]</a> at [_4]'
+            html_params:
+                - url
+                - title
+                - venue
+            url: 'http://upcoming.yahoo.com/syndicate/v2/my_events/{{ident}}'
+            xpath:
+                foreach: //item
+                get:
+                    title: xCal:summary
+                    url: link/child::text()
+                    created_on: dc:date/child::text()
+                    modified_on: dc:date/child::text()
+                    venue: 'xCal:x-calconnect-venue/xCal:adr/xCal:x-calconnect-venue-name/child::text()'
+                    identifier: guid/child::text()
+    flickr:
+        favorites:
+            name: Favorites
+            description: Photos you marked as favorites
+            class: Flickr
+        photos:
+            name: Photos
+            description: Photos you posted
+            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
+            atom:
+                thumbnail: content/child::text()
+    gametap:
+        scores:
+            name: Leaderboard scores
+            description: Your high scores in games with leaderboards
+            class: Gametap
+    googlereader:
+        shared:
+            name: Shared
+            description: Your shared items
+            class: GoogleReader
+    netflix:
+        shipped:
+            name: Shipped
+            description: Movies Netflix shipped to you
+            class: Netflix
+    steam:
+        achievements:
+            name: Achievements
+            description: Your achievements for achievement-enabled games
+            class: Steam
+    uncrate:
+        saved:
+            name: Saved
+            description: Things you saved as favorites
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> on Uncrate'
+            html_params:
+                - url
+                - title
+            url: 'http://uncrate.com/stuff/{{ident}}'
+            identifier: url
+            scraper:
+                foreach: '#widget h2'
+                get:
+                    title:
+                      - a
+                      - TEXT
+                    url:
+                      - a
+                      - @href
+    pownce:
+        notes:
+            name: Notes
+            description: Your public notes
+            fields:
+                - note
+            html_form: '[_1] <a href="[_2]">posted</a>, "[_3]"'
+            html_params:
+                - url
+                - note
+            url: 'http://pownce.com/feeds/public/{{ident}}/'
+            atom:
+                note: summary/child::text()
+    website:
+        posted:
+            name: Posts
+            description: The posts available from the website's feed
+            class: Website
+

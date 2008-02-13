@@ -1,0 +1,12 @@
+<mt:setvar name="author_display_name" value="Melody Nelson">
+
+<div class="widget-elsewhere widget">
+    <h3 class="widget-header">Find Me Elsewhere</h3>
+    <div class="widget-content">
+        <ul class="activity-stream-list">
+<mt:otherprofiles display_name="$author_display_name">
+            <li><a href="<mt:otherprofilevar name="uri" escape="html">" rel="me" class="service-icon service-<mt:otherprofilevar name="type">"><mt:otherprofilevar name="label" escape="html"></a></li>
+</mt:otherprofiles>
+        </ul>
+    </div>
+</div>

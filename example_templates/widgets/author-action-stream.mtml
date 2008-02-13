@@ -1,0 +1,38 @@
+<mt:setvar name="mt_author_display_name" value="Melody Nelson">
+<mt:setvar name="mt_author_username" value="melody123">
+<mt:setvar name="author_short_name" value="Melody">
+<mt:setvar name="past_events" value="10">
+
+<mt:setvarblock name="today_date"><mt:date format="%A"></mt:setvarblock>
+<mt:setvarblock name="name_regex">/<mt:var name="mt_author_display_name">/</mt:setvarblock>
+<mt:setvarblock name="username_regex">/<mt:var name="mt_author_username">: /</mt:setvarblock>
+<mt:authorevents display_name="$mt_author_display_name" lastn="$past_events">
+    <mt:if name="__first__">
+<div class="widget-activity-stream widget">
+    <h3 class="widget-header">Recent Activity</h3>
+    <div class="widget-content">
+        <div class="activity-stream hfeed">
+    </mt:if>
+    <mt:setvarblock name="this_date"><mt:eventdate format="%A"></mt:setvarblock>
+    <mt:DateHeader>
+            <h2 class="activity-stream-header asset-name"><mt:if var="this_date" eq="$today_date">Today<mt:else><mt:var name="this_date"></mt:if></h2>
+            <ul class="activity-stream-list">
+    </mt:DateHeader>
+                <li class="hentry service-icon service-<mt:var name="service_type">">
+                    <mt:event regex_replace="$name_regex","$author_short_name" regex_replace="$username_regex","">
+                    <mt:ignore><!-- hAtom for the win! Remove the following 4 spans if you don't want hAtom. --></mt:ignore>
+                    <span class="entry-title" style="display: none"><mt:event remove_html="1" regex_replace="$name_regex","$author_short_name" regex_replace="$username_regex",""></span>
+                    <span class="entry-content" style="display: none"><mt:event regex_replace="$name_regex","$author_short_name" regex_replace="$username_regex",""></span>
+                    <span class="updated" style="display: none"><mt:eventmodifieddate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
+                    <span class="published" style="display: none"><mt:eventdate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
+                </li>
+    <mt:DateFooter>
+            </ul>
+    </mt:DateFooter>
+    <mt:if name="__last__">
+            <!-- <p><a href='activity-stream-archive.html'>More...</a></p> -->
+        </div>
+    </div>
+</div>
+    </mt:if>
+</mt:authorevents>
