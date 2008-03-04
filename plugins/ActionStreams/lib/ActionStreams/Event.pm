@@ -308,7 +308,9 @@ sub build_results {
             });
         }
 
-        $item->{url} = q{} . $item->{url} if defined $item->{url};
+        for my $field (qw( url thumbnail )) {
+            $item->{$field} = q{} . $item->{$field} if defined $item->{$field};
+        }
 
         $event ||= $class->new;
 
