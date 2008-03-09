@@ -485,7 +485,9 @@ sub tag_stream_action_date {
 
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionDate in a non-action-stream context!");
-    local $arg->{ts} = MT::Util::epoch2ts( $ctx->stash('blog'), MT::Util::ts2epoch(undef, $event->created_on) );
+    my $c_on = $event->created_on;
+    local $arg->{ts} = MT::Util::epoch2ts( $ctx->stash('blog'), MT::Util::ts2epoch(undef, $c_on) )
+        if $c_on;
     return $ctx->_hdlr_date($arg);
 }
 
@@ -754,9 +756,12 @@ sub update_events_for_profile {
     my $mt = MT->app;
     $mt->run_callbacks('pre_update_action_streams_profile.' . $profile->{type},
         $mt, $author, $profile);
+    my $warn = $SIG{__WARN__} || sub { print STDERR $_[0] };
+    my $author_name = $author->name;
     EVENTCLASS: for my $event_class (@event_classes) {
         next EVENTCLASS if !$streams->{$event_class->class_type};
 
+        local $SIG{__WARN__} = sub { $_[0] =~ s{ (?=\n \z) }{updating $type events for $author_name}xms; $warn->(@_) };
         eval {
             $event_class->update_events( author => $author, %$profile );
         };
