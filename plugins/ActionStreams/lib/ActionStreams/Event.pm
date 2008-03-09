@@ -270,13 +270,13 @@ sub fetch_xpath {
                     or next VALUE;
 
                 $outval = "$outval";
-                if ($key eq 'created_on' || $key eq 'modified_on') {
+                if ($outval && ($key eq 'created_on' || $key eq 'modified_on')) {
                     # try both RFC 822/1123 and ISO 8601 formats
                     $outval = MT::Util::epoch2ts(undef, str2time($outval))
                         || MT::Util::iso2ts(undef, $outval);
                 }
 
-                $item_data{$key} = $outval;
+                $item_data{$key} = $outval if $outval;
             }
         }
         push @items, \%item_data;
@@ -306,10 +306,6 @@ sub build_results {
                 author_id  => $author->id,
                 identifier => $identifier,
             });
-        }
-
-        for my $field (qw( url thumbnail )) {
-            $item->{$field} = q{} . $item->{$field} if defined $item->{$field};
         }
 
         $event ||= $class->new;
@@ -343,7 +339,18 @@ sub fetch_scraper {
     my ($url, $scraper) = @params{qw( url scraper )};
 
     $scraper->user_agent($class->ua(%params));
-    $scraper->scrape(URI->new($url));
+    my $items = $scraper->scrape(URI->new($url));
+
+    for my $item (@$items) {
+        for my $field (keys %$item) {
+            if ($field eq 'tags') {
+                $item->{$field} = [ map { "$_" } @{ $item->{$field} } ];
+            }
+            else {
+                $item->{$field} = q{} . $item->{$field};
+            }
+        }
+    }
 }
 
 __PACKAGE__->add_trigger( post_save => sub {
