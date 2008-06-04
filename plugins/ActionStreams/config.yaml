@@ -395,138 +395,26 @@ action_streams:
                     created_on: pubDate/child::text()
                     title: title/child::text()
                     url: link/child::text()
-    iusethis:
-        events:
-            name: Recent events
-            description: Events from your recent events feed
-            html_form: '[_1] <a href="[_2]">[_3]</a>'
-            html_params:
-                - url
-                - title
-            rss: 1
-            url: 'http://osx.iusethis.com/user/feed.rss/{{ident}}?following=0'
-        osxapps:
-            name: Apps you use
-            description: The applications you saved as ones you use
-            fields:
-                - favorite
-            html_form: '[_1] started using <a href="[_2]">[_3]</a>[quant,_4, (and loves it),,]'
-            html_params:
-                - url
-                - title
-                - favorite
-            url: 'http://osx.iusethis.com/user/{{ident}}'
-    magnolia:
-        links:
-            name: Links
-            description: Your public links
-            html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
-            html_params:
-                - url
-                - title
-            url: 'http://ma.gnolia.com/atom/full/people/{{ident}}'
-            identifier: url
-            atom:
-                tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
-    twitter:
-        tweets:
-            name: Tweets
-            description: Your public tweets
-            fields:
-                - tweet
-            html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
-            html_params:
-                - url
-                - tweet
-            url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
-            atom:
-                tweet: title/child::text()
+    flickr:
         favorites:
             name: Favorites
-            description: Public tweets you saved as favorites
-            fields:
-                - tweet_author
-            html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
-            html_params:
-                - url
-                - tweet_author
-                - title
-            url: 'http://twitter.com/favorites/{{ident}}.atom'
-            atom:
-                created_on: ''
-                modified_on: ''
-    vox:
-        favorites:
-            name: Favorites
-            description: Public assets you saved as favorites
-            class: Vox
-        posts:
-            name: Posts
-            description: Your public posts to your Vox
+            description: Photos you marked as favorites
+            class: Flickr
+        photos:
+            name: Photos
+            description: Photos you posted
             html_form: '[_1] posted <a href="[_2]">[_3]</a>'
             html_params:
                 - url
                 - title
-            url: 'http://{{ident}}.vox.com/library/posts/atom.xml'
+            url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
             atom:
-                tags: category/@label
-    youtube:
-        favorites:
-            name: Favorites
-            description: Videos you saved as favorites
-            fields:
-                - by
-            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite video'
-            html_params:
-                - url
-                - title
-            url: 'http://gdata.youtube.com/feeds/users/{{ident}}/favorites'
-            atom:
-                by: author/name/child::text()
-                url: "link[@rel='alternate' and @type='text/html']/@href"
-                thumbnail: "media:group/media:thumbnail[position()=1]/@url"
-                created_on: ''
-                modified_on: ''
-        videos:
-            name: Videos
-            description: Videos you posted
-            html_form: '[_1] posted <a href="[_2]">[_3]</a> to YouTube'
-            html_params:
-                - url
-                - title
-            url: 'http://gdata.youtube.com/feeds/users/{{ident}}/uploads'
-            atom:
-                url: "link[@rel='alternate' and @type='text/html']/@href"
-                thumbnail: "media:group/media:thumbnail[position()=1]/@url"
-    livejournal:
-        posts:
-            name: Posts
-            description: Your public posts to your journal
-            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
-            html_params:
-                - url
-                - title
-            url: 'http://users.livejournal.com/{{ident}}/data/atom'
-            atom: 1
-    iconbuffet:
-        icons:
-            name: Deliveries
-            description: Icon sets you were delivered
-            html_form: '[_1] received the icon set <a href="[_2]">[_3]</a>'
-            html_params:
-                - url
-                - title
-            url: 'http://www.iconbuffet.com/people/{{ident}};received_packages'
-            identifier: url
-            scraper:
-                foreach: 'div#icons div.preview-sm'
-                get:
-                    title:
-                        - a span
-                        - TEXT
-                    url:
-                        - a
-                        - '@href'
+                thumbnail: content/child::text()
+    gametap:
+        scores:
+            name: Leaderboard scores
+            description: Your high scores in games with leaderboards
+            class: Gametap
     goodreads:
         toread:
             name: To read
@@ -588,6 +476,142 @@ action_streams:
                     created_on: pubDate/child::text()
                     modified_on: pubDate/child::text()
                     by: author_name/child::text()
+    googlereader:
+        shared:
+            name: Shared
+            description: Your shared items
+            class: GoogleReader
+    iconbuffet:
+        icons:
+            name: Deliveries
+            description: Icon sets you were delivered
+            html_form: '[_1] received the icon set <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.iconbuffet.com/people/{{ident}};received_packages'
+            identifier: url
+            scraper:
+                foreach: 'div#icons div.preview-sm'
+                get:
+                    title:
+                        - a span
+                        - TEXT
+                    url:
+                        - a
+                        - '@href'
+    iusethis:
+        events:
+            name: Recent events
+            description: Events from your recent events feed
+            html_form: '[_1] <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            rss: 1
+            url: 'http://osx.iusethis.com/user/feed.rss/{{ident}}?following=0'
+        osxapps:
+            name: Apps you use
+            description: The applications you saved as ones you use
+            fields:
+                - favorite
+            html_form: '[_1] started using <a href="[_2]">[_3]</a>[quant,_4, (and loves it),,]'
+            html_params:
+                - url
+                - title
+                - favorite
+            url: 'http://osx.iusethis.com/user/{{ident}}'
+    livejournal:
+        posts:
+            name: Posts
+            description: Your public posts to your journal
+            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://users.livejournal.com/{{ident}}/data/atom'
+            atom: 1
+    magnolia:
+        links:
+            name: Links
+            description: Your public links
+            html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://ma.gnolia.com/atom/full/people/{{ident}}'
+            identifier: url
+            atom:
+                tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
+    netflix:
+        shipped:
+            name: Shipped
+            description: Movies Netflix shipped to you
+            class: Netflix
+    pownce:
+        notes:
+            name: Notes
+            description: Your public notes
+            fields:
+                - note
+            html_form: '[_1] <a href="[_2]">posted</a>, "[_3]"'
+            html_params:
+                - url
+                - note
+            url: 'http://pownce.com/feeds/public/{{ident}}/'
+            atom:
+                note: summary/child::text()
+    steam:
+        achievements:
+            name: Achievements
+            description: Your achievements for achievement-enabled games
+            class: Steam
+    twitter:
+        tweets:
+            name: Tweets
+            description: Your public tweets
+            fields:
+                - tweet
+            html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
+            html_params:
+                - url
+                - tweet
+            url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
+            atom:
+                tweet: title/child::text()
+        favorites:
+            name: Favorites
+            description: Public tweets you saved as favorites
+            fields:
+                - tweet_author
+            html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
+            html_params:
+                - url
+                - tweet_author
+                - title
+            url: 'http://twitter.com/favorites/{{ident}}.atom'
+            atom:
+                created_on: ''
+                modified_on: ''
+    uncrate:
+        saved:
+            name: Saved
+            description: Things you saved as favorites
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> on Uncrate'
+            html_params:
+                - url
+                - title
+            url: 'http://uncrate.com/stuff/{{ident}}'
+            identifier: url
+            scraper:
+                foreach: '#widget h2'
+                get:
+                    title:
+                      - a
+                      - TEXT
+                    url:
+                      - a
+                      - @href
     upcoming:
         events:
             name: Events
@@ -609,75 +633,51 @@ action_streams:
                     modified_on: dc:date/child::text()
                     venue: 'xCal:x-calconnect-venue/xCal:adr/xCal:x-calconnect-venue-name/child::text()'
                     identifier: guid/child::text()
-    flickr:
+    vox:
         favorites:
             name: Favorites
-            description: Photos you marked as favorites
-            class: Flickr
-        photos:
-            name: Photos
-            description: Photos you posted
+            description: Public assets you saved as favorites
+            class: Vox
+        posts:
+            name: Posts
+            description: Your public posts to your Vox
             html_form: '[_1] posted <a href="[_2]">[_3]</a>'
             html_params:
                 - url
                 - title
-            url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
+            url: 'http://{{ident}}.vox.com/library/posts/atom.xml'
             atom:
-                thumbnail: content/child::text()
-    gametap:
-        scores:
-            name: Leaderboard scores
-            description: Your high scores in games with leaderboards
-            class: Gametap
-    googlereader:
-        shared:
-            name: Shared
-            description: Your shared items
-            class: GoogleReader
-    netflix:
-        shipped:
-            name: Shipped
-            description: Movies Netflix shipped to you
-            class: Netflix
-    steam:
-        achievements:
-            name: Achievements
-            description: Your achievements for achievement-enabled games
-            class: Steam
-    uncrate:
-        saved:
-            name: Saved
-            description: Things you saved as favorites
-            html_form: '[_1] saved <a href="[_2]">[_3]</a> on Uncrate'
-            html_params:
-                - url
-                - title
-            url: 'http://uncrate.com/stuff/{{ident}}'
-            identifier: url
-            scraper:
-                foreach: '#widget h2'
-                get:
-                    title:
-                      - a
-                      - TEXT
-                    url:
-                      - a
-                      - @href
-    pownce:
-        notes:
-            name: Notes
-            description: Your public notes
-            fields:
-                - note
-            html_form: '[_1] <a href="[_2]">posted</a>, "[_3]"'
-            html_params:
-                - url
-                - note
-            url: 'http://pownce.com/feeds/public/{{ident}}/'
-            atom:
-                note: summary/child::text()
+                tags: category/@label
     website:
         posted:
             name: Posts
             description: The posts available from the website's feed
             class: Website
+    youtube:
+        favorites:
+            name: Favorites
+            description: Videos you saved as favorites
+            fields:
+                - by
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite video'
+            html_params:
+                - url
+                - title
+            url: 'http://gdata.youtube.com/feeds/users/{{ident}}/favorites'
+            atom:
+                by: author/name/child::text()
+                url: "link[@rel='alternate' and @type='text/html']/@href"
+                thumbnail: "media:group/media:thumbnail[position()=1]/@url"
+                created_on: ''
+                modified_on: ''
+        videos:
+            name: Videos
+            description: Videos you posted
+            html_form: '[_1] posted <a href="[_2]">[_3]</a> to YouTube'
+            html_params:
+                - url
+                - title
+            url: 'http://gdata.youtube.com/feeds/users/{{ident}}/uploads'
+            atom:
+                url: "link[@rel='alternate' and @type='text/html']/@href"
+                thumbnail: "media:group/media:thumbnail[position()=1]/@url"
