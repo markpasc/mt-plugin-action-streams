@@ -450,6 +450,17 @@ action_streams:
                 thumbnail: "media:group/media:thumbnail[position()=1]/@url"
                 created_on: ''
                 modified_on: ''
+        videos:
+            name: Videos
+            description: Videos you posted
+            html_form: '[_1] posted <a href="[_2]">[_3]</a> to YouTube'
+            html_params:
+                - url
+                - title
+            url: 'http://gdata.youtube.com/feeds/users/{{ident}}/uploads'
+            atom:
+                url: "link[@rel='alternate' and @type='text/html']/@href"
+                thumbnail: "media:group/media:thumbnail[position()=1]/@url"
     livejournal:
         posts:
             name: Posts
@@ -633,4 +644,3 @@ action_streams:
             name: Posts
             description: The posts available from the website's feed
             class: Website
-
