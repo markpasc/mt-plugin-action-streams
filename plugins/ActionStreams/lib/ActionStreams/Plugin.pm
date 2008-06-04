@@ -789,6 +789,18 @@ sub tag_profile_services {
     return $out;
 }
 
+sub widget_recent {
+    my ($app, $tmpl, $widget_param) = @_;
+    $tmpl->param('author_id', $app->user->id);
+    $tmpl->param('blog_id', $app->blog->id) if $app->blog;
+}
+
+sub widget_blog_dashboard_only {
+    my ($page, $scope) = @_;
+    return if $scope eq 'dashboard:system';
+    return 1;
+}
+
 sub update_events {
     require ActionStreams::Event;
     my $mt = MT->app;

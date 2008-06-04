@@ -80,6 +80,15 @@ tasks:
         frequency: 1800
         label: Poll for new events
         code: $ActionStreams::ActionStreams::Plugin::update_events
+widgets:
+    asotd:
+        label: Recent Actions
+        template: widget_recent.mtml
+        permission: post
+        singular: 1
+        set: sidebar
+        handler: $ActionStreams::ActionStreams::Plugin::widget_recent
+        condition: $ActionStreams::ActionStreams::Plugin::widget_blog_dashboard_only
 template_sets:
     streams:
         label: 'Action Stream'

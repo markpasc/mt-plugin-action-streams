@@ -1,0 +1,90 @@
+<mtapp:widget class="widget hw-widget"
+    label="<__trans phrase="Your Recent Actions">"
+    can_close="1">
+    <mt:setvarblock name="html_head" append="1">
+        <link rel="stylesheet" type="text/css" href="<mt:var name="static_uri">plugins/ActionStreams/css/action-streams.css" />
+        <style type="text/css">
+            .action-stream-list
+            {
+                margin: 10px 0px;
+            }
+            .action-stream-list li
+            {
+                margin: 15px 0px;
+            }
+            .action-stream-thumbnail
+            {
+                margin: 3px 0px 8px 20px;
+            }
+            .action-stream-thumbnail img
+            {
+                padding: 1px;
+                border: 1px solid #000000;
+            }
+            .asotd_event
+            {
+                float:left;
+                width: 170px;
+            }
+            .asotd_actions
+            {
+                float: left;
+                width: 70px;
+                text-align: right;
+                padding: 0px 0px 0px 10px;
+            }
+            .asotd_actions a
+            {
+                background: url(<mt:var name="static_uri">images/status_icons/draft.gif) 0% 50% no-repeat;
+                padding-left: 12px;
+            }
+        </style>
+        
+        <script type="text/javascript">
+            function post(eventid, title, servicetype, thumbnail)
+            {
+                var summary = document.getElementById("asotd_event_" + eventid).innerHTML;
+                var bodytext = "<ul class=\"action-stream-list\"><li class=\"service-icon service-"+servicetype+"\"><span class=\"entry-content\">"+summary+"</span>"
+                if(thumbnail)
+                {
+                    var thumb = document.getElementById("asotd_event_img_" + eventid).innerHTML;
+                    bodytext += "<div class=\"action-stream-thumbnail\">" + thumb + "</div>";
+                }
+                bodytext += "</li></ul>";
+                var url = "mt.cgi?__mode=view&_type=entry&blog_id=<mt:var name="blog_id"/>";
+                url += "&title="+encodeURIComponent(title)+"&text="+encodeURIComponent(bodytext)+encodeURIComponent('<br/><br/>');
+                document.location.href = url;
+            }
+        </script>
+    </mt:setvarblock>
+
+    <div class="action-stream">
+        <mt:ActionStreams limit="10" author_id="$author_id">
+                <mt:if name="__first__">
+                    <ul class="action-stream-list">
+                </mt:if>
+
+                <li class="service-icon service-<mt:var name="service_type">">
+                    <div class="asotd_event">
+                        <span class="entry-content" id="asotd_event_<mt:var name="__counter__">"><mt:StreamAction smarty_pants="1"></span>
+                    
+                        <mt:setvarblock name="thumb_url"><mt:StreamActionThumbnailURL></mt:setvarblock>
+                    
+                    
+                        <mt:if name="thumb_url">
+                            <div class="action-stream-thumbnail" id="asotd_event_img_<mt:var name="__counter__">">
+                                <a href="<mt:StreamActionURL>" target="_blank"><img src='<mt:var name='thumb_url'>' /></a>
+                            </div>
+                        </mt:if>
+                    </div>
+                    <div class="asotd_actions">
+                        <a href="javascript:post('<mt:var name="__counter__">','<mt:StreamActionTitle>','<mt:var name="service_type">',<mt:if name="thumb_url">true<mt:else>false</mt:if>)">blog this</a>
+                    </div>
+                </li>
+
+                <mt:if name="__last__">
+                    </ul>
+                </mt:if>
+        </mt:ActionStreams>
+    </div>
+</mtapp:widget>
