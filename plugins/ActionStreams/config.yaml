@@ -139,6 +139,9 @@ profile_services:
     catster:
         name: Catster
         url: http://www.catster.com/cats/%s
+    corkd:
+        name: 'Cork''d'
+        url: http://www.corkd.com/people/%s
     delicious:
         name: del.icio.us
         url: http://del.icio.us/%s/
@@ -307,6 +310,40 @@ profile_services:
         url: http://www.zooomr.com/photos/%s
 
 action_streams:
+    corkd:
+        reviews:
+            name: Reviews
+            description: Your wine reviews
+            fields:
+                - review
+            html_form: '[_1] reviewed <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.corkd.com/feed/journal/{{ident}}'
+            rss: 1
+        cellar:
+            name: Cellar
+            description: Wines you own
+            fields:
+                - wine
+            html_form: '[_1] owns <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.corkd.com/feed/cellar/{{ident}}'
+            rss: 1
+        list:
+            name: Shopping List
+            description: Wines you want to buy
+            fields:
+                - wine
+            html_form: '[_1] wants <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.corkd.com/feed/shoppinglist/{{ident}}'
+            rss: 1
     delicious:
         links:
             name: Links
