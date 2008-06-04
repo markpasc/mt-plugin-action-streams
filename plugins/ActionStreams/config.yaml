@@ -139,6 +139,9 @@ profile_services:
     catster:
         name: Catster
         url: http://www.catster.com/cats/%s
+    colourlovers:
+        name: COLOURlovers
+        url: http://www.colourlovers.com/lover/%s
     corkd:
         name: 'Cork''d'
         url: http://www.corkd.com/people/%s
@@ -310,6 +313,72 @@ profile_services:
         url: http://www.zooomr.com/photos/%s
 
 action_streams:
+    colourlovers:
+        colors:
+            name: Colors
+            description: Colors you saved
+            fields:
+                - queue
+            html_form: '[_1] saved the color <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.colourlovers.com/api/colors/new?lover={{ident}}'
+            xpath:
+                foreach: //color
+                get:
+                    title: title/child::text()
+                    url: url/child::text()
+                    identifier: url/child::text()
+                    created_on: dateCreated/child::text()
+                    thumbnail: imageUrl/child::text()
+        palettes:
+            name: Palettes
+            description: Palettes you saved
+            fields:
+                - queue
+            html_form: '[_1] saved the palette <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.colourlovers.com/api/palettes/new?lover={{ident}}'
+            xpath:
+                foreach: //palette
+                get:
+                    title: title/child::text()
+                    url: url/child::text()
+                    identifier: url/child::text()
+                    created_on: dateCreated/child::text()
+                    thumbnail: imageUrl/child::text()
+        patterns:
+            name: Patterns
+            description: Patterns you saved
+            fields:
+                - queue
+            html_form: '[_1] saved the pattern <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.colourlovers.com/api/patterns/new?lover={{ident}}'
+            xpath:
+                foreach: //pattern
+                get:
+                    title: title/child::text()
+                    url: url/child::text()
+                    identifier: url/child::text()
+                    created_on: dateCreated/child::text()
+                    thumbnail: imageUrl/child::text()
+        favpalettes:
+            name: Favorite Palettes
+            description: Palettes you saved as favorites
+            fields:
+                - queue
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite palette'
+            html_params:
+                - url
+                - title
+            url: 'http://www.colourlovers.com/rss/lover/{{ident}}/palettes/favorites'
+            rss: 1
     corkd:
         reviews:
             name: Reviews
