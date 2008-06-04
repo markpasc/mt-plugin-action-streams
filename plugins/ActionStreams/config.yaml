@@ -895,6 +895,29 @@ action_streams:
             url: 'http://www.viddler.com/explore/{{ident}}/videos/feed/'
             rss:
                 thumbnail: media:content/media:thumbnail/@url
+    vimeo:
+        videos:
+            name: Videos
+            description: Videos you posted
+            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: http://vimeo.com/{{ident}}/videos/rss
+            rss:
+                thumbnail: media:thumbnail/@url
+        like:
+            name: Likes
+            description: Videos you liked
+            html_form: '[_1] liked <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: http://vimeo.com/{{ident}}/likes/rss
+            rss:
+                thumbnail: media:thumbnail/@url
+                created_on: ''
+                modified_on: ''
     vox:
         favorites:
             name: Favorites
