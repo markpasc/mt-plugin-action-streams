@@ -33,6 +33,7 @@ callbacks:
     pre_update_action_streams_profile.flickr: $ActionStreams::ActionStreams::Event::Flickr::ident_to_nsid
     pre_build_action_streams_event.twitter_tweets: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
+    pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
 object_types:
     profileevent: ActionStreams::Event
 list_actions:
@@ -357,6 +358,15 @@ action_streams:
                     title: title/child::text()
                     url: link/child::text()
     iusethis:
+        events:
+            name: Recent events
+            description: Events from your recent events feed
+            html_form: '[_1] <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            rss: 1
+            url: 'http://osx.iusethis.com/user/feed.rss/{{ident}}?following=0'
         osxapps:
             name: Apps you use
             description: The applications you saved as ones you use
@@ -367,19 +377,6 @@ action_streams:
                 - url
                 - title
                 - favorite
-            identifier: url
-            scraper:
-                foreach: "//a[starts-with(@href, 'http://osx.iusethis.com/app/')]/ancestor::td[@class='iconview']/ancestor::table"
-                get:
-                    loved:
-                        - "img[alt='loved']"
-                        - '@alt'
-                    title:
-                        - td.titleview
-                        - TEXT
-                    url:
-                        - td.iconview a
-                        - '@href'
             url: 'http://osx.iusethis.com/user/{{ident}}'
     magnolia:
         links:

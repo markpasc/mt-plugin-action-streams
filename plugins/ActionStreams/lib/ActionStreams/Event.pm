@@ -351,6 +351,8 @@ sub fetch_scraper {
             }
         }
     }
+    
+    return $items;
 }
 
 __PACKAGE__->add_trigger( post_save => sub {

@@ -239,8 +239,9 @@ sub _build_service_data {
         if ($streams) {
             my $streamdata = $streams->{$type} || {};
             @streams =
-                sort { lc $streamdata->{$a}->{name} cmp lc $streamdata->{$b}->{name} }
-                map { +{ stream => $_, %{ $streamdata->{$_} } } }
+                sort { lc $a->{name} cmp lc $b->{name} }
+                grep { grep { $_ } @$_{qw( class scraper xpath rss atom )} }
+                map  { +{ stream => $_, %{ $streamdata->{$_} } } }
                 grep { $_ ne 'plugin' }
                 keys %$streamdata;
         }
@@ -249,7 +250,7 @@ sub _build_service_data {
             type => $type,
             %$ndata,
             label => $ndata->{name},
-            user_has_account => $has_profiles{$_} ? 1 : 0,
+            user_has_account => ($has_profiles{$_} ? 1 : 0),
         };
         $ret->{streams} = \@streams if @streams;
         push @networks, $ret;
@@ -446,6 +447,7 @@ sub rebuild_action_stream_blogs {
 
 sub fix_twitter_tweet_name {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Remove the Twitter username from the front of the tweet.
     my $ident = $profile->{ident};
     for my $field (qw( tweet title )) {
         $item->{$field} =~ s{ \A \s* \Q$ident\E : \s* }{}xms;
@@ -454,12 +456,19 @@ sub fix_twitter_tweet_name {
 
 sub fix_flickr_photo_thumbnail {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Extract just the URL, and use the _t size thumbnail, not the _m size image.
     my $thumb = delete $item->{thumbnail};
     if ($thumb =~ m{ (http://farm[^\.]+\.static\.flickr\.com .*? _m.jpg) }xms) {
         $thumb = $1;
         $thumb =~ s{ _m.jpg \z }{_t.jpg}xms;
         $item->{thumbnail} = $thumb;
     }
+}
+
+sub fix_iusethis_event_title {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Remove the username for when we add it back in later.
+    $item->{title} =~ s{ \A \w+ \s* }{}xms;
 }
 
 sub tag_stream_action {
@@ -761,7 +770,7 @@ sub update_events_for_profile {
     EVENTCLASS: for my $event_class (@event_classes) {
         next EVENTCLASS if !$streams->{$event_class->class_type};
 
-        local $SIG{__WARN__} = sub { $_[0] =~ s{ (?=\n \z) }{updating $type events for $author_name}xms; $warn->(@_) };
+        local $SIG{__WARN__} = sub { my ($msg) = @_; $msg =~ s{ (?=\n \z) }{updating $type events for $author_name}xms; $warn->($msg) };
         eval {
             $event_class->update_events( author => $author, %$profile );
         };
