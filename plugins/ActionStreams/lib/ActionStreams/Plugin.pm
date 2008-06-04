@@ -479,6 +479,30 @@ sub fix_iusethis_event_title {
     $item->{title} =~ s{ \A \w+ \s* }{}xms;
 }
 
+sub fix_netflix_recent_prefix_thumb {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Remove the 'Shipped:' or 'Received:' prefix.
+    $item->{title} =~ s{ \A [^:]*: \s* }{}xms;
+    
+    # Extract thumbnail from description.
+    my $thumb = delete $item->{thumbnail};
+    if ($thumb =~ m/ <img src="([^"]+)"} /xms) {
+        $item->{thumbnail} = $1;
+    }
+}
+
+sub fix_netflix_queue_prefix_thumb {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Remove the item number.
+    $item->{title} =~ s{ \A \d+ [\W\S] \s* }{}xms;
+    
+    # Extract thumbnail from description.
+    my $thumb = delete $item->{thumbnail};
+    if ($thumb =~ m/ <img src="([^"]+)"} /xms) {
+        $item->{thumbnail} = $1;
+    }
+}
+
 sub tag_stream_action {
     my ($ctx, $args, $cond) = @_;
 

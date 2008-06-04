@@ -35,6 +35,8 @@ callbacks:
     pre_build_action_streams_event.twitter_favorites: $ActionStreams::ActionStreams::Plugin::fix_twitter_favorite_author
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
     pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
+    pre_build_action_streams_event.netflix_recent: $ActionStreams::ActionStreams::Plugin::fix_netflix_recent_prefix_thumb
+    pre_build_action_streams_event.netflix_queue: $ActionStreams::ActionStreams::Plugin::fix_netflix_queue_prefix_thumb
 object_types:
     profileevent: ActionStreams::Event
 list_actions:
@@ -227,6 +229,11 @@ profile_services:
     myspace:
         name: MySpace
         url: http://www.myspace.com/%s
+    netflix:
+        name: Netflix
+        url: http://rss.netflix.com/QueueRSS?id=%s
+        ident_label: Netflix RSS ID
+        ident_example: P0000006746939516625352861892808956
     newsvine:
         name: Newsvine
         url: http://%s.newsvine.com/
@@ -613,10 +620,30 @@ action_streams:
             atom:
                 tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
     netflix:
-        shipped:
-            name: Shipped
-            description: Movies Netflix shipped to you
-            class: Netflix
+        queue:
+            name: Queue
+            description: Movies you added to your rental queue
+            fields:
+                - queue
+            html_form: '[_1] queued <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://rss.netflix.com/QueueRSS?id={{ident}}'
+            rss:
+                thumbnail: description/child::text()
+        recent:
+            name: Recent Movies
+            description: Recent Rental Activity
+            fields:
+                - recent
+            html_form: '[_1] is watching <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://rss.netflix.com/TrackingRSS?id={{ident}}'
+            rss:
+                thumbnail: description/child::text()
     pownce:
         notes:
             name: Notes

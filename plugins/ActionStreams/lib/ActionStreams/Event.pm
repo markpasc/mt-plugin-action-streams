@@ -98,6 +98,7 @@ sub update_events {
             title => 'title/child::text()',
             url => 'link/child::text()',
             created_on => 'pubDate/child::text()',
+            identifier => 'guid/child::text()',
         };
         $rss_params = {} if !ref $rss_params;
         @$get{keys %$rss_params} = values %$rss_params;
