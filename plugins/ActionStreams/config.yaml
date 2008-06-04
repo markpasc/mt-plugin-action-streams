@@ -32,6 +32,7 @@ callbacks:
     post_update_action_streams: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
     pre_update_action_streams_profile.flickr: $ActionStreams::ActionStreams::Event::Flickr::ident_to_nsid
     pre_build_action_streams_event.twitter_tweets: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
+    pre_build_action_streams_event.twitter_favorites: $ActionStreams::ActionStreams::Plugin::fix_twitter_favorite_author
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
     pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
 object_types:
@@ -403,6 +404,20 @@ action_streams:
             url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
             atom:
                 tweet: title/child::text()
+        favorites:
+            name: Favorites
+            description: Public tweets you saved as favorites
+            fields:
+                - tweet_author
+            html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
+            html_params:
+                - url
+                - tweet_author
+                - title
+            url: 'http://twitter.com/favorites/{{ident}}.atom'
+            atom:
+                created_on: ''
+                modified_on: ''
     vox:
         favorites:
             name: Favorites

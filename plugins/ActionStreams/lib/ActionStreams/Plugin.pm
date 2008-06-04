@@ -454,6 +454,14 @@ sub fix_twitter_tweet_name {
     }
 }
 
+sub fix_twitter_favorite_author {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Remove the Twitter username from the front of the tweet.
+    if ($item->{title} =~ s{ \A \s* ([^\s:]+) : \s* }{}xms) {
+        $item->{tweet_author} = $1;
+    }
+}
+
 sub fix_flickr_photo_thumbnail {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Extract just the URL, and use the _t size thumbnail, not the _m size image.
