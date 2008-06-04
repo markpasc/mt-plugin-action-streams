@@ -515,6 +515,15 @@ sub fix_kongregate_achievement_title_thumb {
     }
 }
 
+sub fix_wists_thumb {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Grab the wists thumbnail out.
+    my $thumb = delete $item->{thumbnail};
+    if ($thumb =~ m{ (http://cache.wists.com/thumbnails/ [^"]+ ) }xms) {
+        $item->{thumbnail} = $1;
+    }
+}
+
 sub tag_stream_action {
     my ($ctx, $args, $cond) = @_;
 
