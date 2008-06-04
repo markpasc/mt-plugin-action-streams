@@ -37,6 +37,7 @@ callbacks:
     pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
     pre_build_action_streams_event.netflix_recent: $ActionStreams::ActionStreams::Plugin::fix_netflix_recent_prefix_thumb
     pre_build_action_streams_event.netflix_queue: $ActionStreams::ActionStreams::Plugin::fix_netflix_queue_prefix_thumb
+    pre_build_action_streams_event.kongregate_achievements: $ActionStreams::ActionStreams::Plugin::fix_kongregate_achievement_title_thumb
 object_types:
     profileevent: ActionStreams::Event
 list_actions:
@@ -209,6 +210,9 @@ profile_services:
         name: Jaiku
         url: http://%s.jaiku.com/
         ident_suffix: .jaiku.com
+    kongregate:
+        name: Kongregate
+        url: http://www.kongregate.com/accounts/%s
     lastfm:
         name: Last.fm
         url: http://www.last.fm/user/%s/
@@ -648,6 +652,55 @@ action_streams:
                 - title
             url: 'http://{{ident}}.jaiku.com/feed/atom'
             atom: 1
+    kongregate:
+        favorites:
+            name: Favorites
+            description: Games you saved as favorites
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite game'
+            html_params:
+                - url
+                - title
+            url: 'http://www.kongregate.com/accounts/{{ident}}'
+            identifier: url
+            scraper:
+                foreach: #favorites dl
+                get:
+                    url:
+                        - dd a
+                        - @href
+                    title:
+                        - dd a
+                        - TEXT
+                    thumbnail:
+                        - dt img
+                        - @src
+        achievements:
+            name: Achievements
+            description: Achievements you won
+            fields:
+                - game_title
+            html_form: '[_1] won the <strong>[_2]</strong> in <a href="[_3]">[_4]</a>'
+            html_params:
+                - title
+                - url
+                - game_title
+            url: 'http://www.kongregate.com/accounts/{{ident}}'
+            identifier: url,title
+            scraper:
+                foreach: #achievements .badge_details
+                get:
+                    url:
+                        - dt.badge_img a
+                        - @href
+                    thumbnail:
+                        - dt.badge_img img
+                        - @style
+                    title:
+                        - dd.badge_name
+                        - TEXT
+                    game_title:
+                        - a.badge_game
+                        - TEXT
     lastfm:
         tracks:
             name: Tracks
