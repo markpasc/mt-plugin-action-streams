@@ -332,6 +332,9 @@ profile_services:
         ident_example: http://www.example.com/
         ident_exact: 1
         can_many: 1
+    wists:
+        name: Wists
+        url: http://www.wists.com/%s
     xboxlive:
         name: 'Xbox Live'
         url: http://live.xbox.com/member/%s
@@ -938,6 +941,20 @@ action_streams:
             name: Posts
             description: The posts available from the website's feed
             class: Website
+    wists:
+        wists:
+            name: Wists
+            description: Stuff you saved
+            html_form: '[_1] wants <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.wists.com/{{ident}}?out=rdf'
+            identifier: url
+            rss:
+                created_on: dc:date/child::text()
+                tags: dc:tag/child::text()
+                thumbnail: content:encoded/child::text()        
     yelp:
         reviews:
             name: Reviews
