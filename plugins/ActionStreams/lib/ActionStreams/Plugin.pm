@@ -652,6 +652,19 @@ sub tag_action_streams_block {
         $args{limit} = 20;
     }
 
+    my ($service, $stream) = @$args{qw( service stream )};
+    if ($service && $stream) {
+        $terms{class} = join q{_}, $service, $stream;
+    }
+    elsif ($service) {
+        $terms{class} = $service . '_%';
+        $args{like} = { class => 1 };
+    }
+    elsif ($stream) {
+        $terms{class} = '%_' . $stream;
+        $args{like} = { class => 1 };
+    }
+
     # Make sure all classes are loaded.
     require ActionStreams::Event;
     for my $service (keys %{ MT->instance->registry('action_streams') || {} }) {
