@@ -754,7 +754,15 @@ sub tag_other_profiles {
     my $out = "";
     my $builder = $ctx->stash( 'builder' );
     my $tokens = $ctx->stash( 'tokens' );
-    for my $profile ( @{ $user->other_profiles } ) {
+    my $services;
+    PROFILE: for my $profile ( @{ $user->other_profiles } ) {
+        if ($args->{type}) {
+            my $profile_type = $profile->{type};
+            $services ||= MT->app->registry('profile_services');
+            next PROFILE if !$services->{$profile_type};
+            next PROFILE if !$services->{$profile_type}->{service_type};
+            next PROFILE if  $services->{$profile_type}->{service_type} ne $args->{type};
+        }
         $ctx->stash( other_profile => $profile );
         $out .= $builder->build( $ctx, $tokens, $cond );
     }

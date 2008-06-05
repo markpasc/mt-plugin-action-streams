@@ -146,9 +146,11 @@ profile_services:
         name: AIM
         url: aim:goim?screenname=%s
         ident_label: Screen name
+        service_type: contact
     bebo:
         name: Bebo
         url: http://www.bebo.com/Profile.jsp?MemberId=%s
+        service_type: network
     catster:
         name: Catster
         url: http://www.catster.com/cats/%s
@@ -161,9 +163,11 @@ profile_services:
     delicious:
         name: del.icio.us
         url: http://del.icio.us/%s/
+        service_type: links
     digg:
         name: Digg
         url: http://digg.com/users/%s/
+        service_type: links
     dodgeball:
         name: Dodgeball
         url: http://www.dodgeball.com/user?uid=%s
@@ -178,10 +182,12 @@ profile_services:
         url: http://www.facebook.com/profile.php?id=%s
         ident_label: User ID
         ident_example: 12345
+        service_type: network
     flickr:
         name: Flickr
         url: http://flickr.com/photos/%s/
         ident_example: 36381329@N00
+        service_type: photos
     goodreads:
         name: Goodreads
         url: http://www.goodreads.com/user/show/%s
@@ -192,9 +198,11 @@ profile_services:
         url: http://www.google.com/reader/shared/%s
         ident_label: Sharing ID
         ident_example: http://www.google.com/reader/shared/16793324975410272738
+        service_type: links
     hi5:
         name: Hi5
         url: http://hi5.com/friend/profile/displayProfile.do?userid=%s
+        service_type: network
     iconbuffet:
         name: IconBuffet
         url: http://www.iconbuffet.com/people/%s
@@ -203,6 +211,7 @@ profile_services:
         url: http://www.icq.com/people/about_me.php?uin=%s
         ident_label: UIN
         ident_example: 12345
+        service_type: contact
     istockphoto:
         name: iStockPhoto
         url: http://www.istockphoto.com/user_view.php?id=%s
@@ -216,10 +225,12 @@ profile_services:
         url: jabber://%s
         ident_label: Jabber ID
         ident_example: melody@example.com
+        service_type: contact
     jaiku:
         name: Jaiku
         url: http://%s.jaiku.com/
         ident_suffix: .jaiku.com
+        service_type: status
     kongregate:
         name: Kongregate
         url: http://www.kongregate.com/accounts/%s
@@ -230,25 +241,30 @@ profile_services:
         name: LinkedIn
         url: http://www.linkedin.com/in/%s
         ident_example: MelodyNelson
+        service_type: network
     livejournal:
         name: LiveJournal
         url: http://%s.livejournal.com/
         ident_suffix: .livejournal.com
+        service_type: blog
     magnolia:
         name: Ma.gnolia
         url: http://ma.gnolia.com/people/%s
+        service_type: links
     mog:
         name: MOG
         url: http://mog.com/%s
     msn:
         name: 'MSN Messenger'
         url: msnim:chat?contact=%s
+        service_type: contact
     multiply:
         name: Multiply
         url: http://%s.multiply.com/
     myspace:
         name: MySpace
         url: http://www.myspace.com/%s
+        service_type: network
     netflix:
         name: Netflix
         url: http://rss.netflix.com/QueueRSS?id=%s
@@ -257,36 +273,43 @@ profile_services:
     netvibes:
         name: Netvibes
         url: http://www.netvibes.com/%s
+        service_type: links
     newsvine:
         name: Newsvine
         url: http://%s.newsvine.com/
     ning:
         name: Ning
         url: http://%s.ning.com/
+        service_type: network
     ohloh:
         name: Ohloh
         url: http://ohloh.net/accounts/%s
     orkut:
         name: Orkut
         url: http://www.orkut.com/Profile.aspx?uid=%s
+        service_type: network
     pandora:
         name: Pandora
         url: http://pandora.com/people/%s
     picasaweb:
         name: Picasa Web Albums
         url: http://picasaweb.google.com/%s
+        service_type: photos
     pownce:
         name: Pownce
         url: http://pownce.com/%s/
+        service_type: status
     reddit:
         name: Reddit
         url: http://reddit.com/user/%s/
+        service_type: links
     skype:
         name: Skype
         url: callto://%s
     smugmug:
         name: Smugmug
         url: http://%s.smugmug.com/
+        service_type: photos
     sonicliving:
         name: SonicLiving
         url: http://www.sonicliving.com/user/%s/
@@ -305,14 +328,17 @@ profile_services:
     tribe:
         name: Tribe
         url: http://people.tribe.net/%s
+        service_type: network
     tumblr:
         name: Tumblr
         url: http://%s.tumblr.com
         ident_label: URL
         ident_suffix: .tumblr.com
+        service_type: blog
     twitter:
         name: Twitter
         url: http://twitter.com/%s
+        service_type: status
     uncrate:
         name: Uncrate
         url: http://uncrate.com/stuff/%s
@@ -324,17 +350,21 @@ profile_services:
     viddler:
         name: Viddler
         url: http://www.viddler.com/explore/%s
+        service_type: video
     vimeo:
         name: Vimeo
         url: http://www.vimeo.com/%s
+        service_type: video
     virb:
         name: Virb
         url: http://www.virb.com/%s
+        service_type: network
     vox:
         name: Vox
         url: http://%s.vox.com/
         ident_label: Vox name
         ident_suffix: .vox.com
+        service_type: blog
     website:
         name: Website
         url: %s
@@ -342,6 +372,7 @@ profile_services:
         ident_example: http://www.example.com/
         ident_exact: 1
         can_many: 1
+        service_type: blog
     wists:
         name: Wists
         url: http://www.wists.com/%s
@@ -352,6 +383,7 @@ profile_services:
     yahoo:
         name: 'Yahoo! Messenger'
         url: http://edit.yahoo.com/config/send_webmesg?.target=%s
+        service_type: contact
     yelp:
         name: Yelp
         url: http://www.yelp.com/user_details?userid={{ident}}
@@ -360,10 +392,12 @@ profile_services:
     youtube:
         name: YouTube
         url: http://www.youtube.com/user/%s
+        service_type: video
     zooomr:
         name: Zooomr
         url: http://www.zooomr.com/photos/%s
         ident_example: 1234567@Z01
+        service_type: photos
 
 action_streams:
     colourlovers:
