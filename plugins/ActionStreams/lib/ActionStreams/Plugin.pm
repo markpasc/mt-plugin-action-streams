@@ -115,18 +115,42 @@ sub list_profileevent {
     my $plugin = MT->component('ActionStreams');
     my %params = map { $_ => $app->param($_) ? 1 : 0 }
         qw( saved_deleted hidden shown );
+
+    $params{services} = [];
+    my $services = $app->registry('profile_services');
+    while (my ($prevt, $service) = each %$services) {
+        push @{ $params{services} }, {
+            service_id   => $prevt,
+            service_name => $service->{name},
+        };
+    }
+    $params{services} = [ sort { lc $a->{service_name} cmp lc $b->{service_name} } @{ $params{services} } ];
+
+    my %terms = (
+        class => '*',
+        author_id => $author_id,
+    );
+    my %args = (
+        sort => 'created_on',
+        direction => 'descend',
+    );
+
+    if (my $filter = $app->param('filter')) {
+        $params{filter_key} = $filter;
+        my $filter_val = $params{filter_val} = $app->param('filter_val');
+        $params{filter_label} = 'Actions from the service ' . $app->registry('profile_services')->{$filter_val}->{name};
+        if ($filter eq 'service') {
+            $terms{class} = $filter_val . '_%';
+            $args{like} = { class => 1 };
+        }
+    }
+
     $params{id} = $params{edit_author_id} = $author_id;
     $params{service_styles} = \@service_styles_loop;
     $app->listing({
         type     => 'profileevent',
-        terms    => {
-            class     => '*',
-            author_id => $author_id,
-        },
-        args     => {
-            sort      => 'created_on',
-            direction => 'descend',
-        },
+        terms    => \%terms,
+        args     => \%args,
         listing_screen => 1,
         code     => $code,
         template => $plugin->load_tmpl('list_profileevent.tmpl'),
