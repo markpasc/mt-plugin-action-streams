@@ -93,7 +93,7 @@ sub update_events {
             }
         }
     }
-    elsif (my $rss_params - $stream->{rss}) {
+    elsif (my $rss_params = $stream->{rss}) {
         my $get = {
             title => 'title/child::text()',
             url => 'link/child::text()',
