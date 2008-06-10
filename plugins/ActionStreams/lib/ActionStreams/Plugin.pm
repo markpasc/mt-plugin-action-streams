@@ -776,11 +776,11 @@ sub tag_stream_action_rollup {
     my $nexts = $ctx->stash('remaining_stream_actions');
     return $ctx->_hdlr_pass_tokens_else($arg, $cond)
         if !$nexts || !@$nexts || $event->class ne $nexts->[0]->class;
+    $nexts ||= [];
 
     my $event_class = $event->class;
     my $event_date  = _event_day($ctx, $event);
 
-    my $nexts = $ctx->stash('remaining_stream_actions') || [];
     my @rollup_events = ($event);
     while (@$nexts && $nexts->[0]->class eq $event_class && $event_date eq _event_day($ctx, $nexts->[0])) {
         push @rollup_events, shift @$nexts;
