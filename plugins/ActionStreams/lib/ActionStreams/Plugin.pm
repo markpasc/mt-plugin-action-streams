@@ -804,7 +804,7 @@ sub tag_stream_action_rollup {
 
 sub _event_day {
     my ($ctx, $event) = @_;
-    return substr(epoch2ts($ctx->stash('blog'), ts2epoch(undef, $event)), 0, 8);
+    return substr(epoch2ts($ctx->stash('blog'), ts2epoch(undef, $event->created_on)), 0, 8);
 }
 
 sub tag_stream_action_tags {
