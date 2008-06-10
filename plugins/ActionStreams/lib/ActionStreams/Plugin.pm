@@ -709,52 +709,102 @@ sub tag_action_streams_block {
         @events = reverse @events
             if $args{direction} ne 'descend';
     }
+    local $ctx->{__stash}{remaining_stream_actions} = \@events;
 
-
-    my $builder = $ctx->stash('builder');
-    my $tokens  = $ctx->stash('tokens');
 
     my $res = '';
     my $count = 0;
-    my $vars = $ctx->{__stash}{vars} ||= {};
-    my %profiles;
     my $day_date = '';
-    EVENT: for my $event (@events) {
-        local $ctx->{__stash}{stream_action} = $event;
-        my $author = $event->author;
-        local $ctx->{__stash}{author} = $event->author;
-
-        my $type = $event->class_type;
-        my ($service, $stream_id) = split /_/, $type, 2;
-        $profiles{$service} ||= $author->other_profiles($service);
-        next EVENT if !$profiles{$service};
-        local $ctx->{__stash}{other_profile} = $profiles{$service};
-
-        local $vars->{action_type} = $type;
-        local $vars->{service_type} = $service;
-        local $vars->{stream_type} = $stream_id;
-
-        my $event_time_local = ts2epoch(undef, $event->created_on);
-        my $new_day_date = substr epoch2ts($ctx->stash('blog'), $event_time_local), 0, 8;
+    EVENT: while (my $event = shift @events) {
+        my $new_day_date = _event_day($ctx, $event);
         local $cond->{DateHeader} = $day_date ne $new_day_date ? 1 : 0;
         local $cond->{DateFooter} = $events[$count+1]
-            && $new_day_date ne substr(epoch2ts($ctx->stash('blog'), ts2epoch(undef, $events[$count+1]->created_on)), 0, 8)
+            && $new_day_date ne _event_day($ctx, $events[$count+1])
             ? 1 : 0;
         $day_date = $new_day_date;
 
-        $count++;  # switch to 1-based count
-        local $vars->{__first__}   = $count == 1;
-        local $vars->{__last__}    = $count == @events;
-        local $vars->{__odd__}     = ($count % 2) == 1;
-        local $vars->{__even__}    = ($count % 2) == 0;
-        local $vars->{__counter__} = $count;
-
-        defined(my $out = $builder->build($ctx, $tokens, $cond))
-            or return $ctx->error($builder->errstr);
+        $count++;
+        defined (my $out = _build_about_event(
+            $ctx, $args, $cond,
+            event => $event,
+            count => $count,
+            total => scalar @events,
+        )) or return;
         $res .= $out;
     }
 
     return $res;
+}
+
+sub _build_about_event {
+    my ($ctx, $arg, $cond, %param) = @_;
+    my ($event, $count, $total) = @param{qw( event count total )};
+
+    local $ctx->{__stash}{stream_action} = $event;
+    my $author = $event->author;
+    local $ctx->{__stash}{author} = $event->author;
+
+    my $type = $event->class_type;
+    my ($service, $stream_id) = split /_/, $type, 2;
+    my $profile = $author->other_profiles($service);
+    next EVENT if !$profile;
+    local $ctx->{__stash}{other_profile} = $profile;
+
+    my $vars = $ctx->{__stash}{vars} ||= {};
+    local $vars->{action_type} = $type;
+    local $vars->{service_type} = $service;
+    local $vars->{stream_type} = $stream_id;
+
+    local $vars->{__first__}   = $count == 1;
+    local $vars->{__last__}    = $count == $total;
+    local $vars->{__odd__}     = ($count % 2) == 1;
+    local $vars->{__even__}    = ($count % 2) == 0;
+    local $vars->{__counter__} = $count;
+
+    my $builder = $ctx->stash('builder');
+    my $tokens  = $ctx->stash('tokens');
+
+    defined(my $out = $builder->build($ctx, $tokens, $cond))
+        or return $ctx->error($builder->errstr);
+    return $out;
+}
+
+sub tag_stream_action_rollup {
+    my ($ctx, $arg, $cond) = @_;
+    my $event = $ctx->stash('stream_action')
+        or return $ctx->error("Used StreamActionRollup in a non-action-stream context!");
+    my $nexts = $ctx->stash('remaining_stream_actions');
+    return $ctx->_hdlr_pass_tokens_else($arg, $cond)
+        if !$nexts || !@$nexts || $event->class ne $nexts->[0]->class;
+
+    my $event_class = $event->class;
+    my $event_date  = _event_day($ctx, $event);
+
+    my $nexts = $ctx->stash('remaining_stream_actions') || [];
+    my @rollup_events = ($event);
+    while (@$nexts && $nexts->[0]->class eq $event_class && $event_date eq _event_day($ctx, $nexts->[0])) {
+        push @rollup_events, shift @$nexts;
+    }
+
+    my $res;
+    my $count = 0;
+    for my $rup_event (@rollup_events) {
+        $count++;
+        defined (my $out = _build_about_event(
+            $ctx, $arg, $cond,
+            event => $rup_event,
+            count => $count,
+            total => scalar @rollup_events,
+        )) or return;
+        $res .= $arg->{glue} if $arg->{glue} && $count > 1;
+        $res .= $out;
+    }
+    return $res;
+}
+
+sub _event_day {
+    my ($ctx, $event) = @_;
+    return substr(epoch2ts($ctx->stash('blog'), ts2epoch(undef, $event)), 0, 8);
 }
 
 sub tag_stream_action_tags {

@@ -72,10 +72,11 @@ tags:
         StreamActionThumbnailURL: $ActionStreams::ActionStreams::Plugin::tag_stream_action_thumbnail_url
         OtherProfileVar:          $ActionStreams::ActionStreams::Plugin::tag_other_profile_var
     block:
-        ActionStreams:    $ActionStreams::ActionStreams::Plugin::tag_action_streams_block
-        StreamActionTags: $ActionStreams::ActionStreams::Plugin::tag_stream_action_tags
-        OtherProfiles:    $ActionStreams::ActionStreams::Plugin::tag_other_profiles
-        ProfileServices:  $ActionStreams::ActionStreams::Plugin::tag_profile_services
+        ActionStreams:      $ActionStreams::ActionStreams::Plugin::tag_action_streams_block
+        StreamActionTags:   $ActionStreams::ActionStreams::Plugin::tag_stream_action_tags
+        OtherProfiles:      $ActionStreams::ActionStreams::Plugin::tag_other_profiles
+        ProfileServices:    $ActionStreams::ActionStreams::Plugin::tag_profile_services
+        StreamActionRollup: $ActionStreams::ActionStreams::Plugin::tag_stream_action_rollup
 tasks:
     UpdateEvents:
         frequency: 1800
