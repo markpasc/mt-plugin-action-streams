@@ -497,6 +497,12 @@ sub fix_flickr_photo_thumbnail {
     }
 }
 
+sub fix_iminta_link_title {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    # Remove the username for when we add it back in later.
+    $item->{title} =~ s{ (?: \s* :: [^:]+ ){2} \z }{}xms;
+}
+
 sub fix_iusethis_event_title {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the username for when we add it back in later.

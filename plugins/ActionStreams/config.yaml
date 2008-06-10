@@ -34,6 +34,7 @@ callbacks:
     pre_build_action_streams_event.twitter_tweets: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
     pre_build_action_streams_event.twitter_favorites: $ActionStreams::ActionStreams::Plugin::fix_twitter_favorite_author
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
+    pre_build_action_streams_event.iminta_links: $ActionStreams::ActionStreams::Plugin::fix_iminta_link_title
     pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
     pre_build_action_streams_event.netflix_recent: $ActionStreams::ActionStreams::Plugin::fix_netflix_recent_prefix_thumb
     pre_build_action_streams_event.netflix_queue: $ActionStreams::ActionStreams::Plugin::fix_netflix_queue_prefix_thumb
@@ -212,6 +213,9 @@ profile_services:
         ident_label: UIN
         ident_example: 12345
         service_type: contact
+    iminta:
+        name: Iminta
+        url: http://iminta.com/people/%s
     istockphoto:
         name: iStockPhoto
         url: http://www.istockphoto.com/user_view.php?id=%s
@@ -656,6 +660,16 @@ action_streams:
                     url:
                         - a
                         - '@href'
+    iminta:
+        links:
+            name: Intas
+            description: Links you saved
+            html_form: '[_1] is inta <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://iminta.com/people/{{ident}}/rss.xml?inta_source_id=11'
+            rss: 1
     istockphoto:
         photos:
             name: Photos
