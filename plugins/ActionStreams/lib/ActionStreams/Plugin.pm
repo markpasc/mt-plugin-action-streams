@@ -387,7 +387,7 @@ sub add_other_profile {
         # Check for full URLs.
         if (!$network->{ident_exact}) {
             my $url_pattern = $network->{url};
-            my ($pre_ident, $post_ident) = split /\%s/, $url_pattern;
+            my ($pre_ident, $post_ident) = split /(?:\%s|\Q{{ident}}\E)/, $url_pattern, 2;
             $pre_ident =~ s{ \A http:// }{}xms;
             $post_ident =~ s{ / \z }{}xms;
             if ($ident =~ m{ \A (?:http://)? \Q$pre_ident\E (.*?) \Q$post_ident\E /? \z }xms) {
@@ -395,7 +395,8 @@ sub add_other_profile {
             }
         }
 
-        $uri = sprintf $network->{url}, $ident;
+        $uri = $network->{url};
+        $uri =~ s{ (?:\%s|\Q{{ident}}\E) }{$ident}xmsg;
     } else {
         $ident = $uri = $app->param( 'profile_uri' );
         $label = $app->param( 'profile_label' );
@@ -597,7 +598,7 @@ sub tag_stream_action_date {
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionDate in a non-action-stream context!");
     my $c_on = $event->created_on;
-    local $arg->{ts} = MT::Util::epoch2ts( $ctx->stash('blog'), MT::Util::ts2epoch(undef, $c_on) )
+    local $arg->{ts} = epoch2ts( $ctx->stash('blog'), ts2epoch(undef, $c_on) )
         if $c_on;
     return $ctx->_hdlr_date($arg);
 }
@@ -607,7 +608,7 @@ sub tag_stream_action_modified_date {
 
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionModifiedDate in a non-action-stream context!");
-    local $arg->{ts} = MT::Util::epoch2ts( $ctx->stash('blog'), MT::Util::ts2epoch(undef, $event->modified_on) );
+    local $arg->{ts} = epoch2ts( $ctx->stash('blog'), ts2epoch(undef, $event->modified_on) );
     return $ctx->_hdlr_date($arg);
 }
 
