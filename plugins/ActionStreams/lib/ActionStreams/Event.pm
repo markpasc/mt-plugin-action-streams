@@ -4,8 +4,9 @@ package ActionStreams::Event;
 use strict;
 use base qw( MT::Object MT::Taggable MT::Scorable );
 our @EXPORT_OK = qw( classes_for_type );
-use Web::Scraper;
 use HTTP::Date qw( str2time );
+
+use ActionStreams::Scraper;
 
 our $hide_if_first_update = 0;
 

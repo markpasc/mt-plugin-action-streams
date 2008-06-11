@@ -4,7 +4,7 @@ package ActionStreams::Event::Gametap;
 use strict;
 use base qw( ActionStreams::Event );
 
-use Web::Scraper;
+use ActionStreams::Scraper;
 
 __PACKAGE__->install_properties({
     class_type => 'gametap_scores',

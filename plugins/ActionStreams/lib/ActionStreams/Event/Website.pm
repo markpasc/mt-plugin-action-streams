@@ -4,7 +4,7 @@ package ActionStreams::Event::Website;
 use strict;
 use base qw( ActionStreams::Event );
 
-use Web::Scraper;
+use ActionStreams::Scraper;
 
 __PACKAGE__->install_properties({
     class_type => 'website_posted',
@@ -30,7 +30,7 @@ sub update_events {
     my $class = shift;
     my %profile = @_;
     my ($ident, $author) = @profile{qw( ident author )};
-
+    
     my $links = $class->fetch_scraper(
         url     => $ident,
         scraper => scraper {
