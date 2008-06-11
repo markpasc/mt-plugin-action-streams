@@ -544,6 +544,14 @@ sub fix_netflix_queue_prefix_thumb {
     }
 }
 
+sub fix_p0pulist_stuff_urls {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    
+    for my $field (qw( identifier url )) {
+        $item->{$field} =~ s{ \A / }{http://p0pulist.com/}xms;
+    }
+}
+
 sub fix_kongregate_achievement_title_thumb {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the parenthetical from the end of the title.

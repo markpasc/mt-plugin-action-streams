@@ -40,6 +40,7 @@ callbacks:
     pre_build_action_streams_event.netflix_queue: $ActionStreams::ActionStreams::Plugin::fix_netflix_queue_prefix_thumb
     pre_build_action_streams_event.kongregate_achievements: $ActionStreams::ActionStreams::Plugin::fix_kongregate_achievement_title_thumb
     pre_build_action_streams_event.wists_wists: $ActionStreams::ActionStreams::Plugin::fix_wists_thumb
+    pre_build_action_streams_event.p0pulist_stuff: $ActionStreams::ActionStreams::Plugin::fix_p0pulist_stuff_urls
 object_types:
     profileevent: ActionStreams::Event
 list_actions:
@@ -300,6 +301,11 @@ profile_services:
         name: Picasa Web Albums
         url: http://picasaweb.google.com/%s
         service_type: photos
+    p0pulist:
+        name: p0pulist
+        url: http://p0pulist.com/list/hot_list/%s
+        ident_label: User ID
+        ident_example: 12345
     pownce:
         name: Pownce
         url: http://pownce.com/%s/
@@ -841,6 +847,17 @@ action_streams:
             url: 'http://picasaweb.google.com/data/feed/api/user/{{ident}}?kind=photo&max-results=15'
             atom:
                 thumbnail: media:group/media:thumbnail[position()=2]/@url
+    p0pulist:
+        stuff:
+            name: List
+            description: Things you put in your list
+            html_form: '[_1] is enjoying <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://p0pulist.com/list/hot_list/{{ident}}.rss'
+            rss:
+                thumbnail: image/url/child::text()
     pownce:
         notes:
             name: Notes
