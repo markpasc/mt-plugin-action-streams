@@ -226,6 +226,9 @@ profile_services:
     iusethis:
         name: IUseThis
         url: http://osx.iusethis.com/user/%s
+    iwatchthis:
+        name: iwatchthis
+        url: http://iwatchthis.com/%s
     jabber:
         name: Jabber
         url: jabber://%s
@@ -710,6 +713,16 @@ action_streams:
                 - title
                 - favorite
             url: 'http://osx.iusethis.com/user/{{ident}}'
+    iwatchthis:
+        favorites:
+            name: Favorites
+            description: Videos you saved as watched
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite video'
+            html_params:
+                - url
+                - title
+            url: 'http://iwatchthis.com/rss/{{ident}}'
+            rss: 1
     jaiku:
         jaikus:
             name: Jaikus
