@@ -29,7 +29,7 @@ applications:
 callbacks:
     MT::App::CMS::template_source.users_content_nav: $ActionStreams::ActionStreams::Plugin::users_content_nav
     MT::App::CMS::post_add_profile: $ActionStreams::ActionStreams::Plugin::first_profile_update
-    post_update_action_streams: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
+    post_action_streams_task: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
     pre_update_action_streams_profile.flickr: $ActionStreams::ActionStreams::Event::Flickr::ident_to_nsid
     pre_build_action_streams_event.twitter_tweets: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
     pre_build_action_streams_event.twitter_favorites: $ActionStreams::ActionStreams::Plugin::fix_twitter_favorite_author

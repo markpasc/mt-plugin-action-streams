@@ -274,7 +274,7 @@ sub _build_service_data {
             type => $type,
             %$ndata,
             label => $ndata->{name},
-            user_has_account => ($has_profiles{$_} ? 1 : 0),
+            user_has_account => ($has_profiles{$type} ? 1 : 0),
         };
         $ret->{streams} = \@streams if @streams;
         push @networks, $ret;
@@ -458,13 +458,24 @@ sub first_profile_update {
 }
 
 sub rebuild_action_stream_blogs {
-    my ($cb, $app, $author, $profiles) = @_;
-    return if !MT->request('saved_action_stream_events');
+    my ($cb, $app) = @_;
+    return if !$app->request('saved_action_stream_events');
 
-    my @blogs = MT->model('blog')->load();  # TODO: ouch!
     my $plugin = MT->component('ActionStreams');
-    BLOG: for my $blog (@blogs) {
-        next BLOG if !$plugin->get_config_value('rebuild_for_action_stream_events', 'blog:' . $blog->id);
+    my $pd_iter = MT->model('plugindata')->load_iter({
+        plugin => $plugin->key,
+        key => { like => 'configuration:blog:%' }
+    });
+    my %rebuild;
+    while ( my $pd = $pd_iter->() ) {
+        next unless $pd->data('rebuild_for_action_stream_events');
+        my ($blog_id) = $pd->key =~ m/:blog:(\d+)$/;
+        $rebuild{$blog_id} = 1;
+    }
+    foreach my $blog_id (keys %rebuild) {
+        # FIXME: We could possibly limit this further so we only rebuild
+        # indexes that use actionstreams...
+        my $blog = MT->model('blog')->load( $blog_id ) or next;
         $app->rebuild_indexes( Blog => $blog );
     }
 }
@@ -906,6 +917,8 @@ sub update_events {
     require ActionStreams::Event;
     my $mt = MT->app;
 
+    $mt->run_callbacks('pre_action_streams_task', $mt);
+
     my $author_iter = MT::Author->search({ type => MT::Author->AUTHOR() });
     while (my $author = $author_iter->()) {
         my $profiles = $author->other_profiles();
@@ -917,6 +930,8 @@ sub update_events {
 
         $mt->run_callbacks('post_update_action_streams', $mt, $author, $profiles);
     }
+
+    $mt->run_callbacks('post_action_streams_task', $mt);
 }
 
 sub update_events_for_profile {
