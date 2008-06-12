@@ -913,6 +913,7 @@ action_streams:
         tweets:
             name: Tweets
             description: Your public tweets
+            class: TwitterTweet
             fields:
                 - tweet
             html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'

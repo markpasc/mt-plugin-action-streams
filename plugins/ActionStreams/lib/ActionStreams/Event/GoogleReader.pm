@@ -23,7 +23,7 @@ sub as_html {
         MT::Util::encode_html($event->author->nickname),
         map { MT::Util::encode_html($event->$_()) } qw( url title source_url source_title ));
     if (($event->annotation || '') ne '') {
-        $html .= " &mdash; <em>&ldquo;" . MT::Util::encode_html($event->annotation) . "&rdquo;</em>";
+        $html .= " &mdash; <em>&ldquo;" . $event->annotation . "&rdquo;</em>";
     }
     return $html;
 }
