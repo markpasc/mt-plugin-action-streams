@@ -246,6 +246,7 @@ profile_services:
     lastfm:
         name: Last.fm
         url: http://www.last.fm/user/{{ident}}/
+        ident_example: JoeUsername
     linkedin:
         name: LinkedIn
         url: http://www.linkedin.com/in/{{ident}}
@@ -300,6 +301,7 @@ profile_services:
     pandora:
         name: Pandora
         url: http://pandora.com/people/{{ident}}
+        ident_example: JoeUsername
     picasaweb:
         name: Picasa Web Albums
         url: http://picasaweb.google.com/{{ident}}
@@ -785,12 +787,44 @@ action_streams:
     lastfm:
         tracks:
             name: Tracks
-            description: Songs you recently listened to
+            description: Songs you recently listened to (High spam potential!)
             html_form: '[_1] heard <a href="[_2]">[_3]</a>'
             html_params:
                 - url
                 - title
             url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/recenttracks.rss'
+            rss: 1
+        lovedtracks:
+            name: Loved Tracks
+            description: Songs you marked as "loved"
+            fields:
+                - artist
+            html_form: '[_1] loved <a href="[_2]">[_3]</a> by [_4]'
+            html_params:
+                - url
+                - title
+                - artist
+            url: 'http://pipes.yahoo.com/pipes/pipe.run?_id=4smlkvMW3RGPpBPfTqoASA&_render=rss&lastFM_UserName={{ident}}'
+            identifier: url
+            rss:
+                artist: description/child::text()
+        journalentries:
+            name: Journal Entries
+            description: Your recent journal entries
+            html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/journals.rss'
+            rss: 1
+        events:
+            name: Events
+            description: The events you said you'll be attending
+            html_form: '[_1] is attending <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/events.rss'
             rss: 1
     livejournal:
         posts:
@@ -849,6 +883,37 @@ action_streams:
                 - title
             url: 'http://www2.netvibes.com/rest/account/{{ident}}/timeline?format=atom'
             atom: 1
+    pandora:
+        favorites:
+            name: Favorite Songs
+            description: Songs you marked as favorites
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite song'
+            html_params:
+                - url
+                - title
+            url: 'http://feeds.pandora.com/feeds/people/{{ident}}/favorites.xml'
+            rss:
+                thumbnail: pandora:albumArtUrl/child::text()
+        favoriteartists:
+            name: Favorite Artists
+            description: Artists you marked as favorites
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite artist'
+            html_params:
+                - url
+                - title
+            url: 'http://feeds.pandora.com/feeds/people/{{ident}}/favoriteartists.xml'
+            rss:
+                thumbnail: pandora:artistPhotoUrl/child::text()
+        stations:
+            name: Stations
+            description: Radio stations you added
+            html_form: '[_1] added a new radio station named <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://feeds.pandora.com/feeds/people/{{ident}}/stations.xml'
+            rss:
+                thumbnail: pandora:stationImageUrl/child::text()
     picasaweb:
         photos:
             name: Photos
