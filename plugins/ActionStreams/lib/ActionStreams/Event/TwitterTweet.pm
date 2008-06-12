@@ -41,7 +41,7 @@ sub autolink {
     $text =~ s{(\s|^)@([A-Za-z0-9_]+)}{$1@<a href="http://www.twitter.com/$2">$2</a>}gs;
 
     # hash tags (#perl) (linking to summize requests)
-    $text =~ s{(\s|^)#([A-Za-z0-9_]+)}{$1#<a href="http://www.summize.com/search?tag=$2">$2</a>}gs;  
+    $text =~ s{(\s|^)#([A-Za-z0-9_]+)}{$1#<a href="http://summize.com/search?tag=$2">$2</a>}gs;  
 
     return $text;
 }
