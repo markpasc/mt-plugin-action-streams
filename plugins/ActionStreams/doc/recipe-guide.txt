@@ -1,0 +1,282 @@
+# Action Streams Recipe Developer Guide #
+
+The Action Streams plugin collects authors' actions performed in remote services. Plugin developers can add support to Action Streams for new web services, often with no Perl code required at all.
+
+## Making a plugin with the registry ##
+
+In Movable Type 4, plugins are defined using a file called `config.yaml` instead of Perl code. When Movable Type loads the plugin, the settings the plugin defines in `config.yaml` are integrated into what's called *the registry*. The registry is a tree of settings that informs Movable Type what settings, pages, and objects are available.
+
+To define your plugin, make a new directory in the `plugins` directory. Inside it, create a file called `config.yaml`, and enter all the basic plugin settings. For example:
+
+    id:   ExampleService
+    key:  ExampleService
+    name: Example Service
+    description: An example Action Streams service.
+    version: 1.0
+    author_name: Mark Paschal
+    author_link: http://www.example.com/mark/
+    plugin_link: http://www.example.com/plugins/example-service/
+
+These settings define a plugin called "Example Service" with all the specified settings. Consult the Movable Type developer documentation for further help on creating plugins.
+
+## Defining a profile service ##
+
+Every action and stream belongs to a **service**, so unless you're adding a stream for a service that already exists in Action Streams, you need to define one of those first. Usually a service is a web site at which an author has an account. Authors can use the Action Streams plugin to make a sidebar list of their accounts on all the services for which they enter their accounts.
+
+Profile services are defined in the `profile_services` section of the registry. Because Movable Type merges your `config.yaml` into the registry, you specify additional services by adding your own `profile_services` section to your plugin's `config.yaml`. For example:
+
+    profile_services:
+        example:
+            name: Simple Example Service
+            url: http://www.example.com/people/{{ident}}
+        complex:
+            name: Complex Example Service
+            url: http://big.example.com/{{ident}}/profile
+            ident_label: User ID
+            ident_example: 12345
+            ident_suffix: /profile
+            service_type: example
+            icon: example.png
+
+This defines two services. Each service has its own key by which it's known in the registry. These services' keys are `example` and `complex`. The data you can set for a service are:
+
+### `name` (required) ###
+
+The human-readable name of the service. This name is used for display and for ordering the list of services.
+
+### `url` (required) ###
+
+The URL to a user's profile on the service. This is the URL used in the author's list of services.
+
+The string `{{ident}}` will be replaced by the author's identifier for this service. Only one identifier per service is currently supported.
+
+### `ident_label` ###
+
+A label to describe what the author's identifier on the service is. If not given, the label `Username` is used. For example, if the user identifier on the service is a number, you might specify `User ID` here to indicate the author should enter a number. For the AIM service, the label is `Screen name`.
+
+### `ident_example` ###
+
+A label to show what the identifiers for the service generally look like. For example, if the user identifier is a number, you might specify `12345`. For the Flickr service, the example identifier is `36381329@N00`.
+
+### `ident_suffix` ###
+
+A label to show after the field in which the identifier is entered. Typically this is used to further suggest that the one's subdomain on a service is one's identifier. For example, the Vox service's suffix is `.vox.com`.
+
+### `service_type` ###
+
+The type of service . Authors can list their accounts in certain types of services only by using the `type` attribute of the `OtherProfiles` tag. Any type value is allowed here, but the established service types are:
+
+* `contact` (AIM, Yahoo! Messenger, etc)
+* `blog` (Vox, Tumblr, the Website service, etc)
+* `photos` (Flickr, Smugmug, etc)
+* `video` (Vimeo, YouTube, etc)
+* `links` (del.icio.us, Digg, etc)
+* `status` (Pownce, Twitter, etc)
+* `network` (Facebook, MySpace, etc)
+
+### `icon` ###
+
+The location of the service's icon. This can be a complete URL to the image. If not a URL, `icon` should be a path to the image relative to your plugin's `mt-static` directory. For example, if you install your `example.png` at `mt-static/plugins/ExampleService/example.png`, your `icon` setting should be `example.png`.
+
+## Defining stream recipes for a service ##
+
+Once a service is defined in `profile_services`, you can make recipes for collecting its action streams. These recipes go in the `action_streams` section of the registry. For example:
+
+    action_streams:
+        example:
+            posts:
+                name: Posts
+                description: Posts you posted on the example service
+                html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+                html_params:
+                    - url
+                    - title
+                url: http://www.example.com/people/{{ident}}/posts
+                atom:
+                    thumbnail: media:thumbnail/child::text()
+
+Each service has its own section, labelled with the same key as in the `profile_services` section. Inside that, you can define one or more recipes for how to collect actions. As you can see, recipes have three parts:
+
+* **URLs** that indicate where to find action content.
+* **Collectors** that specify how to turn the resource at the stream's URL into action data. Action data is primarily a title, a link, and a unique identifier for each action, but you can specify additional data fields in your recipe.
+* **Forms** that describe how to turn the action data back into HTML. Authors can display however they like with template code, but in the application and by default, actions in this stream will display as you specify in the recipe.
+
+Together, these parts define the recipe.
+
+### Picking the stream resource ###
+
+Typically, modern web services will provide a web feed or XML resource for their members that rolls up their recent activity on the site. Sometimes a service only provides an HTML page, but Action Streams can work with them too. This is the resource you will specify as your stream's `url`.
+
+The URL for the resource needs to include the user's identifier in the URL. In some extreme cases, you may even have to change what identifier your profile service uses in order to get the stream resource. Normally the same user name or ID is in the URL, though.
+
+### Three schools of collection ###
+
+Most services don't yet publish their members' actions as such, so even if you can collect from a nice standard web feed, the feed content will need some massaging. There are three main kinds of collectors at your disposal: XML feeds, HTML scrapers, and custom collectors.
+
+#### XML feeds ###
+
+It's easy to collect data from XML feeds. Action Streams accepts recipes using XPath syntax. For example, you might collect data from del.icio.us' RSS feeds with an `xpath` recipe:
+
+    delicious:
+        links:
+            name: Links
+            description: Your public links
+            # ...
+            url: 'http://del.icio.us/rss/{{ident}}'
+            identifier: url
+            xpath:
+                foreach: //item
+                get:
+                    created_on: dc:date/child::text()
+                    title: title/child::text()
+                    url: link/child::text()
+
+This specifies that each item in the feed is an XPath `//item`, meaning an `item` tag anywhere in the document. Within each `item`, you can find values for the `created_on`, `title`, and `url` fields using the given XPath selectors. The `identifier: url` statement indicates to use the `url` value as the action's unique identifier.
+
+As many services provide as standard web feeds, it's actually even easier to collect from those. Instead of `xpath`, specify your recipe as `rss` or `atom`, with any additional or special fields as additional XPath selectors:
+
+    delicious:
+        links:
+            name: Links
+            description: Your public links
+            # ...
+            url: 'http://del.icio.us/rss/{{ident}}'
+            identifier: url
+            rss:
+                created_on: dc:date/child::text()
+
+If there are no special fields to collect, you can also specify the recipe as simply `1`, as in this recipe for Jaiku:
+
+    jaiku:
+        jaikus:
+            name: Jaikus
+            description: Jaikus you posted
+            # ...
+            url: 'http://{{ident}}.jaiku.com/feed/atom'
+            atom: 1
+
+The values of each entry's ID field (`guid` in RSS and `id` in Atom) are then used for actions' identifiers.
+
+#### HTML pages ####
+
+When feeds aren't available, HTML will do. Action Streams reads HTML pages using Web::Scraper, an HTML scraping library inspired by the Ruby scrapi library. For example, the Iwtst plugin reads your iwanttoseethat.com profile page with this definition:
+
+    iwtst:
+        want:
+            name: Movies
+            description: The movies you want to see
+            # ...
+            url: 'http://iwanttoseethat.com/people/{{ident}}'
+            identifier: url
+            scraper:
+                foreach: 'div.seethat div.seethat_yes'
+                get:
+                    url:
+                      - a
+                      - @href
+                    title:
+                      - a
+                      - TEXT
+
+Instead of XPath, here we can use CSS selector syntax. (For more complex constructions, you can use XPath selectors as well.) This recipe says each action is a `div` with class `seethat_yes` inside a `seethat` `div`. The action's `url` field is then the value of the `href` attribute of the `a` tag inside, while the `title` field is the text linked inside that `a` tag.
+
+#### Custom collectors ####
+
+If you aren't pulling web data, or you can't quite articulate as a set of selectors, you can implement your own action collector as a Perl class. You then tell what class implements your stream:
+
+    complex:
+        posts:
+            name: Posts
+            description: Posts you posted on the complex example service
+            # ...
+            class: Example::Event::ComplexPosts
+
+Your class then subclasses the plugin's `ActionStreams::Event` class, and implements your particular content-finding behavior. As the XML and HTML recipes are really the default behavior of an `ActionStreams::Event` object, the above techniques are easily accessible from your class too. See some of the `ActionStreams::Event` subclasses included with the Action Streams plugin for examples.
+
+### Formatting actions for display ###
+
+TODO
+
+### Stream recipe options ###
+
+Recipes describe how to collect and display users' actions on profile services. They are found in `action_streams` section of the registry, as sub-entries of sections the keys of which match the related services in `profile_services`.
+
+The options you can set for action streams are:
+
+#### `name` (required) ####
+
+The name of the action stream. This is displayed to authors when they enter their profile service identifier and are given the option of collecting the stream.
+
+#### `description` (required) ####
+
+The description of the action stream. This is displayed to authors with the stream's name when they enter profile identifiers.
+
+#### `fields` ####
+
+The list of additional fields supported by actions of this stream. The standard fields are:
+
+* `title`
+* `url`
+* `thumbnail`
+* `identifier`
+* `created_on`
+* `modified_on`
+
+You need not specify these fields.
+
+#### `html_form` ####
+
+The formatting string for formatting an action for display. Numbered replacement tokens are replaced with the author's name and the values of the fields named in `html_params`.
+
+#### `html_params` ####
+
+The list of additional fields to replace into `html_form` when displaying an action.
+
+#### `url` ####
+
+The URL from which to collect action data. The token `{{ident}}` will be replaced with the author's identifier on that service.
+
+#### `identifier` ####
+
+The name of the field to use as the unique identifier. Multiple fields can be specified by separating their names with commas (for example: `title,created_on`).
+
+If not given, the collection recipe should collect an `identifier` field from the action source. If an `identifier` field is not collected, each action will be considered unique, regardless of the content of the other fields.
+
+#### `xpath` ####
+
+The XPath recipe with which to collect action data. The recipe options for an XPath recipe are:
+
+##### `foreach` (required) #####
+
+The XPath selector that selects the list of actions in the resource.
+
+##### `get` (required) #####
+
+The XPath selectors to apply to each node determined by the `foreach` selector to find the action data.
+
+#### `rss` ####
+
+The RSS recipe with which to collect action data. RSS recipes collect data from the standard RSS entry content. If child options are specified, each is used as an XPath selector (as in an `xpath` recipe's `get` option) to collect a field from the RSS `item` nodes.
+
+#### `atom` ####
+
+The Atom recipe with which to collect action data. Atom recipes collect data from the standard Atom feed content. If child options are specified, each is used as an XPath selector (as in an `xpath` recipe's `get` option) to collect a field from the Atom `entry` nodes.
+
+#### `scraper` ####
+
+The Web::Scraper recipe with which to collect action data. The recipe options for a Web::Scraper recipe are:
+
+##### `foreach` (required) #####
+
+The CSS or XPath selector that selects the list of actions in the resource.
+
+##### `get` (required) #####
+
+The CSS or XPath selectors to apply to each node determined by the `foreach` selector to find the action data. Note that each selector in a Web::Scraper recipe is a two-element list:
+
+* The selector for a child node.
+* `@`*`attribute` or `TEXT` to select an attribute value or the text content of the node.
+
+#### `class` ####
+
+The name of the Perl package to use to represent actions in this stream. The Perl package should be a subclass of `ActionStreams::Event`.
