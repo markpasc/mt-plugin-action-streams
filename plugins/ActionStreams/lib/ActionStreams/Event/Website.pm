@@ -35,31 +35,51 @@ sub update_events {
         url     => $ident,
         scraper => scraper {
             process 'head link[type="application/atom+xml"]', 'atom[]' => '@href';
+            process 'head link[type="application/rss+xml"]',  'rss[]'  => '@href';
             process 'head link[rel~="shortcut"]',             'icon[]' => '@href';
         },
     );
     return if !$links;
-    my ($feed_url) = @{ $links->{atom} || [] };
+    my ($feed_url) = @{ $links->{atom} || $links->{rss} || [] };
     return if !$feed_url;
     my ($icon_url) = @{ $links->{icon} || [] };
 
-    my $items = $class->fetch_xpath(
-        url => $feed_url,
-        foreach => '//entry',
-        get => {
-            identifier   => 'id/child::text()',
-            title        => 'title/child::text()',
-            summary      => 'summary/child::text()',
-            url          => q(link[@rel='alternate']/@href),
-            source_title => 'ancestor::feed/title/child::text()',
-            source_url   => q(ancestor::feed/link[@rel='alternate']/@href),
-            created_on   => 'published/child::text()',
-            modified_on  => 'updated/child::text()',
-        },
-    );
+    my $items;
+    if (my ($feed_url) = @{ $links->{atom} || [] }) {
+        $items = $class->fetch_xpath(
+            url => $feed_url,
+            foreach => '//entry',
+            get => {
+                identifier   => 'id/child::text()',
+                title        => 'title/child::text()',
+                summary      => 'summary/child::text()',
+                url          => q(link[@rel='alternate']/@href),
+                source_title => 'ancestor::feed/title/child::text()',
+                source_url   => q(ancestor::feed/link[@rel='alternate']/@href),
+                created_on   => 'published/child::text()',
+                modified_on  => 'updated/child::text()',
+            },
+        );
+    }
+    elsif (my ($feed_url) = @{ $links->{rss} || [] }) {
+        $items = $class->fetch_xpath(
+            url => $feed_url,
+            foreach => '//item',
+            get => {
+                identifier   => 'guid/child::text()',
+                title        => 'title/child::text()',
+                summary      => 'description/child::text()',
+                url          => 'link/child::text()',
+                source_title => 'ancestor::rss/title/child::text()',
+                source_url   => 'ancestor::rss/link/child::text()',
+                created_on   => 'pubDate/child::text()',
+                modified_on  => 'pubDate/child::text()',
+            },
+        );
+    }
 	return if !$items;
 
-    if ($icon_url) {
+    if (my ($icon_url) = @{ $links->{icon} || [] }) {
         $icon_url = q{} . $icon_url;
         $_->{icon_url} = $icon_url for @$items;
     }
