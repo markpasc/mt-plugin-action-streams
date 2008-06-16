@@ -342,6 +342,10 @@ sub fetch_scraper {
 
     $scraper->user_agent($class->ua(%params));
     my $items = $scraper->scrape(URI->new($url));
+    # we're only being used for our scraper.
+    return if !$items;
+    return $items if !ref $items;
+    return $items if 'ARRAY' ne ref $items;
 
     for my $item (@$items) {
         for my $field (keys %$item) {
