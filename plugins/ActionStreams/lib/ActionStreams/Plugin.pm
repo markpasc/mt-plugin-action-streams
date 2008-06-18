@@ -138,10 +138,15 @@ sub list_profileevent {
     if (my $filter = $app->param('filter')) {
         $params{filter_key} = $filter;
         my $filter_val = $params{filter_val} = $app->param('filter_val');
-        $params{filter_label} = 'Actions from the service ' . $app->registry('profile_services')->{$filter_val}->{name};
         if ($filter eq 'service') {
+            $params{filter_label} = $app->translate('Actions from the service [_1]', $app->registry('profile_services')->{$filter_val}->{name});
             $terms{class} = $filter_val . '_%';
             $args{like} = { class => 1 };
+        }
+        elsif ($filter eq 'visible') {
+            $params{filter_label} = ($filter_val eq 'show') ? 'Actions that are shown'
+                : 'Actions that are hidden';
+            $terms{visible} = $filter_val eq 'show' ? 1 : 0;
         }
     }
 
