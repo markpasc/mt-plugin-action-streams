@@ -576,6 +576,13 @@ sub fix_wists_thumb {
     }
 }
 
+sub fix_gametap_score_stuff {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    $item->{score} =~ s{ \D }{}xmsg;
+    $item->{url} = q{} . $item->{url};
+    $item->{url} =~ s{ \A / }{http://www.gametap.com/}xms;
+}
+
 sub tag_stream_action {
     my ($ctx, $args, $cond) = @_;
 

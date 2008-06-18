@@ -34,6 +34,7 @@ callbacks:
     pre_build_action_streams_event.twitter_favorites: $ActionStreams::ActionStreams::Plugin::fix_twitter_favorite_author
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
     pre_build_action_streams_event.flickr_favorites: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
+    pre_build_action_streams_event.gametap_scores: $ActionStreams::ActionStreams::Plugin::fix_gametap_score_stuff
     pre_build_action_streams_event.iminta_links: $ActionStreams::ActionStreams::Plugin::fix_iminta_link_title
     pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
     pre_build_action_streams_event.netflix_recent: $ActionStreams::ActionStreams::Plugin::fix_netflix_recent_prefix_thumb
@@ -191,6 +192,9 @@ profile_services:
         url: http://flickr.com/photos/{{ident}}/
         ident_example: 36381329@N00
         service_type: photos
+    gametap:
+        name: Gametap
+        url: http://www.gametap.com/profile/show/profile.do?sn={{ident}}
     goodreads:
         name: Goodreads
         url: http://www.goodreads.com/user/show/{{ident}}
@@ -595,7 +599,27 @@ action_streams:
         scores:
             name: Leaderboard scores
             description: Your high scores in games with leaderboards
-            class: Gametap
+            fields:
+                - score
+            html_form: '[_1] scored <strong>[_2]</strong> in <a href="[_3]">[_4]</a>'
+            html_params:
+                - score
+                - url
+                - title
+            url: http://www.gametap.com/profile/leaderboards.do?sn={{ident}}
+            identifier: title,score
+            scraper:
+                foreach: 'div.buddy-leaderboards div.tr'
+                get:
+                    url:
+                        - 'div.name a'
+                        - @href
+                    title:
+                        - 'div.name strong'
+                        - TEXT
+                    score:
+                        - 'div.name div'
+                        - TEXT
     goodreads:
         toread:
             name: To read
