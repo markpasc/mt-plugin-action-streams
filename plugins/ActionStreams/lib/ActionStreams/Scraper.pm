@@ -3,11 +3,6 @@ package ActionStreams::Scraper;
 
 my $import_error = 'Cannot update stream without Web::Scraper; a prerequisite may not be installed';
 
-sub scraper (&)   { die $import_error }
-sub process       { die $import_error }
-sub process_first { die $import_error }
-sub result        { die $import_error }
-
 sub import {
     my %methods;
     
