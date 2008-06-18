@@ -9,22 +9,34 @@ sub process_first { die $import_error }
 sub result        { die $import_error }
 
 sub import {
+    my %methods;
+    
     if (eval { require Web::Scraper; 1 }) {
         # Override the die-ing methods above with Web::Scraper's.
         Web::Scraper->import();
+        %methods = (
+            scraper => \&scraper,
+            result  => sub { goto &result },
+            process => sub { goto &process },
+            process_first => sub { goto &process_first },
+        );
     }
     elsif (my $err = $@) {
         $import_error .= ': ' . $err;
+        %methods = (
+            scraper => sub (&) { die $import_error },
+            result  => sub     { die $import_error },
+            process => sub     { die $import_error },
+            process_first => sub { die $import_error },
+        );
     }
     
     # Export these methods like Web::Scraper does.
     my $pkg = caller;
     no strict 'refs';
-    *{"${pkg}::scraper"}       = \&scraper;
-    *{"${pkg}::process"}       = sub { goto &process };
-    *{"${pkg}::process_first"} = sub { goto &process_first };
-    *{"${pkg}::result"}        = sub { goto &result };
-    
+    while (my ($key, $val) = each %methods) {
+        *{"${pkg}::${key}"} = $val;
+    }
     return 1;
 }
 
