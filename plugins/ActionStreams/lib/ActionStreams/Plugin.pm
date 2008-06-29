@@ -617,7 +617,9 @@ sub tag_stream_action_modified_date {
 
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionModifiedDate in a non-action-stream context!");
-    local $arg->{ts} = epoch2ts( $ctx->stash('blog'), ts2epoch(undef, $event->modified_on) );
+    my $m_on = $event->modified_on || $event->created_on;
+    local $arg->{ts} = epoch2ts( $ctx->stash('blog'), ts2epoch(undef, $m_on) )
+        if $m_on;
     return $ctx->_hdlr_date($arg);
 }
 
