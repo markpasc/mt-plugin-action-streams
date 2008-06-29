@@ -113,7 +113,7 @@ The URL for the resource needs to include the user's identifier in the URL. In s
 
 Most services don't yet publish their members' actions as such, so even if you can collect from a nice standard web feed, the feed content will need some massaging. There are three main kinds of collectors at your disposal: XML feeds, HTML scrapers, and custom collectors.
 
-#### XML feeds ###
+#### XML feeds ####
 
 It's easy to collect data from XML feeds. Action Streams accepts recipes using XPath syntax. For example, you might collect data from del.icio.us' RSS feeds with an `xpath` recipe:
 
