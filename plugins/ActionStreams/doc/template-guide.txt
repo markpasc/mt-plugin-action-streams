@@ -1,0 +1,111 @@
+# Action Streams Template Author Guide #
+
+The Action Streams plugin provides a full suite of template tags for publishing action stream data however you wish.
+
+## Examples ##
+
+See both the examples provided in the `plugins/ActionStreams/doc/example_templates` directory, as well as the default template set in `plugins/ActionStreams/blog_tmpl` for a turnkey solution you can disassemble.
+
+## The minimal list ##
+
+The simplest way to list actions is to use the markup provided by the recipe authors with the `mt:StreamAction` tag. To list the most recent actions by all a blog's authors, use the template code:
+
+    <ul>
+        <mt:ActionStreams>
+            <li><mt:StreamAction></li>
+        </mt:ActionStreams>
+    </ul>
+
+Action Streams also provides CSS and service icons for showing from what service each action came from. If you include that CSS, use this list markup to enable the icons:
+
+    TODO
+
+## Customizing based on type ##
+
+## Rolling actions up ##
+
+## Tag reference ##
+
+### Selecting authors ###
+
+Both the `mt:ActionStreams` and `mt:OtherProfiles` tags for listing actions and profiles respectively take several options for picking whose actions or profiles to show.
+
+If one of the below author selecting attributes is used, it specifies the authors. Otherwise, if the tag is used in an author context (such as on an author archive page, inside an `mt:Authors` tag, or in an entry context), that one author is selected. Otherwise, if the tag is used in a blog context (most of the time), all the authors on that blog are selected.
+
+The tag attributes for selecting authors are:
+
+#### `author_ids` ####
+
+A list of the numeric IDs of authors to select, separated by commas.
+
+#### `display_names` ####
+
+A list of the full display names of authors to select, separated by commas.
+
+#### `authors` ####
+
+A list of the login usernames of authors to select, separated by commas.
+
+### `mt:ProfileServices` ###
+
+### `mt:OtherProfiles` ###
+
+### `mt:OtherProfileVar` ###
+
+### `mt:ActionStreams` ###
+
+Loops over the actions selected by the author context and specified attributes. See "Selecting authors" above.
+
+Inside the `mt:ActionStreams` loop, an action context where you can use the other `mt:StreamAction`*`Something`* tags is provided.
+
+The attributes supported by this tag are:
+
+#### `sort_by` ####
+
+The field by which to order the selected actions. By default, actions are ordered by the `created_on` field (that is, the time when the action occurred or was first found). You cannot sort by any of your streams' additional fields, even when limiting actions to those streams.
+
+#### `direction` ####
+
+The direction in which to order the selected actions. Possible values are `descend` and `ascend`. By default, actions are ordered in descending order (`descend`).
+
+#### `limit` ####
+
+The number of actions at most to show. If fewer actions are available in the selected set of actions, fewer will be shown.
+
+#### `days` ####
+
+The number of days of actions at most to show, as determined at publish time from the actions' creation times (`created_on` fields). If fewer actions are available in the selected set of actions, fewer will be shown.
+
+#### `service` ####
+
+The ID of the service from which to show actions. Service IDs are the keys used in their service definitions; for example, Twitter's ID is `twitter`, and del.icio.us' ID is `delicious`.
+
+For services with multiple streams, limiting only by `service` without a `stream` will list all actions from all of those streams. For example, `service="flickr"` will list both Flickr photos and Flickr favorites.
+
+#### `stream` ####
+
+The ID of the stream from which to show actions. Stream IDs are the keys used in their recipe definitions; for example, the stream of del.icio.us links has the ID `links`, and the stream of Flickr photos has the ID `photos`.
+
+Because similar streams for all services use the same stream IDs, you can use the `stream` attribute independent of `service` to slice for similar actions across services. For example, you can specify `stream="photos"` to get photo events across services, or `stream="favorites"` for a multi-source list of favorites.
+
+To list actions from one particular stream only, use both `service` and `stream`.
+
+### `mt:StreamAction` ###
+
+Provides the recipe authors' suggested markup for the action in context.
+
+### `mt:StreamActionVar` ###
+
+### `mt:StreamActionTitle` ###
+
+### `mt:StreamActionURL` ###
+
+### `mt:StreamActionThumbnailURL` ###
+
+### `mt:StreamActionDate` ###
+
+### `mt:StreamActionModifiedDate` ###
+
+### `mt:StreamActionTags` ###
+
+### `mt:StreamActionRollup` ###
