@@ -195,23 +195,37 @@ Your class then subclasses the plugin's `ActionStreams::Event` class, and implem
 
 ### Formatting actions for display ###
 
-TODO
+While bloggers can customize how actions are published to the blog however they wish with the provided template tags, the recipe defines how actions are displayed when using the `mt:StreamAction` tag and when displayed in the application. This display is governed by the `html_form` and `html_params` options, as in the del.icio.us recipe:
 
-### Stream recipe options ###
+    delicious:
+        links:
+            name: Links
+            description: Your public links
+            html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            # ...
+
+The `html_form` setting is a pattern in maketext format, making it easy to . Each replacement token is numbered. The first replacement token, `[_1]`, is always the name of the MT user whose action is being displayed. The next tokens represent the fields you specify in (in this case, `url` and `title`).
+
+Note that the is HTML. The HTML will be returned verbatim when used with the `mt:StreamAction` tag. For display in the Movable Type application, the HTML is removed; del.icio.us links would be just the text "*Author name* saved the link *title*" without the hyperlink.
+
+## Stream recipe option reference ##
 
 Recipes describe how to collect and display users' actions on profile services. They are found in `action_streams` section of the registry, as sub-entries of sections the keys of which match the related services in `profile_services`.
 
 The options you can set for action streams are:
 
-#### `name` (required) ####
+### `name` (required) ###
 
 The name of the action stream. This is displayed to authors when they enter their profile service identifier and are given the option of collecting the stream.
 
-#### `description` (required) ####
+### `description` (required) ###
 
 The description of the action stream. This is displayed to authors with the stream's name when they enter profile identifiers.
 
-#### `fields` ####
+### `fields` ###
 
 The list of additional fields supported by actions of this stream. The standard fields are:
 
@@ -224,59 +238,61 @@ The list of additional fields supported by actions of this stream. The standard 
 
 You need not specify these fields.
 
-#### `html_form` ####
+### `html_form` ###
 
 The formatting string for formatting an action for display. Numbered replacement tokens are replaced with the author's name and the values of the fields named in `html_params`.
 
-#### `html_params` ####
+### `html_params` ###
 
 The list of additional fields to replace into `html_form` when displaying an action.
 
-#### `url` ####
+### `url` ###
 
 The URL from which to collect action data. The token `{{ident}}` will be replaced with the author's identifier on that service.
 
-#### `identifier` ####
+### `identifier` ###
 
 The name of the field to use as the unique identifier. Multiple fields can be specified by separating their names with commas (for example: `title,created_on`).
 
 If not given, the collection recipe should collect an `identifier` field from the action source. If an `identifier` field is not collected, each action will be considered unique, regardless of the content of the other fields.
 
-#### `xpath` ####
+### `xpath` ###
 
 The XPath recipe with which to collect action data. The recipe options for an XPath recipe are:
 
-##### `foreach` (required) #####
+#### `foreach` (required) ####
 
-The XPath selector that selects the list of actions in the resource.
+The XPath selector that selects the nodes of the resource document that represent actions. All the `get` selectors are then applied to each node to find the action data.
 
-##### `get` (required) #####
+#### `get` (required) ####
 
-The XPath selectors to apply to each node determined by the `foreach` selector to find the action data.
+A set of XPath selectors, keyed on the names of the action fields they describe. To find the value of each field, the indicated selector is applied to each node as determined by the `foreach` selector.
 
-#### `rss` ####
+### `rss` ###
 
 The RSS recipe with which to collect action data. RSS recipes collect data from the standard RSS entry content. If child options are specified, each is used as an XPath selector (as in an `xpath` recipe's `get` option) to collect a field from the RSS `item` nodes.
 
-#### `atom` ####
+### `atom` ###
 
 The Atom recipe with which to collect action data. Atom recipes collect data from the standard Atom feed content. If child options are specified, each is used as an XPath selector (as in an `xpath` recipe's `get` option) to collect a field from the Atom `entry` nodes.
 
-#### `scraper` ####
+### `scraper` ###
 
 The Web::Scraper recipe with which to collect action data. The recipe options for a Web::Scraper recipe are:
 
-##### `foreach` (required) #####
+#### `foreach` (required) ####
 
-The CSS or XPath selector that selects the list of actions in the resource.
+The CSS or XPath selector that selects the nodes of the resource document that represent the actions. All the `get` selectors are then applied to each node to find the action data.
 
-##### `get` (required) #####
+#### `get` (required) ####
 
-The CSS or XPath selectors to apply to each node determined by the `foreach` selector to find the action data. Note that each selector in a Web::Scraper recipe is a two-element list:
+A set of Web::Scraper selectors, keyed on the names of the action fields they describe. Each selector is applied to each action node, as determined by the `foreach` selector, to find the action data.
 
-* The selector for a child node.
-* `@`*`attribute` or `TEXT` to select an attribute value or the text content of the node.
+Each Web::Scraper selector is a two-element list:
 
-#### `class` ####
+* The CSS or XPath selector to use to find a child node.
+* `@`*`attribute`* or `TEXT` to select an attribute value or the text content of the node.
 
-The name of the Perl package to use to represent actions in this stream. The Perl package should be a subclass of `ActionStreams::Event`.
+### `class` ###
+
+The name of the Perl package to use to represent actions in this stream. The Perl package should be a subclass of `ActionStreams::Event`. See the `ActionStreams::Event` perldoc for information on defining an action stream in Perl code.
