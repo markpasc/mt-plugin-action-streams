@@ -209,17 +209,17 @@ While bloggers can customize how actions are published to the blog however they 
 
 The `html_form` setting is a pattern in maketext format, making it easy to . Each replacement token is numbered. The first replacement token, `[_1]`, is always the name of the MT user whose action is being displayed. The next tokens represent the fields you specify in (in this case, `url` and `title`).
 
-Note that the is HTML. The HTML will be returned verbatim when used with the `mt:StreamAction` tag. For display in the Movable Type application, the HTML is removed; del.icio.us links would be just the text "*Author name* saved the link *title*" without the hyperlink.
+Note that the result of formatting an action is, in fact, HTML. This markup will be returned verbatim when used with the `mt:StreamAction` tag. For display in the Movable Type application, the HTML is removed; del.icio.us links are the text "*Author name* saved the link *title*" without the hyperlink, for example.
 
 ## Stream recipe option reference ##
 
-Recipes describe how to collect and display users' actions on profile services. They are found in `action_streams` section of the registry, as sub-entries of sections the keys of which match the related services in `profile_services`.
+Recipes describe how to collect and display users' actions on profile services. They are found in the `action_streams` section of the registry, in sections named the same as the related service in the  `profile_services` section.
 
 The options you can set for action streams are:
 
 ### `name` (required) ###
 
-The name of the action stream. This is displayed to authors when they enter their profile service identifier and are given the option of collecting the stream.
+The name of the action stream. This is displayed to authors when they enter their profile service identifier, where they are given the option of collecting the stream.
 
 ### `description` (required) ###
 
@@ -227,16 +227,33 @@ The description of the action stream. This is displayed to authors with the stre
 
 ### `fields` ###
 
-The list of additional fields supported by actions of this stream. The standard fields are:
+The list of additional fields supported by actions of this stream.
 
-* `title`
-* `url`
-* `thumbnail`
-* `identifier`
-* `created_on`
-* `modified_on`
+Every stream already has a set of standard fields. You need only specify additional fields beyond these. The standard fields are:
 
-You need not specify these fields.
+#### `title` ####
+
+The name of the page/asset/resource the action is about.
+
+#### `url` ####
+
+The web address of the page/asset/resource the action is about.
+
+#### `thumbnail` ####
+
+The web address (URL) of a thumbnail image of the page/asset/resource the action is about.
+
+#### `identifier` ####
+
+A string that uniquely identifies this action in its particular stream.
+
+#### `created_on` ####
+
+When the action was taken. This is *not* necessarily when the page/asset/resource the action is about was created; when a link is saved or a video is favorited, for example.
+
+#### `modified_on` ####
+
+When the action was last altered. Many actions occur only once and will never change, but some may (such as if the author changes the rating or tags for a saved link). Action Streams will update this timestamp automatically when the action object is changed.
 
 ### `html_form` ###
 
@@ -278,7 +295,7 @@ The Atom recipe with which to collect action data. Atom recipes collect data fro
 
 ### `scraper` ###
 
-The Web::Scraper recipe with which to collect action data. The recipe options for a Web::Scraper recipe are:
+The Web::Scraper recipe with which to collect action data. The options for a Web::Scraper recipe are:
 
 #### `foreach` (required) ####
 
