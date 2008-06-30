@@ -103,6 +103,10 @@ Each service has its own section, labelled with the same key as in the `profile_
 
 Together, these parts define the recipe.
 
+### Picking a stream ID ###
+
+TODO: The word with which you name your recipe's registry section is its ID. Template authors can etc
+
 ### Picking the stream resource ###
 
 Typically, modern web services will provide a web feed or XML resource for their members that rolls up their recent activity on the site. Sometimes a service only provides an HTML page, but Action Streams can work with them too. This is the resource you will specify as your stream's `url`.
