@@ -598,7 +598,9 @@ sub tag_stream_action_var {
         or return $ctx->error("Used StreamActionVar in a non-action-stream context!");
     my $var = $arg->{var} || $arg->{name}
         or return $ctx->error("Used StreamActionVar without a 'name' attribute!");
-    return $event->can($var) ? $event->$var() : '';
+    return $ctx->error("Use StreamActionVar to retrieve invalid variable $var from event of type " . ref $event)
+        if !$event->can($var) && !$event->has_column($var);
+    return $event->$var();
 }
 
 sub tag_stream_action_date {
