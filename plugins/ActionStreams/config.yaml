@@ -192,6 +192,10 @@ profile_services:
         url: http://flickr.com/photos/{{ident}}/
         ident_example: 36381329@N00
         service_type: photos
+    friendfeed:
+        name: FriendFeed
+        url: http://friendfeed.com/{{ident}}
+        ident_example: JoeUsername
     gametap:
         name: Gametap
         url: http://www.gametap.com/profile/show/profile.do?sn={{ident}}
@@ -595,6 +599,17 @@ action_streams:
             url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
             atom:
                 thumbnail: content/child::text()
+    friendfeed:
+        likes:
+            name: Likes
+            description: Things from your friends that you "like"
+            html_form: '[_1] likes <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://friendfeed.com/{{ident}}/likes?format=atom'
+            atom:
+                url: link/@href
     gametap:
         scores:
             name: Leaderboard scores
