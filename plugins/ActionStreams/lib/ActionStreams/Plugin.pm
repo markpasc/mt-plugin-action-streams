@@ -751,9 +751,10 @@ sub tag_action_streams_block {
     EVENT: while (my $event = shift @events) {
         my $new_day_date = _event_day($ctx, $event);
         local $cond->{DateHeader} = $day_date ne $new_day_date ? 1 : 0;
-        local $cond->{DateFooter} = $events[$count+1]
-            && $new_day_date ne _event_day($ctx, $events[$count+1])
-            ? 1 : 0;
+        local $cond->{DateFooter} = !@events                                      ? 1
+                                  : $new_day_date ne _event_day($ctx, $events[0]) ? 1
+                                  :                                                 0
+                                  ;
         $day_date = $new_day_date;
 
         $count++;
