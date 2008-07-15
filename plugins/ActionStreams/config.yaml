@@ -935,33 +935,63 @@ action_streams:
         favorites:
             name: Favorite Songs
             description: Songs you marked as favorites
+            fields:
+                - album_art
+                - guid
             html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite song'
             html_params:
                 - url
                 - title
             url: 'http://feeds.pandora.com/feeds/people/{{ident}}/favorites.xml'
-            rss:
-                thumbnail: pandora:albumArtUrl/child::text()
+            identifier: guid
+            xpath:
+                foreach: //item
+                get:
+                    created_on: pubDate/child::text()
+                    title: title/child::text()
+                    guid: guid/child::text()
+                    url: link/child::text()
+                    album_art: pandora:albumArtUrl/child::text()
         favoriteartists:
             name: Favorite Artists
             description: Artists you marked as favorites
+            fields:
+                - artist-photo-url
+                - guid
             html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite artist'
             html_params:
                 - url
                 - title
             url: 'http://feeds.pandora.com/feeds/people/{{ident}}/favoriteartists.xml'
-            rss:
-                thumbnail: pandora:artistPhotoUrl/child::text()
+            identifier: guid
+            xpath:
+                foreach: //item
+                get:
+                    created_on: pubDate/child::text()
+                    title: title/child::text()
+                    guid: guid/child::text()
+                    url: link/child::text()
+                    artist-photo-url: pandora:stationImageUrl/child::text()
         stations:
             name: Stations
             description: Radio stations you added
+            fields:
+                - guid
+                - station-image-url
             html_form: '[_1] added a new radio station named <a href="[_2]">[_3]</a>'
             html_params:
                 - url
                 - title
             url: 'http://feeds.pandora.com/feeds/people/{{ident}}/stations.xml'
-            rss:
-                thumbnail: pandora:stationImageUrl/child::text()
+            identifier: guid
+            xpath:
+                foreach: //item
+                get:
+                    created_on: pubDate/child::text()
+                    title: title/child::text()
+                    guid: guid/child::text()
+                    url: pandora:stationLink/child::text()
+                    station-image-url: pandora:stationImageUrl/child::text()
     picasaweb:
         photos:
             name: Photos
