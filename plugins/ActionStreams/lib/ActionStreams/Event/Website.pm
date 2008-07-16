@@ -40,9 +40,6 @@ sub update_events {
         },
     );
     return if !$links;
-    my ($feed_url) = @{ $links->{atom} || $links->{rss} || [] };
-    return if !$feed_url;
-    my ($icon_url) = @{ $links->{icon} || [] };
 
     my $items;
     if (my ($feed_url) = @{ $links->{atom} || [] }) {
