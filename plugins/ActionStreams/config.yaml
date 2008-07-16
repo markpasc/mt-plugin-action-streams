@@ -431,7 +431,7 @@ action_streams:
         playing:
             name: Currently Playing
             description: The games in your collection you're currently playing
-            class: ActionStreams::Event::OneupPlaying
+            class: OneupPlaying
     colourlovers:
         colors:
             name: Colors
@@ -1196,7 +1196,12 @@ action_streams:
             rss:
                 created_on: dc:date/child::text()
                 tags: dc:tag/child::text()
-                thumbnail: content:encoded/child::text()        
+                thumbnail: content:encoded/child::text()
+    xboxlive:
+        gamerscore:
+            name: Gamerscore
+            description: Notes when your gamerscore passes an even number
+            class: XboxGamerscore
     yelp:
         reviews:
             name: Reviews

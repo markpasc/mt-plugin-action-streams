@@ -15,10 +15,3 @@ profile_services:
         name: Rock Band.com
         url: http://www.rockband.com/rockers/%s
 
-action_streams:
-    xboxlive:
-        gamerscore:
-            name: Gamerscore
-            description: Notes when your gamerscore passes an even number
-            class: ActionStreams::Event::Games::XboxGamerscore
-
