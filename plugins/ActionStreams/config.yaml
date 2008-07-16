@@ -1069,6 +1069,7 @@ action_streams:
         favorites:
             name: Favorites
             description: Public tweets you saved as favorites
+            class: TwitterFavorite
             fields:
                 - tweet_author
             html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
