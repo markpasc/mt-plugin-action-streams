@@ -4,7 +4,7 @@ package ActionStreams::Event::Games::XboxGamerscore;
 use strict;
 use base qw( ActionStreams::Event );
 
-use Web::Scraper;
+use ActionStreams::Scraper;
 
 __PACKAGE__->install_properties({
     class_type => 'xboxlive_gamerscore',
@@ -19,7 +19,7 @@ __PACKAGE__->install_meta({
 
 sub as_html {
     my $event = shift;
-    return MT->translate('[_1] exceeded <strong>[_2]</strong> gamerscore <a href="[_3]">on Xbox Live</a>',
+    return MT->translate('[_1] passed <strong>[_2]</strong> gamerscore <a href="[_3]">on Xbox Live</a>',
         MT::Util::encode_html($event->author->nickname),
         map { MT::Util::encode_html($event->$_()) } qw( score url ));
 }
@@ -40,14 +40,14 @@ sub update_events {
     return if !$score;
 
     $score = $score->{score};
-    require Scalar::Util;
-    return if !Scalar::Util::looks_like_number($score);
+    $score =~ s{ \A \s+ | \s+ \z }{}xmsg;
+    return if $score =~ m{ \D }xms;
 
     $score =~ s/ (?<= \A \d ) (\d*) \z / join q{}, ((q{0}) x length $1) /xmse;
 
     my $item = {
         url        => "http://live.xbox.com/member/$ident",
-        score      => $score;
+        score      => $score,
         identifier => join(q{:}, $ident, $score),
     };
 
@@ -55,3 +55,4 @@ sub update_events {
 }
 
 1;
+
