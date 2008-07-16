@@ -8,10 +8,6 @@ version: 1.0
 plugin_link: http://markpasc.org/code/mt/asgames/
 
 profile_services:
-    kongregate:
-        name: Kongregate
-        url: http://www.kongregate.com/accounts/%s
-        icon: kongregate.png
     destructoid:
         name: Destructoid
         url: http://www.destructoid.com/elephant/profile.phtml?un=%s
@@ -25,55 +21,4 @@ action_streams:
             name: Gamerscore
             description: Notes when your gamerscore passes an even number
             class: ActionStreams::Event::Games::XboxGamerscore
-    kongregate:
-        favorites:
-            name: Favorites
-            description: The games you've saved as favorites
-            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite game'
-            html_params:
-                - url
-                - title
-            url: 'http://www.kongregate.com/accounts/{{ident}}'
-            identifier: url
-            scraper:
-                foreach: #favorites dl
-                get:
-                    url:
-                        - dd a
-                        - @href
-                    title:
-                        - dd a
-                        - TEXT
-                    thumbnail:
-                        - dt img
-                        - @src
-        achievements:
-            name: Achievements
-            description: The achievements you've won
-            fields:
-                - game_title
-            html_form: '[_1] won the <strong>[_2]</strong> in <a href="[_3]">[_4]</a>'
-            html_params:
-                - title
-                - url
-                - game_title
-            url: 'http://www.kongregate.com/accounts/{{ident}}'
-            identifier: url,title
-            scraper:
-                foreach: #achievements .badge_details
-                get:
-                    url:
-                        - dt.badge_img a
-                        - @href
-                    thumbnail:
-                        - dt.badge_img img
-                        - @src
-                    title:
-                        - dd.badge_name
-                        - TEXT
-                    game_title:
-                        - a.badge_game
-                        - TEXT
-callbacks:
-    pre_build_action_streams_event.kongregate_achievements: sub { $_[2]->{title} =~ s{ \( [^)]* \) \z }{}xms }
 
