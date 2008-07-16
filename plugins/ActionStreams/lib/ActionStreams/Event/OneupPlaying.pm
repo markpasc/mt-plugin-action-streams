@@ -1,5 +1,5 @@
 
-package ActionStreams::Event::Games::OneupPlaying;
+package ActionStreams::Event::OneupPlaying;
 
 use strict;
 use base qw( ActionStreams::Event );

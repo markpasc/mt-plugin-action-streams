@@ -20,11 +20,6 @@ profile_services:
         url: http://www.rockband.com/rockers/%s
 
 action_streams:
-    oneup:
-        playing:
-            name: Currently Playing
-            description: The games in your collection you're currently playing
-            class: ActionStreams::Event::Games::OneupPlaying
     xboxlive:
         gamerscore:
             name: Gamerscore

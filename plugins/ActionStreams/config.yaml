@@ -168,6 +168,9 @@ profile_services:
         name: del.icio.us
         url: http://del.icio.us/{{ident}}/
         service_type: links
+    destructoid:
+        name: Destructoid
+        url: http://www.destructoid.com/elephant/profile.phtml?un={{ident}}
     digg:
         name: Digg
         url: http://digg.com/users/{{ident}}/
@@ -424,6 +427,11 @@ profile_services:
         service_type: photos
 
 action_streams:
+    oneup:
+        playing:
+            name: Currently Playing
+            description: The games in your collection you're currently playing
+            class: ActionStreams::Event::OneupPlaying
     colourlovers:
         colors:
             name: Colors
