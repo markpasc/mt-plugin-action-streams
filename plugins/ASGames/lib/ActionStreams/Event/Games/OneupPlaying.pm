@@ -4,18 +4,24 @@ package ActionStreams::Event::Games::OneupPlaying;
 use strict;
 use base qw( ActionStreams::Event );
 
+use ActionStreams::Scraper;
+
 __PACKAGE__->install_properties({
     class_type => 'oneup_playing',
 });
 
 __PACKAGE__->install_meta({
     columns => [ qw(
+        playing
     ) ],
 });
 
 sub as_html {
     my $event = shift;
-    return MT->translate('[_1] started playing <a href="[_2]">[_3]</a>',
+    return MT->translate(
+        $event->playing ? '[_1] started playing <a href="[_2]">[_3]</a>'
+                        : '[_1] played <a href="[_2]">[_3]</a>'
+                        ,
         MT::Util::encode_html($event->author->nickname),
         map { MT::Util::encode_html($event->$_()) } qw( url title ));
 }
@@ -29,13 +35,19 @@ sub update_events {
 
     {
         my $ua = $class->ua();
-        local $ua->{max_redirect} = 0;
+        my @redir = @{ $ua->requests_redirectable };
+        $ua->requests_redirectable([]);
 
         my $resp = $ua->get($url);
-        return if $resp->code != 304;
+        $ua->requests_redirectable(\@redir);
+
+        return if $resp->code != 301;
         my $real_profile = $resp->header('Location');
 
-        $real_profile =~ m{ \D (\d+) \z }xms or return;
+        if ($real_profile !~ m{ \D (\d+) \z }xms) {
+            # Hmm, invalid ident?
+            return;
+        }
         my $user_id = $1;
 
         $url = "http://www.1up.com/do/gamesCollectionViewOnly?publicUserId=$user_id";
@@ -48,7 +60,7 @@ sub update_events {
                 process 'a',
                     'url'   => '@href',
                     'title' => 'TEXT';
-                process q{td[@class='bodybold'] img[contains(@src, 'icon_check')]},
+                process q{td.bodybold img[src=~'icon_check']},
                     'playing' => '@src';
             };
             result 'games';
@@ -57,9 +69,8 @@ sub update_events {
     return if !$items;
 
     for my $item (@$items) {
-        $item->{playing} = 1 if $item->{playing};
-
-        $item->{identifier} = join q{:}, $item->{url}, $item->{playing};
+        $item->{playing} = $item->{playing} ? 1 : 0;
+        $item->{identifier} = $item->{url};
     }
 
     $class->build_results( author => $author, items => $items );
