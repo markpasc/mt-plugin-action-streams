@@ -41,8 +41,8 @@ sub update_events {
     );
     return if !$links;
 
-    my $items;
-    if (my ($feed_url) = @{ $links->{atom} || [] }) {
+    my ($feed_url, $items);
+    if (($feed_url) = @{ $links->{atom} || [] }) {
         $items = $class->fetch_xpath(
             url => $feed_url,
             foreach => '//entry',
@@ -58,7 +58,7 @@ sub update_events {
             },
         );
     }
-    elsif (my ($feed_url) = @{ $links->{rss} || [] }) {
+    elsif (($feed_url) = @{ $links->{rss} || [] }) {
         $items = $class->fetch_xpath(
             url => $feed_url,
             foreach => '//item',
@@ -85,4 +85,3 @@ sub update_events {
 }
 
 1;
-
