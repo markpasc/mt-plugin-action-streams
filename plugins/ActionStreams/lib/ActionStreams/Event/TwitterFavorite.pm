@@ -1,7 +1,7 @@
 package ActionStreams::Event::TwitterFavorite;
 
 use strict;
-use base qw( ActionStreams::Event::Twitter );
+use base qw( ActionStreams::Event ActionStreams::Event::Twitter );
 
 __PACKAGE__->install_properties({
     class_type => 'twitter_favorites',

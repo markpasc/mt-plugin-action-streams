@@ -2,7 +2,6 @@
 package ActionStreams::Event::Twitter;
 
 use strict;
-use base qw( ActionStreams::Event );
 
 sub autolink {
     my $self = shift;
