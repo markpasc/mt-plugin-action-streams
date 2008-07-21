@@ -22,11 +22,12 @@ my %game_for_code = (
     Portal    => 'Portal',
     TF2       => 'Team Fortress 2',
     'HL2:EP2' => 'Half-Life 2: Episode Two',
+    'DOD:S'   => 'Day of Defeat: Source',
 );
 
 sub as_html {
     my $event = shift;
-    return MT->translate('[_1] won the <strong>[_2]</strong> achievement in <a href="http://steamcommunity.com/id/[_3]/stats/[_4]">[_5]</a>',
+    return MT->translate('[_1] won the <strong>[_2]</strong> achievement in <a href="http://steamcommunity.com/id/[_3]/stats/[_4]?tab=achievements">[_5]</a>',
         MT::Util::encode_html($event->author->nickname),
         map { MT::Util::encode_html($event->$_()) } qw( title ident gamecode game ));
 }
@@ -51,7 +52,7 @@ sub update_events {
     };
 
     for my $gamecode (keys %game_for_code) {
-        my $url = "http://steamcommunity.com/id/$ident/stats/$gamecode";
+        my $url = "http://steamcommunity.com/id/$ident/stats/$gamecode?tab=achievements";
         my $items = $class->fetch_scraper(
             url     => $url,
             scraper => $scraper,
