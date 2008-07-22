@@ -24,6 +24,20 @@ sub init_registry {
                 },
             },
         },
+        callbacks => {
+            'MT::App::CMS::init_request' => sub {
+                return if MT->app->mode ne 'dialog_add_profile';
+                MT->log('ASTest: return args at init_request time are: ' . MT->app->{return_args});
+            },
+            'template_param.dialog_add_profile' => sub {
+                my ($cb, $mt, $param, $tmpl) = @_;
+                MT->log('ASTest: networks param to dialog_add_profile is ' . $param->{networks});
+                MT->log('ASTest: return_args at dialog_add_profile time is ' . MT->app->{return_args});
+
+                my $profserv = MT->app->registry('profile_services') || {};
+                MT->log('ASTest: profile_services at dialog_add_profile time (' . scalar(keys %$profserv) . ') include: ' . join(q{ }, keys %$profserv));
+            },
+        },
     });
 }
 
