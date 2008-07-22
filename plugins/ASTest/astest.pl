@@ -50,6 +50,7 @@ sub astest {
 
         perl => {
             version => $],
+            include_paths => [ @INC ],
         },
 
         registry => Storable::dclone({
@@ -66,6 +67,7 @@ sub astest {
     };
 
     require Data::Dumper;
+    local $Data::Dumper::Sortkeys = 1;
     my $param = { astest => Data::Dumper::Dumper($c) };
     $app->build_page($plugin->load_tmpl('astest.tmpl'), $param);
 }
