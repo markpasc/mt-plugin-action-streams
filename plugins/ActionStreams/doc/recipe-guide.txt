@@ -215,6 +215,34 @@ The `html_form` setting is a pattern in maketext format, making it easy to . Eac
 
 Note that the result of formatting an action is, in fact, HTML. This markup will be returned verbatim when used with the `mt:StreamAction` tag. For display in the Movable Type application, the HTML is removed; del.icio.us links are the text "*Author name* saved the link *title*" without the hyperlink, for example.
 
+### Cleaning up after your stream ###
+
+Some streams may not leave in the correct displayable format. For example, the regular Twitter tweet feeds include the authors' usernames with the tweets. The Twitter stream needs to remove to correctly collect only the tweet text. How can it remove the usernames from the collected actions?
+
+Movable Type provides a system for defining *callbacks*, or code hooks that are run at certain points of a process. The Action Streams plugin provides several callbacks at various stages of stream event collection. You will have to use Perl code to write these callbacks, but as you're doing very small things, the code is usually simple.
+
+For example, the Twitter stream uses the `pre_build_action_streams_event` callback to modify the actions after they're collected by the normal feed collector, but before they are saved. The callback is defined in the registry thus:
+
+    callbacks:
+        pre_build_action_streams_event.twitter_tweets: \
+            $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
+
+The stream callback code is then defined in ActionStreams::Plugin as:
+
+	sub fix_twitter_tweet_name {
+	    my ($cb, $app, $item, $event, $author, $profile) = @_;
+	    # Remove the Twitter username from the front of the tweet.
+	    my $ident = $profile->{ident};
+        $item->{tweet} =~ s{
+			\A          # start of the string
+			\s*         # any whitespace
+			\Q$ident\E  # the Twitter username
+			: \s*       # followed by a colon and whitespace
+		}{}xms;
+	}
+
+The Action Streams callbacks available to you are documented later. See the Movable Type developer documentation for more about defining callbacks.
+
 ## Stream recipe option reference ##
 
 Recipes describe how to collect and display users' actions on profile services. They are found in the `action_streams` section of the registry, in sections named the same as the related service in the  `profile_services` section.
@@ -317,3 +345,75 @@ Each Web::Scraper selector is a two-element list:
 ### `class` ###
 
 The name of the Perl package to use to represent actions in this stream. The Perl package should be a subclass of `ActionStreams::Event`. See the `ActionStreams::Event` perldoc for information on defining an action stream in Perl code.
+
+## Stream recipe callback reference ##
+
+Action Streams specifies several callbacks for you to customize the creation of your action streams and the collection of their events.
+
+Note that Movable Type's standard object callbacks are also available for the `ActionStreams::Event` objects representing actions.
+
+### `pre_add_profile.`*`type`* ###
+
+Fires before an author's new profile is added. `type` is the ID (registry key) of the service being added. The parameters passed to your callback routine are:
+
+* `$app`, the current MT::App through which the profile is being added
+* `$user`, the MT::Author whose profile is being added
+* `$profile`, a hashref containing the information about the profile being added:
+  * `type`, the ID of the profile service
+  * `ident`, the user ID on the remote service
+  * `label`, a user-facing description of the profile
+  * `uri`, the URL of the profile page
+  * `streams`, a hashref with keys that are the stream IDs of the streams the author has selected to collect; all values are set to `1`
+
+### `post_add_profile.`*`type`* ###
+
+Fires after an author's new profile is added. The same parameters are passed to your callback routine as to a `pre_add_profile` routine.
+
+### `pre_remove_profile.`*`type`* ###
+
+Fires before a profile is removed. The parameters passed to your callback routine are:
+
+* `$app`, the current MT::App through which the profile is being removed
+* `$user`, the MT::Author whose profile is being removed
+* `$type`, the ID of service corresponding to the profile being removed
+* `$ident`, the user ID on the remote service for the profile being removed
+
+### `post_remove_profile.`*`type`* ###
+
+Fires after a profile is removed. The parameters passed to your callback are the same as to a `pre_remove_profile` callback.
+
+### `pre_action_streams_task` ###
+
+Fires before the scheduled task to collect stream events is performed. The parameters to your callback routine are:
+
+* `$mt`, the current MT instance through which the stream events will be collected
+
+### `post_action_streams_task` ###
+
+Fires after the scheduled task to collect stream events is completed. The parameters to your callback are the same as for `pre_action_streams_task`.
+
+### `pre_update_action_streams_profile.`*`type`* ###
+
+Fires before the streams for a particular author's profile are collected. For example, this callback fires once before an author's Twitter streams (both the tweets and favorites streams) are collected. The parameters passed to your callback routine are:
+
+* `$mt`, the current MT instance through which the stream events will be collected
+* `$author`, the MT::Author whose streams are being collected
+* `$profile`, a hashref containing all the information about the profile; this is the same as the `$profile` argument to the `pre_add_profile` callback
+
+### `post_update_action_streams_profile.`*`type`* ###
+
+Fires after the streams for a particular author's profile are collected. The parameters passed to your callback routine are the same as to `pre_update_action_streams_profile`.
+
+### `pre_build_action_streams_event.`*`type`* ###
+
+Fires after a stream event is collected, but before it's put into the `ActionStreams::Event` object. The parameters given to your callback routine are:
+
+* `$mt`, the current MT instance through which the stream event was collected
+* `$item`, a hashref containing the data collected for this event
+* `$event`, the `ActionStreams::Event` into which the event data will put; this is either a new empty `ActionStreams::Event`, or the previously version of this event as determined by the value of the stream recipe's identifier field
+* `$author`, the MT::Author whose stream is being collected
+* `$profile`, a hashref containing all the information about the profile; this is the same as the `$profile` argument to the `pre_add_profile` callback
+
+### `post_build_action_streams_event.`*`type`* ###
+
+Fires after a stream event is composed, but before it is saved. The parameters passed to your callback routine are the same as to `pre_build_action_streams_event`.
