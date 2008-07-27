@@ -105,7 +105,17 @@ Together, these parts define the recipe.
 
 ### Picking a stream ID ###
 
-TODO: The word with which you name your recipe's registry section is its ID. Template authors can etc
+The word you use as the registry key when defining a stream is its ID. While you can use any term here, if the stream you're defining is analogous to a stream available from another service, use the same ID as the other service's stream does.
+
+Template authors can list similar actions across services by using the `stream` attribute on the `ActionStreams` tag in absence of the `service` attribute. The value template authors will use with `stream` will be this ID, so in order for your (say) photos stream to be included when a user lists all posted photos across all services, use `photos` for your stream ID.
+
+Some of the standard stream IDs used in the standard provided streams are:
+
+* `links`, web pages or resources that have been bookmarked (as in del.icio.us, Digg, Magnolia)
+* `photos`, photos posted by the author (as in Flickr, Picasa on the Web, Smugmug)
+* `favorites`, assets and objects of others' that the author saved as a favorite (as in Vox, Twitter, YouTube)
+* `achievements`, awards won by the author (as in Steam or Kongregate)
+* `videos`, videos posted by the author (as in Viddler, Vimeo, YouTube)
 
 ### Picking the stream resource ###
 
