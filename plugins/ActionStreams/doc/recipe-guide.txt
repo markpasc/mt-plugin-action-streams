@@ -64,7 +64,7 @@ A label to show after the field in which the identifier is entered. Typically th
 
 ### `service_type` ###
 
-The type of service . Authors can list their accounts in certain types of services only by using the `type` attribute of the `OtherProfiles` tag. Any type value is allowed here, but the established service types are:
+The kind of web service this profile is about. Authors can list their accounts for a certain type of services using the `type` attribute of the `OtherProfiles` tag. Any value is allowed here, but the established service types are:
 
 * `contact` (AIM, Yahoo! Messenger, etc)
 * `blog` (Vox, Tumblr, the Website service, etc)
