@@ -746,7 +746,7 @@ sub tag_action_streams_block {
 
 
     my $res = '';
-    my $count = 0;
+    my ($count, $total) = (0, scalar @events);
     my $day_date = '';
     EVENT: while (my $event = shift @events) {
         my $new_day_date = _event_day($ctx, $event);
@@ -762,7 +762,7 @@ sub tag_action_streams_block {
             $ctx, $args, $cond,
             event => $event,
             count => $count,
-            total => scalar @events,
+            total => $total,
         )) or return;
         $res .= $out;
     }
