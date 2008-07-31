@@ -1,23 +1,23 @@
 # Action Streams Plugin for Movable Type
-# Author: Mark Paschal
+# Authors: Mark Paschal, Bryan Tighe, Brad Choate, Alex Bain
 # Copyright 2008 Six Apart, Ltd.
 # License: Artistic, licensed under the same terms as Perl itself
 
 
 OVERVIEW
 
-The Action Streams plugin utilizes Movable Type to monitor a collection of 3rd party web sites
-and services for changes to a user's profile. The plugin will then aggregate and collect those
-actions so that they can be published to a user's website, blog or profile.
+Action Streams for Movable Type collects your action on third party web sites into your
+Movable Type web site. Using it, you can aggregate those actions for your reference, promote
+specific items to blog posts, and stream the whole set to your friends and readers. Action
+Streams are a powerful part of your web profile.
 
-The plugin adds the ability for an author within Movable Type to list their accounts on 3rd
-party web sites.  From these accounts, a periodic task automatically imports the author's
-activities on those services via RSS, Atom, and some web scraping.  This allows the author to
-create an Action Stream completely under their control.
-
-This plugin then provides a set of template tags as well that make it possible to publish and
-display the author's accounts and actions on any page powered by Movable Type.  The default
-example templates use the Microformats XFN and hAtom to make the information more accessible.
+The plugin adds the ability for your Movable Type authors to list their accounts on third
+party web services. A periodic task then automatically imports your authors' activity on those
+services using XML feeds (where provided) and scraping HTML pages (where necessary). Your
+authors can then publish their action streams completely under their control: the provided
+template tags make it possible to display authors' accounts and actions on any page powered by
+Movable Type. The example templates and the provided template set also use the XFN and hAtom
+microformats and provide web feeds to integrate with tools your readers may be using.
 
 
 PREREQUISITES
