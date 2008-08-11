@@ -1,4 +1,3 @@
-
 package ActionStreams::Plugin;
 
 use strict;
