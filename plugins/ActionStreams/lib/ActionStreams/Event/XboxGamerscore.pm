@@ -1,5 +1,5 @@
 
-package ActionStreams::Event::Games::XboxGamerscore;
+package ActionStreams::Event::XboxGamerscore;
 
 use strict;
 use base qw( ActionStreams::Event );
