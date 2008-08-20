@@ -1,12 +1,20 @@
 # Action Streams Recipe Developer Guide #
 
-The Action Streams plugin collects authors' actions performed in remote services. Plugin developers can add support to Action Streams for new web services, often with no Perl code required at all.
+The Action Streams plugin collects authors' actions performed in remote
+services. Plugin developers can add support to Action Streams for new web
+services, often with no Perl code required at all.
 
 ## Making a plugin with the registry ##
 
-In Movable Type 4, plugins are defined using a file called `config.yaml` instead of Perl code. When Movable Type loads the plugin, the settings the plugin defines in `config.yaml` are integrated into what's called *the registry*. The registry is a tree of settings that informs Movable Type what settings, pages, and objects are available.
+In Movable Type 4, plugins are defined using a file called `config.yaml`
+instead of Perl code. When Movable Type loads the plugin, the settings the
+plugin defines in `config.yaml` are integrated into what's called *the
+registry*. The registry is a tree of settings that informs Movable Type what
+settings, pages, and objects are available.
 
-To define your plugin, make a new directory in the `plugins` directory. Inside it, create a file called `config.yaml`, and enter all the basic plugin settings. For example:
+To define your plugin, make a new directory in the `plugins` directory. Inside
+it, create a file called `config.yaml`, and enter all the basic plugin
+settings. For example:
 
     id:   ExampleService
     key:  ExampleService
@@ -17,13 +25,22 @@ To define your plugin, make a new directory in the `plugins` directory. Inside i
     author_link: http://www.example.com/mark/
     plugin_link: http://www.example.com/plugins/example-service/
 
-These settings define a plugin called "Example Service" with all the specified settings. Consult the Movable Type developer documentation for further help on creating plugins.
+These settings define a plugin called "Example Service" with all the specified
+settings. Consult the Movable Type developer documentation for further help on
+creating plugins.
 
 ## Defining a profile service ##
 
-Every action and stream belongs to a **service**, so unless you're adding a stream for a service that already exists in Action Streams, you need to define one of those first. Usually a service is a web site at which an author has an account. Authors can use the Action Streams plugin to make a sidebar list of their accounts on all the services for which they enter their accounts.
+Every action and stream belongs to a **service**, so unless you're adding a
+stream for a service that already exists in Action Streams, you need to define
+one of those first. Usually a service is a web site at which an author has an
+account. Authors can use the Action Streams plugin to make a sidebar list of
+their accounts on all the services for which they enter their accounts.
 
-Profile services are defined in the `profile_services` section of the registry. Because Movable Type merges your `config.yaml` into the registry, you specify additional services by adding your own `profile_services` section to your plugin's `config.yaml`. For example:
+Profile services are defined in the `profile_services` section of the
+registry. Because Movable Type merges your `config.yaml` into the registry,
+you specify additional services by adding your own `profile_services` section
+to your plugin's `config.yaml`. For example:
 
     profile_services:
         example:
@@ -38,33 +55,48 @@ Profile services are defined in the `profile_services` section of the registry. 
             service_type: example
             icon: example.png
 
-This defines two services. Each service has its own key by which it's known in the registry. These services' keys are `example` and `complex`. The data you can set for a service are:
+This defines two services. Each service has its own key by which it's known in
+the registry. These services' keys are `example` and `complex`. The data you
+can set for a service are:
 
 ### `name` (required) ###
 
-The human-readable name of the service. This name is used for display and for ordering the list of services.
+The human-readable name of the service. This name is used for display and for
+ordering the list of services.
 
 ### `url` (required) ###
 
-The URL to a user's profile on the service. This is the URL used in the author's list of services.
+The URL to a user's profile on the service. This is the URL used in the
+author's list of services.
 
-The string `{{ident}}` will be replaced by the author's identifier for this service. Only one identifier per service is currently supported.
+The string `{{ident}}` will be replaced by the author's identifier for this
+service. Only one identifier per service is currently supported.
 
 ### `ident_label` ###
 
-A label to describe what the author's identifier on the service is. If not given, the label `Username` is used. For example, if the user identifier on the service is a number, you might specify `User ID` here to indicate the author should enter a number. For the AIM service, the label is `Screen name`.
+A label to describe what the author's identifier on the service is. If not
+given, the label `Username` is used. For example, if the user identifier on
+the service is a number, you might specify `User ID` here to indicate the
+author should enter a number. For the AIM service, the label is `Screen name`.
 
 ### `ident_example` ###
 
-A label to show what the identifiers for the service generally look like. For example, if the user identifier is a number, you might specify `12345`. For the Flickr service, the example identifier is `36381329@N00`.
+A label to show what the identifiers for the service generally look like. For
+example, if the user identifier is a number, you might specify `12345`. For
+the Flickr service, the example identifier is `36381329@N00`.
 
 ### `ident_suffix` ###
 
-A label to show after the field in which the identifier is entered. Typically this is used to further suggest that the one's subdomain on a service is one's identifier. For example, the Vox service's suffix is `.vox.com`.
+A label to show after the field in which the identifier is entered. Typically
+this is used to further suggest that the one's subdomain on a service is one's
+identifier. For example, the Vox service's suffix is `.vox.com`.
 
 ### `service_type` ###
 
-The kind of web service this profile is about. Authors can list their accounts for a certain type of services using the `type` attribute of the `OtherProfiles` tag. Any value is allowed here, but the established service types are:
+The kind of web service this profile is about. Authors can list their accounts
+for a certain type of services using the `type` attribute of the
+`OtherProfiles` tag. Any value is allowed here, but the established service
+types are:
 
 * `contact` (AIM, Yahoo! Messenger, etc)
 * `blog` (Vox, Tumblr, the Website service, etc)
@@ -76,11 +108,17 @@ The kind of web service this profile is about. Authors can list their accounts f
 
 ### `icon` ###
 
-The location of the service's icon. This can be a complete URL to the image. If not a URL, `icon` should be a path to the image relative to your plugin's `mt-static` directory. For example, if you install your `example.png` at `mt-static/plugins/ExampleService/example.png`, your `icon` setting should be `example.png`.
+The location of the service's icon. This can be a complete URL to the image.
+If not a URL, `icon` should be a path to the image relative to your plugin's
+`mt-static` directory. For example, if you install your `example.png` at
+`mt-static/plugins/ExampleService/example.png`, your `icon` setting should be
+`example.png`.
 
 ## Defining stream recipes for a service ##
 
-Once a service is defined in `profile_services`, you can make recipes for collecting its action streams. These recipes go in the `action_streams` section of the registry. For example:
+Once a service is defined in `profile_services`, you can make recipes for
+collecting its action streams. These recipes go in the `action_streams`
+section of the registry. For example:
 
     action_streams:
         example:
@@ -95,41 +133,70 @@ Once a service is defined in `profile_services`, you can make recipes for collec
                 atom:
                     thumbnail: media:thumbnail/child::text()
 
-Each service has its own section, labelled with the same key as in the `profile_services` section. Inside that, you can define one or more recipes for how to collect actions. As you can see, recipes have three parts:
+Each service has its own section, labelled with the same key as in the
+`profile_services` section. Inside that, you can define one or more recipes
+for how to collect actions. As you can see, recipes have three parts:
 
 * **URLs** that indicate where to find action content.
-* **Collectors** that specify how to turn the resource at the stream's URL into action data. Action data is primarily a title, a link, and a unique identifier for each action, but you can specify additional data fields in your recipe.
-* **Forms** that describe how to turn the action data back into HTML. Authors can display however they like with template code, but in the application and by default, actions in this stream will display as you specify in the recipe.
+* **Collectors** that specify how to turn the resource at the stream's URL
+  into action data. Action data is primarily a title, a link, and a unique
+  identifier for each action, but you can specify additional data fields in
+  your recipe.
+* **Forms** that describe how to turn the action data back into HTML. Authors
+  can display however they like with template code, but in the application and
+  by default, actions in this stream will display as you specify in the
+  recipe.
 
 Together, these parts define the recipe.
 
 ### Picking a stream ID ###
 
-The word you use as the registry key when defining a stream is its ID. While you can use any term here, if the stream you're defining is analogous to a stream available from another service, use the same ID as the other service's stream does.
+The word you use as the registry key when defining a stream is its ID. While
+you can use any term here, if the stream you're defining is analogous to a
+stream available from another service, use the same ID as the other service's
+stream does.
 
-Template authors can list similar actions across services by using the `stream` attribute on the `ActionStreams` tag in absence of the `service` attribute. The value template authors will use with `stream` will be this ID, so in order for your (say) photos stream to be included when a user lists all posted photos across all services, use `photos` for your stream ID.
+Template authors can list similar actions across services by using the
+`stream` attribute on the `ActionStreams` tag in absence of the `service`
+attribute. The value template authors will use with `stream` will be this ID,
+so in order for your (say) photos stream to be included when a user lists all
+posted photos across all services, use `photos` for your stream ID.
 
 Some of the standard stream IDs used in the standard provided streams are:
 
-* `links`, web pages or resources that have been bookmarked (as in del.icio.us, Digg, Magnolia)
-* `photos`, photos posted by the author (as in Flickr, Picasa on the Web, Smugmug)
-* `favorites`, assets and objects of others' that the author saved as a favorite (as in Vox, Twitter, YouTube)
+* `links`, web pages or resources that have been bookmarked (as in
+  del.icio.us, Digg, Magnolia)
+* `photos`, photos posted by the author (as in Flickr, Picasa on the Web,
+  Smugmug)
+* `favorites`, assets and objects of others' that the author saved as a
+  favorite (as in Vox, Twitter, YouTube)
 * `achievements`, awards won by the author (as in Steam or Kongregate)
 * `videos`, videos posted by the author (as in Viddler, Vimeo, YouTube)
 
 ### Picking the stream resource ###
 
-Typically, modern web services will provide a web feed or XML resource for their members that rolls up their recent activity on the site. Sometimes a service only provides an HTML page, but Action Streams can work with them too. This is the resource you will specify as your stream's `url`.
+Typically, modern web services will provide a web feed or XML resource for
+their members that rolls up their recent activity on the site. Sometimes a
+service only provides an HTML page, but Action Streams can work with them too.
+This is the resource you will specify as your stream's `url`.
 
-The URL for the resource needs to include the user's identifier in the URL. In some extreme cases, you may even have to change what identifier your profile service uses in order to get the stream resource. Normally the same user name or ID is in the URL, though.
+The URL for the resource needs to include the user's identifier in the URL. In
+some extreme cases, you may even have to change what identifier your profile
+service uses in order to get the stream resource. Normally the same user name
+or ID is in the URL, though.
 
 ### Three schools of collection ###
 
-Most services don't yet publish their members' actions as such, so even if you can collect from a nice standard web feed, the feed content will need some massaging. There are three main kinds of collectors at your disposal: XML feeds, HTML scrapers, and custom collectors.
+Most services don't yet publish their members' actions as such, so even if you
+can collect from a nice standard web feed, the feed content will need some
+massaging. There are three main kinds of collectors at your disposal: XML
+feeds, HTML scrapers, and custom collectors.
 
 #### XML feeds ####
 
-It's easy to collect data from XML feeds. Action Streams accepts recipes using XPath syntax. For example, you might collect data from del.icio.us' RSS feeds with an `xpath` recipe:
+It's easy to collect data from XML feeds. Action Streams accepts recipes using
+XPath syntax. For example, you might collect data from del.icio.us' RSS feeds
+with an `xpath` recipe:
 
     delicious:
         links:
@@ -145,9 +212,15 @@ It's easy to collect data from XML feeds. Action Streams accepts recipes using X
                     title: title/child::text()
                     url: link/child::text()
 
-This specifies that each item in the feed is an XPath `//item`, meaning an `item` tag anywhere in the document. Within each `item`, you can find values for the `created_on`, `title`, and `url` fields using the given XPath selectors. The `identifier: url` statement indicates to use the `url` value as the action's unique identifier.
+This specifies that each item in the feed is an XPath `//item`, meaning an
+`item` tag anywhere in the document. Within each `item`, you can find values
+for the `created_on`, `title`, and `url` fields using the given XPath
+selectors. The `identifier: url` statement indicates to use the `url` value as
+the action's unique identifier.
 
-As many services provide as standard web feeds, it's actually even easier to collect from those. Instead of `xpath`, specify your recipe as `rss` or `atom`, with any additional or special fields as additional XPath selectors:
+As many services provide as standard web feeds, it's actually even easier to
+collect from those. Instead of `xpath`, specify your recipe as `rss` or
+`atom`, with any additional or special fields as additional XPath selectors:
 
     delicious:
         links:
@@ -159,7 +232,8 @@ As many services provide as standard web feeds, it's actually even easier to col
             rss:
                 created_on: dc:date/child::text()
 
-If there are no special fields to collect, you can also specify the recipe as simply `1`, as in this recipe for Jaiku:
+If there are no special fields to collect, you can also specify the recipe as
+simply `1`, as in this recipe for Jaiku:
 
     jaiku:
         jaikus:
@@ -169,11 +243,15 @@ If there are no special fields to collect, you can also specify the recipe as si
             url: 'http://{{ident}}.jaiku.com/feed/atom'
             atom: 1
 
-The values of each entry's ID field (`guid` in RSS and `id` in Atom) are then used for actions' identifiers.
+The values of each entry's ID field (`guid` in RSS and `id` in Atom) are then
+used for actions' identifiers.
 
 #### HTML pages ####
 
-When feeds aren't available, HTML will do. Action Streams reads HTML pages using Web::Scraper, an HTML scraping library inspired by the Ruby scrapi library. For example, the Iwtst plugin reads your iwanttoseethat.com profile page with this definition:
+When feeds aren't available, HTML will do. Action Streams reads HTML pages
+using Web::Scraper, an HTML scraping library inspired by the Ruby scrapi
+library. For example, the Iwtst plugin reads your iwanttoseethat.com profile
+page with this definition:
 
     iwtst:
         want:
@@ -192,11 +270,17 @@ When feeds aren't available, HTML will do. Action Streams reads HTML pages using
                       - a
                       - TEXT
 
-Instead of XPath, here we can use CSS selector syntax. (For more complex constructions, you can use XPath selectors as well.) This recipe says each action is a `div` with class `seethat_yes` inside a `seethat` `div`. The action's `url` field is then the value of the `href` attribute of the `a` tag inside, while the `title` field is the text linked inside that `a` tag.
+Instead of XPath, here we can use CSS selector syntax. (For more complex
+constructions, you can use XPath selectors as well.) This recipe says each
+action is a `div` with class `seethat_yes` inside a `seethat` `div`. The
+action's `url` field is then the value of the `href` attribute of the `a` tag
+inside, while the `title` field is the text linked inside that `a` tag.
 
 #### Custom collectors ####
 
-If you aren't pulling web data, or you can't quite articulate as a set of selectors, you can implement your own action collector as a Perl class. You then tell what class implements your stream:
+If you aren't pulling web data, or you can't quite articulate as a set of
+selectors, you can implement your own action collector as a Perl class. You
+then tell what class implements your stream:
 
     complex:
         posts:
@@ -205,11 +289,20 @@ If you aren't pulling web data, or you can't quite articulate as a set of select
             # ...
             class: Example::Event::ComplexPosts
 
-Your class then subclasses the plugin's `ActionStreams::Event` class, and implements your particular content-finding behavior. As the XML and HTML recipes are really the default behavior of an `ActionStreams::Event` object, the above techniques are easily accessible from your class too. See some of the `ActionStreams::Event` subclasses included with the Action Streams plugin for examples.
+Your class then subclasses the plugin's `ActionStreams::Event` class, and
+implements your particular content-finding behavior. As the XML and HTML
+recipes are really the default behavior of an `ActionStreams::Event` object,
+the above techniques are easily accessible from your class too. See some of
+the `ActionStreams::Event` subclasses included with the Action Streams plugin
+for examples.
 
 ### Formatting actions for display ###
 
-While bloggers can customize how actions are published to the blog however they wish with the provided template tags, the recipe defines how actions are displayed when using the `mt:StreamAction` tag and when displayed in the application. This display is governed by the `html_form` and `html_params` options, as in the del.icio.us recipe:
+While bloggers can customize how actions are published to the blog however
+they wish with the provided template tags, the recipe defines how actions are
+displayed when using the `mt:StreamAction` tag and when displayed in the
+application. This display is governed by the `html_form` and `html_params`
+options, as in the del.icio.us recipe:
 
     delicious:
         links:
@@ -221,17 +314,34 @@ While bloggers can customize how actions are published to the blog however they 
                 - title
             # ...
 
-The `html_form` setting is a pattern in maketext format, making it easy to . Each replacement token is numbered. The first replacement token, `[_1]`, is always the name of the MT user whose action is being displayed. The next tokens represent the fields you specify in (in this case, `url` and `title`).
+The `html_form` setting is a pattern in maketext format, making it easy to .
+Each replacement token is numbered. The first replacement token, `[_1]`, is
+always the name of the MT user whose action is being displayed. The next
+tokens represent the fields you specify in (in this case, `url` and `title`).
 
-Note that the result of formatting an action is, in fact, HTML. This markup will be returned verbatim when used with the `mt:StreamAction` tag. For display in the Movable Type application, the HTML is removed; del.icio.us links are the text "*Author name* saved the link *title*" without the hyperlink, for example.
+Note that the result of formatting an action is, in fact, HTML. This markup
+will be returned verbatim when used with the `mt:StreamAction` tag. For
+display in the Movable Type application, the HTML is removed; del.icio.us
+links are the text "*Author name* saved the link *title*" without the
+hyperlink, for example.
 
 ### Cleaning up after your stream ###
 
-Some streams may not leave in the correct displayable format. For example, the regular Twitter tweet feeds include the authors' usernames with the tweets. The Twitter stream needs to remove to correctly collect only the tweet text. How can it remove the usernames from the collected actions?
+Some streams may not leave in the correct displayable format. For example, the
+regular Twitter tweet feeds include the authors' usernames with the tweets.
+The Twitter stream needs to remove to correctly collect only the tweet text.
+How can it remove the usernames from the collected actions?
 
-Movable Type provides a system for defining *callbacks*, or code hooks that are run at certain points of a process. The Action Streams plugin provides several callbacks at various stages of stream event collection. You will have to use Perl code to write these callbacks, but as you're doing very small things, the code is usually simple.
+Movable Type provides a system for defining *callbacks*, or code hooks that
+are run at certain points of a process. The Action Streams plugin provides
+several callbacks at various stages of stream event collection. You will have
+to use Perl code to write these callbacks, but as you're doing very small
+things, the code is usually simple.
 
-For example, the Twitter stream uses the `pre_build_action_streams_event` callback to modify the actions after they're collected by the normal feed collector, but before they are saved. The callback is defined in the registry thus:
+For example, the Twitter stream uses the `pre_build_action_streams_event`
+callback to modify the actions after they're collected by the normal feed
+collector, but before they are saved. The callback is defined in the registry
+thus:
 
     callbacks:
         pre_build_action_streams_event.twitter_tweets: \
@@ -251,27 +361,35 @@ The stream callback code is then defined in ActionStreams::Plugin as:
 		}{}xms;
 	}
 
-The Action Streams callbacks available to you are documented later. See the Movable Type developer documentation for more about defining callbacks.
+The Action Streams callbacks available to you are documented later. See the
+Movable Type developer documentation for more about defining callbacks.
 
 ## Stream recipe option reference ##
 
-Recipes describe how to collect and display users' actions on profile services. They are found in the `action_streams` section of the registry, in sections named the same as the related service in the  `profile_services` section.
+Recipes describe how to collect and display users' actions on profile
+services. They are found in the `action_streams` section of the registry, in
+sections named the same as the related service in the  `profile_services`
+section.
 
 The options you can set for action streams are:
 
 ### `name` (required) ###
 
-The name of the action stream. This is displayed to authors when they enter their profile service identifier, where they are given the option of collecting the stream.
+The name of the action stream. This is displayed to authors when they enter
+their profile service identifier, where they are given the option of
+collecting the stream.
 
 ### `description` (required) ###
 
-The description of the action stream. This is displayed to authors with the stream's name when they enter profile identifiers.
+The description of the action stream. This is displayed to authors with the
+stream's name when they enter profile identifiers.
 
 ### `fields` ###
 
 The list of additional fields supported by actions of this stream.
 
-Every stream already has a set of standard fields. You need only specify additional fields beyond these. The standard fields are:
+Every stream already has a set of standard fields. You need only specify
+additional fields beyond these. The standard fields are:
 
 #### `title` ####
 
@@ -283,7 +401,8 @@ The web address of the page/asset/resource the action is about.
 
 #### `thumbnail` ####
 
-The web address (URL) of a thumbnail image of the page/asset/resource the action is about.
+The web address (URL) of a thumbnail image of the page/asset/resource the
+action is about.
 
 #### `identifier` ####
 
@@ -291,97 +410,138 @@ A string that uniquely identifies this action in its particular stream.
 
 #### `created_on` ####
 
-When the action was taken. This is *not* necessarily when the page/asset/resource the action is about was created; when a link is saved or a video is favorited, for example.
+When the action was taken. This is *not* necessarily when the
+page/asset/resource the action is about was created; when a link is saved or a
+video is favorited, for example.
 
 #### `modified_on` ####
 
-When the action was last altered. Many actions occur only once and will never change, but some may (such as if the author changes the rating or tags for a saved link). Action Streams will update this timestamp automatically when the action object is changed.
+When the action was last altered. Many actions occur only once and will never
+change, but some may (such as if the author changes the rating or tags for a
+saved link). Action Streams will update this timestamp automatically when the
+action object is changed.
 
 ### `html_form` ###
 
-The formatting string for formatting an action for display. Numbered replacement tokens are replaced with the author's name and the values of the fields named in `html_params`.
+The formatting string for formatting an action for display. Numbered
+replacement tokens are replaced with the author's name and the values of the
+fields named in `html_params`.
 
 ### `html_params` ###
 
-The list of additional fields to replace into `html_form` when displaying an action.
+The list of additional fields to replace into `html_form` when displaying an
+action.
 
 ### `url` ###
 
-The URL from which to collect action data. The token `{{ident}}` will be replaced with the author's identifier on that service.
+The URL from which to collect action data. The token `{{ident}}` will be
+replaced with the author's identifier on that service.
 
 ### `identifier` ###
 
-The name of the field to use as the unique identifier. Multiple fields can be specified by separating their names with commas (for example: `title,created_on`).
+The name of the field to use as the unique identifier. Multiple fields can be
+specified by separating their names with commas (for example:
+`title,created_on`).
 
-If not given, the collection recipe should collect an `identifier` field from the action source. If an `identifier` field is not collected, each action will be considered unique, regardless of the content of the other fields.
+If not given, the collection recipe should collect an `identifier` field from
+the action source. If an `identifier` field is not collected, each action will
+be considered unique, regardless of the content of the other fields.
 
 ### `xpath` ###
 
-The XPath recipe with which to collect action data. The recipe options for an XPath recipe are:
+The XPath recipe with which to collect action data. The recipe options for an
+XPath recipe are:
 
 #### `foreach` (required) ####
 
-The XPath selector that selects the nodes of the resource document that represent actions. All the `get` selectors are then applied to each node to find the action data.
+The XPath selector that selects the nodes of the resource document that
+represent actions. All the `get` selectors are then applied to each node to
+find the action data.
 
 #### `get` (required) ####
 
-A set of XPath selectors, keyed on the names of the action fields they describe. To find the value of each field, the indicated selector is applied to each node as determined by the `foreach` selector.
+A set of XPath selectors, keyed on the names of the action fields they
+describe. To find the value of each field, the indicated selector is applied
+to each node as determined by the `foreach` selector.
 
 ### `rss` ###
 
-The RSS recipe with which to collect action data. RSS recipes collect data from the standard RSS entry content. If child options are specified, each is used as an XPath selector (as in an `xpath` recipe's `get` option) to collect a field from the RSS `item` nodes.
+The RSS recipe with which to collect action data. RSS recipes collect data
+from the standard RSS entry content. If child options are specified, each is
+used as an XPath selector (as in an `xpath` recipe's `get` option) to collect
+a field from the RSS `item` nodes.
 
 ### `atom` ###
 
-The Atom recipe with which to collect action data. Atom recipes collect data from the standard Atom feed content. If child options are specified, each is used as an XPath selector (as in an `xpath` recipe's `get` option) to collect a field from the Atom `entry` nodes.
+The Atom recipe with which to collect action data. Atom recipes collect data
+from the standard Atom feed content. If child options are specified, each is
+used as an XPath selector (as in an `xpath` recipe's `get` option) to collect
+a field from the Atom `entry` nodes.
 
 ### `scraper` ###
 
-The Web::Scraper recipe with which to collect action data. The options for a Web::Scraper recipe are:
+The Web::Scraper recipe with which to collect action data. The options for a
+Web::Scraper recipe are:
 
 #### `foreach` (required) ####
 
-The CSS or XPath selector that selects the nodes of the resource document that represent the actions. All the `get` selectors are then applied to each node to find the action data.
+The CSS or XPath selector that selects the nodes of the resource document that
+represent the actions. All the `get` selectors are then applied to each node
+to find the action data.
 
 #### `get` (required) ####
 
-A set of Web::Scraper selectors, keyed on the names of the action fields they describe. Each selector is applied to each action node, as determined by the `foreach` selector, to find the action data.
+A set of Web::Scraper selectors, keyed on the names of the action fields they
+describe. Each selector is applied to each action node, as determined by the
+`foreach` selector, to find the action data.
 
 Each Web::Scraper selector is a two-element list:
 
 * The CSS or XPath selector to use to find a child node.
-* `@`*`attribute`* or `TEXT` to select an attribute value or the text content of the node.
+* `@`*`attribute`* or `TEXT` to select an attribute value or the text content
+  of the node.
 
 ### `class` ###
 
-The name of the Perl package to use to represent actions in this stream. The Perl package should be a subclass of `ActionStreams::Event`. See the `ActionStreams::Event` perldoc for information on defining an action stream in Perl code.
+The name of the Perl package to use to represent actions in this stream. The
+Perl package should be a subclass of `ActionStreams::Event`. See the
+`ActionStreams::Event` perldoc for information on defining an action stream in
+Perl code.
 
 ## Stream recipe callback reference ##
 
-Action Streams specifies several callbacks for you to customize the creation of your action streams and the collection of their events.
+Action Streams specifies several callbacks for you to customize the creation
+of your action streams and the collection of their events.
 
-Note that Movable Type's standard object callbacks are also available for the `ActionStreams::Event` objects representing actions.
+Note that Movable Type's standard object callbacks are also available for the
+`ActionStreams::Event` objects representing actions.
 
 ### `pre_add_profile.`*`type`* ###
 
-Fires before an author's new profile is added. `type` is the ID (registry key) of the service being added. The parameters passed to your callback routine are:
+Fires before an author's new profile is added. `type` is the ID (registry key)
+of the service being added. The parameters passed to your callback routine
+are:
 
 * `$app`, the current MT::App through which the profile is being added
 * `$user`, the MT::Author whose profile is being added
-* `$profile`, a hashref containing the information about the profile being added:
+* `$profile`, a hashref containing the information about the profile being
+  added:
   * `type`, the ID of the profile service
   * `ident`, the user ID on the remote service
   * `label`, a user-facing description of the profile
   * `uri`, the URL of the profile page
-  * `streams`, a hashref with keys that are the stream IDs of the streams the author has selected to collect; all values are set to `1`
+  * `streams`, a hashref with keys that are the stream IDs of the streams the
+    author has selected to collect; all values are set to `1`
 
 ### `post_add_profile.`*`type`* ###
 
-Fires after an author's new profile is added. The same parameters are passed to your callback routine as to a `pre_add_profile` routine.
+Fires after an author's new profile is added. The same parameters are passed
+to your callback routine as to a `pre_add_profile` routine.
 
 ### `pre_remove_profile.`*`type`* ###
 
-Fires before a profile is removed. The parameters passed to your callback routine are:
+Fires before a profile is removed. The parameters passed to your callback
+routine are:
 
 * `$app`, the current MT::App through which the profile is being removed
 * `$user`, the MT::Author whose profile is being removed
@@ -390,40 +550,60 @@ Fires before a profile is removed. The parameters passed to your callback routin
 
 ### `post_remove_profile.`*`type`* ###
 
-Fires after a profile is removed. The parameters passed to your callback are the same as to a `pre_remove_profile` callback.
+Fires after a profile is removed. The parameters passed to your callback are
+the same as to a `pre_remove_profile` callback.
 
 ### `pre_action_streams_task` ###
 
-Fires before the scheduled task to collect stream events is performed. The parameters to your callback routine are:
+Fires before the scheduled task to collect stream events is performed. The
+parameters to your callback routine are:
 
-* `$mt`, the current MT instance through which the stream events will be collected
+* `$mt`, the current MT instance through which the stream events will be
+  collected
 
 ### `post_action_streams_task` ###
 
-Fires after the scheduled task to collect stream events is completed. The parameters to your callback are the same as for `pre_action_streams_task`.
+Fires after the scheduled task to collect stream events is completed. The
+parameters to your callback are the same as for `pre_action_streams_task`.
 
 ### `pre_update_action_streams_profile.`*`type`* ###
 
-Fires before the streams for a particular author's profile are collected. For example, this callback fires once before an author's Twitter streams (both the tweets and favorites streams) are collected. The parameters passed to your callback routine are:
+Fires before the streams for a particular author's profile are collected. For
+example, this callback fires once before an author's Twitter streams (both the
+tweets and favorites streams) are collected. The parameters passed to your
+callback routine are:
 
-* `$mt`, the current MT instance through which the stream events will be collected
+* `$mt`, the current MT instance through which the stream events will be
+  collected
 * `$author`, the MT::Author whose streams are being collected
-* `$profile`, a hashref containing all the information about the profile; this is the same as the `$profile` argument to the `pre_add_profile` callback
+* `$profile`, a hashref containing all the information about the profile; this
+  is the same as the `$profile` argument to the `pre_add_profile` callback
 
 ### `post_update_action_streams_profile.`*`type`* ###
 
-Fires after the streams for a particular author's profile are collected. The parameters passed to your callback routine are the same as to `pre_update_action_streams_profile`.
+Fires after the streams for a particular author's profile are collected. The
+parameters passed to your callback routine are the same as to
+`pre_update_action_streams_profile`.
 
 ### `pre_build_action_streams_event.`*`type`* ###
 
-Fires after a stream event is collected, but before it's put into the `ActionStreams::Event` object. The parameters given to your callback routine are:
+Fires after a stream event is collected, but before it's put into the
+`ActionStreams::Event` object. The parameters given to your callback routine
+are:
 
 * `$mt`, the current MT instance through which the stream event was collected
 * `$item`, a hashref containing the data collected for this event
-* `$event`, the `ActionStreams::Event` into which the event data will put; this is either a new empty `ActionStreams::Event`, or the previously version of this event as determined by the value of the stream recipe's identifier field
+* `$event`, the `ActionStreams::Event` into which the event data will put;
+  this is either a new empty `ActionStreams::Event`, or the previously version
+  of this event as determined by the value of the stream recipe's identifier
+  field
 * `$author`, the MT::Author whose stream is being collected
-* `$profile`, a hashref containing all the information about the profile; this is the same as the `$profile` argument to the `pre_add_profile` callback
+* `$profile`, a hashref containing all the information about the profile; this
+  is the same as the `$profile` argument to the `pre_add_profile` callback
 
 ### `post_build_action_streams_event.`*`type`* ###
 
-Fires after a stream event is composed, but before it is saved. The parameters passed to your callback routine are the same as to `pre_build_action_streams_event`.
+Fires after a stream event is composed, but before it is saved. The parameters
+passed to your callback routine are the same as to
+`pre_build_action_streams_event`.
+
