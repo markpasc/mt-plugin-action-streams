@@ -368,3 +368,261 @@ __PACKAGE__->add_trigger( post_save => sub {
 
 1;
 
+__END__
+
+=head1 NAME
+
+ActionStreams::Event - an Action Streams stream definition
+
+=head1 SYNOPSIS
+
+    # in plugin's config.yaml
+    
+    profile_services:
+        example:
+            
+
+    # in plugin's lib/My/Stream.pm
+
+    package My::Stream;
+    use base qw( ActionStreams::Event );
+    
+    __PACKAGE__->install_properties({
+        class_type => 'example_streamid',
+    });
+    
+    sub update_events {
+        my $class = shift;
+        my %profile = @_;
+        
+        # trivial example: save a random number
+        my $die_roll = int rand 20;
+        my %item = (
+            title      => $die_roll,
+            identifier => $die_roll,
+        );
+        
+        return $class->build_results(
+            author => $profile{author},
+            items  => [ \%item ],
+        );
+    }
+    
+    1;
+
+=head1 DESCRIPTION
+
+I<ActionStreams::Event> provides the basic implementation of an action stream.
+Stream definitions are engines for turning web resources into I<actions> (also
+called I<events>). This base class produces actions based on generic stream
+recipes defined in the MT registry, as well as providing the internal machinery
+for you to implement your own streams in Perl code.
+
+=head1 METHODS TO IMPLEMENT
+
+These are the methods one commonly implements (overrides) when implementing a
+stream subclass.
+
+=head2 C<$class-E<GT>update_events(%profile)>
+
+Fetches the web resource specified by the profile parameters, collects data
+from it into actions, and saves the action records for use later. Required
+members of C<%profile> are:
+
+=over 4
+
+=item * C<author>
+
+The C<MT::Author> instance for whom events should be collected.
+
+=item * C<ident>
+
+The author's identifier on the given service.
+
+=back
+
+Other information about the stream, such as the URL pattern into which the
+C<ident> parameter can be replaced, is available through the
+C<$class-E<gt>registry_entry()> method.
+
+=head2 C<$self-E<GT>as_html()>
+
+Returns the HTML version of the action, suitable for display to readers.
+
+The default implementation uses the stream's registry definition to construct
+the action: the author's name and the action's values as named in `html_params`
+are replaced into the stream's `html_form` setting. You need override it only
+if you have more complex requirements.
+
+=head1 AVAILABLE METHODS
+
+These are the methods provided by I<ActionStreams::Event> to perform common
+tasks. Call them from your overridden methods.
+
+=head2 C<$self-E<GT>set_values(\%values)>
+
+Stores the data given in C<%values> as members of this event.
+
+=head2 C<$class-E<GT>fetch_xpath(%param)>
+
+Returns the items discovered by scanning a web resource by the given XPath
+recipe. Required members of C<%param> are:
+
+=over 4
+
+=item * C<url>
+
+The address of the web resource to scan for events. The resource should be a
+valid XML document.
+
+=item * C<foreach>
+
+The XPath selector with which to select the individual events from the
+resource.
+
+=item * C<get>
+
+A hashref containing the XPath selectors with which to collect individual data
+for each item, keyed on the names of the fields to contain the data.
+
+=back
+
+C<%param> may also contain additional arguments for the C<ua()> method.
+
+Returned items are hashrefs containing the discovered fields, suitable for
+turning into C<ActionStreams::Event> records with the C<build_results()>
+method.
+
+=head2 C<$class-E<GT>fetch_scraper(%param)>
+
+Returns the items discovered by scanning by the given recipe. Required members
+of C<%param> are:
+
+=over 4
+
+=item * C<url>
+
+The address of the web resource to scan for events. The resource should be an
+HTML or XML document suitable for analysis by the C<Web::Scraper> module.
+
+=item * C<scraper>
+
+The C<Web::Scraper> scraper with which to extract item data from the specified
+web resource. See L<Web::Scraper> for information on how to construct a
+scraper.
+
+=back
+
+Returned items are hashrefs containing the discovered fields, suitable for
+turning into C<ActionStreams::Event> records with the C<build_results()>
+method.
+
+See also the below I<NOTE ON WEB::SCRAPER>.
+
+=head2 C<$class-E<GT>build_results(%param)>
+
+Converts a set of collected items into saved action records of type C<$class>.
+The required members of C<%param> are:
+
+=over 4
+
+=item * C<author>
+
+The C<MT::Author> instance whose action the items represent.
+
+=item * C<items>
+
+An arrayref of items to save as actions. Each item is a hashref containing the
+action data, keyed on the names of the fields containing the data.
+
+=back
+
+Optional parameters are:
+
+=over 4
+
+=item * C<profile>
+
+An arrayref describing the data for the author's profile for the associated
+stream, such as is returned by the C<MT::Author::other_profile()> method
+supplied by the Action Streams plugin.
+
+The profile member is not used directly by C<build_results()>; they are only
+passed to callbacks.
+
+=item * C<stream>
+
+A hashref containing the settings from the registry about the stream, such as
+is returned from the C<registry_entry()> method.
+
+=back
+
+=head2 C<$class-E<GT>ua(%param)>
+
+Returns the common HTTP user-agent, an instance of C<LWP::UserAgent>, with
+which you can fetch web resources. No arguments are required; possible optional
+parameters are:
+
+=over 4
+
+=item * C<default_useragent>
+
+If set, the returned HTTP user-agent will use C<LWP::UserAgent>'s default
+identifier in the HTTP C<User-Agent> header. If omitted, the UA will use the
+Action Streams identifier of C<mt-actionstreams-lwp/I<version>>.
+
+=back
+
+=head2 C<$self-E<GT>author()>
+
+Returns the C<MT::Author> instance associated with this event, if its
+C<author_id> field has been set.
+
+=head2 C<$class-E<GT>install_properties(\%properties)>
+
+I<TODO>
+
+=head2 C<$class-E<GT>install_meta(\%properties)>
+
+I<TODO>
+
+=head2 C<$class-E<GT>registry_entry()>
+
+Returns the registry data for the stream represented by C<$class>.
+
+=head2 C<$class-E<GT>classes_for_type($service_id)>
+
+Given a profile service ID (that is, a key from the C<profile_services> section
+of the registry), returns a list of stream classes for scanning that service's
+streams.
+
+=head1 NOTE ON WEB::SCRAPER
+
+The C<Web::Scraper> module is powerful, but it has complex dependencies. While
+its pure Perl requirements are bundled with the Action Streams plugin, it also
+requires a compiled XML module. Also, because of how its syntax works, you must
+directly C<use> the module in your own code, contrary to the Movable Type idiom
+of using C<require> so that modules are loaded only when they are sure to be
+used.
+
+If you attempt load C<Web::Scraper> in the normal way, but C<Web::Scraper> is
+unable to load due to its missing requirement, whenever the plugin attempts to
+load your scraper, the entire plugin will fail to load.
+
+Therefore the C<ActionStreams::Scraper> wrapper module is provided for you. If
+you need to load C<Web::Scraper> so as to make a scraper to pass
+C<ActionStreams::Event::fetch_scraper()> method, instead write in your module:
+
+    use ActionStreams::Scraper;
+
+This module provides the C<Web::Scraper> interface, but if C<Web::Scraper> is
+unable to load, the error will be thrown when your module tries to I<use> it,
+rather than when you I<load> it. That is, if C<Web::Scraper> can't load, no
+errors will be thrown to end users until they try to use your stream.
+
+=head1 AUTHOR
+
+Mark Paschal E<lt>mark@sixapart.comE<gt>
+
+=cut
+
