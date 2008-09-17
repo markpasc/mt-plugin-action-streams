@@ -666,6 +666,9 @@ sub _author_ids_for_args {
         @author_ids = map { $_->id } @authors;
     }
     elsif (my $names = $args->{author} || $args->{authors}) {
+        # If arg is the special string 'all', then include all authors by returning undef instead of an empty array.
+        return if $names =~ m{ \A\s* all \s*\z }xmsi;
+
         my @names = split /\s*,\s*/, $names;
         my @authors = MT->model('author')->load({ name => \@names });
         @author_ids = map { $_->id } @authors;
@@ -690,10 +693,11 @@ sub tag_action_streams_block {
     my ($ctx, $args, $cond) = @_;
 
     my %terms = (
-        author_id => _author_ids_for_args(@_),
         class     => '*',
         visible   => 1,
     );
+    my $author_id = _author_ids_for_args(@_);
+    $terms{author_id} = $author_id if defined $author_id;
     my %args = (
         sort      => ($args->{sort_by}   || 'created_on'),
         direction => ($args->{direction} || 'descend'),
