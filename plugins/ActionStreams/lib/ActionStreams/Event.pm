@@ -251,10 +251,13 @@ sub fetch_xpath {
         return;
     }
 
+    # Strip leading whitespace, since the parser doesn't like it.
     # TODO: confirm we got xml?
+    my $content = $res->content;
+    $content =~ s{ \A \s+ }{}xms;
 
     require XML::XPath;
-    my $x = XML::XPath->new( xml => $res->content );
+    my $x = XML::XPath->new( xml => $content );
 
     my @items;
     ITEM: for my $item ($x->findnodes($params{foreach})) {
