@@ -959,6 +959,25 @@ action_streams:
                 - title
             url: 'http://www2.netvibes.com/rest/account/{{ident}}/timeline?format=atom'
             atom: 1
+    ohloh:
+        kudos:
+            name: Kudos
+            description: Kudos you have received
+            html_form: '[_1] received kudos from <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.ohloh.net/accounts/{{ident}}/kudos'
+            identifier: url
+            scraper:
+                foreach: 'div.received_kudo'
+                get:
+                    url:
+                        - a
+                        - @href
+                    title:
+                        - a
+                        - TEXT
     pandora:
         favorites:
             name: Favorite Songs
