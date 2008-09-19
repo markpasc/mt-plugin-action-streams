@@ -8,7 +8,7 @@ use MT::Util qw( relative_date offset_time offset_time_list epoch2ts ts2epoch fo
 
 sub users_content_nav {
     my ($cb, $app, $html_ref) = @_;
-    
+
     $$html_ref =~ s{class=["']active["']}{}xmsg
         if $app->mode eq 'list_profileevent' || $app->mode eq 'other_profiles';
 
@@ -68,12 +68,12 @@ sub list_profileevent {
 
     my $code = sub {
         my ($event, $row) = @_;
-        
+
         my @meta_col = keys %{ $event->properties->{meta_columns} || {} };
         $row->{$_} = $event->{$_} for @meta_col;
-        
+
         $row->{as_html} = $event->as_html();
-        
+
         my ($service, $stream_id) = split /_/, $row->{class}, 2;
         $row->{type} = $service;
 
@@ -82,7 +82,7 @@ sub list_profileevent {
         $row->{service} = $net->{name} if $net;
 
         $row->{url} = $event->url;
-        
+
         if (!$service_styles{$service}) {
             if (!$net->{plugin} || $net->{plugin}->id ne 'actionstreams') {
                 if (my $icon = __PACKAGE__->icon_url_for_service($service, $net)) {
@@ -448,7 +448,7 @@ sub remove_other_profile {
         $app->run_callbacks('post_remove_profile.' . $type, $app, $user, $type, $ident);
         $page_author_id = $author_id;
     }
-    
+
     return $app->redirect($app->uri(
         mode => 'other_profiles',
         args => { id => ($page_author_id || $app->user->id), removed => 1 },
@@ -529,7 +529,7 @@ sub fix_netflix_recent_prefix_thumb {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the 'Shipped:' or 'Received:' prefix.
     $item->{title} =~ s{ \A [^:]*: \s* }{}xms;
-    
+
     # Extract thumbnail from description.
     my $thumb = delete $item->{thumbnail};
     if ($thumb =~ m/ <img src="([^"]+)"} /xms) {
@@ -541,7 +541,7 @@ sub fix_netflix_queue_prefix_thumb {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the item number.
     $item->{title} =~ s{ \A \d+ [\W\S] \s* }{}xms;
-    
+
     # Extract thumbnail from description.
     my $thumb = delete $item->{thumbnail};
     if ($thumb =~ m/ <img src="([^"]+)"} /xms) {
@@ -558,7 +558,7 @@ sub fix_kongregate_achievement_title_thumb {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the parenthetical from the end of the title.
     $item->{title} =~ s{ \( [^)]* \) \z }{}xms;
-    
+
     # Pick the actual achievement badge out of the inline CSS.
     my $thumb = delete $item->{thumbnail};
     if ($thumb =~ m{ background-image: \s* url\( ([^)]+) }xms) {

@@ -174,7 +174,7 @@ sub classes_for_type {
     while (my ($stream_id, $stream) = each %$prevt) {
         next if 'HASH' ne ref $stream;
         next if !$stream->{class} && !$stream->{url};
-    
+
         my $pkg;
         if ($pkg = $stream->{class}) {
             $pkg = join q{::}, $class, $pkg if $pkg && $pkg !~ m{::}xms;
@@ -267,7 +267,7 @@ sub fetch_xpath {
             if ($key eq 'tags') {
                 my @outvals = $item->findnodes($val)
                     or next VALUE;
-                    
+
                 $item_data{$key} = [ map { $_->getNodeValue } @outvals ];
             }
             else {
@@ -293,7 +293,7 @@ sub fetch_xpath {
 sub build_results {
     my $class = shift;
     my %params = @_;
-    
+
     my ($author, $items, $profile, $stream) =
         @params{qw( author items profile stream )};
 
@@ -331,7 +331,7 @@ sub build_results {
 
         $mt->run_callbacks('post_build_action_streams_event.'
             . $class->class_type, $mt, $item, $event, $author, $profile);
-        
+
         $event->save() or MT->log($event->errstr);
     }
 
@@ -360,7 +360,7 @@ sub fetch_scraper {
             }
         }
     }
-    
+
     return $items;
 }
 
