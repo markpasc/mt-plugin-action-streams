@@ -490,7 +490,7 @@ sub fix_twitter_tweet_name {
     # Remove the Twitter username from the front of the tweet.
     my $ident = $profile->{ident};
     for my $field (qw( tweet title )) {
-        $item->{$field} =~ s{ \A \s* \Q$ident\E : \s* }{}xms;
+        $item->{$field} =~ s{ \A \s* \Q$ident\E : \s* }{}xmsi;
     }
 }
 
