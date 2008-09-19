@@ -446,11 +446,11 @@ action_streams:
             xpath:
                 foreach: //color
                 get:
-                    title: title/child::text()
-                    url: url/child::text()
-                    identifier: url/child::text()
-                    created_on: dateCreated/child::text()
-                    thumbnail: imageUrl/child::text()
+                    title: title
+                    url: url
+                    identifier: url
+                    created_on: dateCreated
+                    thumbnail: imageUrl
         palettes:
             name: Palettes
             description: Palettes you saved
@@ -464,11 +464,11 @@ action_streams:
             xpath:
                 foreach: //palette
                 get:
-                    title: title/child::text()
-                    url: url/child::text()
-                    identifier: url/child::text()
-                    created_on: dateCreated/child::text()
-                    thumbnail: imageUrl/child::text()
+                    title: title
+                    url: url
+                    identifier: url
+                    created_on: dateCreated
+                    thumbnail: imageUrl
         patterns:
             name: Patterns
             description: Patterns you saved
@@ -482,11 +482,11 @@ action_streams:
             xpath:
                 foreach: //pattern
                 get:
-                    title: title/child::text()
-                    url: url/child::text()
-                    identifier: url/child::text()
-                    created_on: dateCreated/child::text()
-                    thumbnail: imageUrl/child::text()
+                    title: title
+                    url: url
+                    identifier: url
+                    created_on: dateCreated
+                    thumbnail: imageUrl
         favpalettes:
             name: Favorite Palettes
             description: Palettes you saved as favorites
@@ -545,9 +545,9 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    created_on: dc:date/child::text()
-                    title: title/child::text()
-                    url: link/child::text()
+                    created_on: dc:date
+                    title: title
+                    url: link
     digg:
         links:
             name: Dugg
@@ -563,9 +563,9 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    created_on: pubDate/child::text()
-                    title: title/child::text()
-                    url: link/child::text()
+                    created_on: pubDate
+                    title: title
+                    url: link
         submitted:
             name: Submissions
             description: Links you submitted
@@ -580,9 +580,9 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    created_on: pubDate/child::text()
-                    title: title/child::text()
-                    url: link/child::text()
+                    created_on: pubDate
+                    title: title
+                    url: link
     flickr:
         favorites:
             name: Favorites
@@ -595,8 +595,8 @@ action_streams:
                 - title
             url: 'http://api.flickr.com/services/feeds/photos_faves.gne?nsid={{ident}}&lang=en-us&format=atom_10'
             atom:
-                thumbnail: content/child::text()
-                by: author/name/child::text()
+                thumbnail: content
+                by: author/name
         photos:
             name: Photos
             description: Photos you posted
@@ -606,7 +606,7 @@ action_streams:
                 - title
             url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
             atom:
-                thumbnail: content/child::text()
+                thumbnail: content
     friendfeed:
         likes:
             name: Likes
@@ -659,11 +659,11 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    title: title/child::text()
-                    url: link/child::text()
-                    created_on: pubDate/child::text()
-                    modified_on: pubDate/child::text()
-                    by: author_name/child::text()
+                    title: title
+                    url: link
+                    created_on: pubDate
+                    modified_on: pubDate
+                    by: author_name
         reading:
             name: Reading
             description: Books on your "currently-reading" shelf
@@ -679,11 +679,11 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    title: title/child::text()
-                    url: link/child::text()
-                    created_on: pubDate/child::text()
-                    modified_on: pubDate/child::text()
-                    by: author_name/child::text()
+                    title: title
+                    url: link
+                    created_on: pubDate
+                    modified_on: pubDate
+                    by: author_name
         read:
             name: Read
             description: Books on your "read" shelf
@@ -699,11 +699,11 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    title: title/child::text()
-                    url: link/child::text()
-                    created_on: pubDate/child::text()
-                    modified_on: pubDate/child::text()
-                    by: author_name/child::text()
+                    title: title
+                    url: link
+                    created_on: pubDate
+                    modified_on: pubDate
+                    by: author_name
     googlereader:
         shared:
             name: Shared
@@ -863,7 +863,7 @@ action_streams:
             url: 'http://pipes.yahoo.com/pipes/pipe.run?_id=4smlkvMW3RGPpBPfTqoASA&_render=rss&lastFM_UserName={{ident}}'
             identifier: url
             rss:
-                artist: description/child::text()
+                artist: description
         journalentries:
             name: Journal Entries
             description: Your recent journal entries
@@ -916,7 +916,7 @@ action_streams:
                 - title
             url: 'http://rss.netflix.com/QueueRSS?id={{ident}}'
             rss:
-                thumbnail: description/child::text()
+                thumbnail: description
         recent:
             name: Recent Movies
             description: Recent Rental Activity
@@ -928,7 +928,7 @@ action_streams:
                 - title
             url: 'http://rss.netflix.com/TrackingRSS?id={{ident}}'
             rss:
-                thumbnail: description/child::text()
+                thumbnail: description
     netvibes:
         links:
             name: Links
@@ -955,11 +955,11 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    created_on: pubDate/child::text()
-                    title: title/child::text()
-                    guid: guid/child::text()
-                    url: link/child::text()
-                    album_art: pandora:albumArtUrl/child::text()
+                    created_on: pubDate
+                    title: title
+                    guid: guid
+                    url: link
+                    album_art: pandora:albumArtUrl
         favoriteartists:
             name: Favorite Artists
             description: Artists you marked as favorites
@@ -975,11 +975,11 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    created_on: pubDate/child::text()
-                    title: title/child::text()
-                    guid: guid/child::text()
-                    url: link/child::text()
-                    artist-photo-url: pandora:stationImageUrl/child::text()
+                    created_on: pubDate
+                    title: title
+                    guid: guid
+                    url: link
+                    artist-photo-url: pandora:stationImageUrl
         stations:
             name: Stations
             description: Radio stations you added
@@ -995,11 +995,11 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    created_on: pubDate/child::text()
-                    title: title/child::text()
-                    guid: guid/child::text()
-                    url: pandora:stationLink/child::text()
-                    station-image-url: pandora:stationImageUrl/child::text()
+                    created_on: pubDate
+                    title: title
+                    guid: guid
+                    url: pandora:stationLink
+                    station-image-url: pandora:stationImageUrl
     picasaweb:
         photos:
             name: Photos
@@ -1021,7 +1021,7 @@ action_streams:
                 - title
             url: 'http://p0pulist.com/list/hot_list/{{ident}}.rss'
             rss:
-                thumbnail: image/url/child::text()
+                thumbnail: image/url
     pownce:
         notes:
             name: Notes
@@ -1034,7 +1034,7 @@ action_streams:
                 - note
             url: 'http://pownce.com/feeds/public/{{ident}}/'
             atom:
-                note: summary/child::text()
+                note: summary
     smugmug:
         photos:
             name: Photos
@@ -1044,7 +1044,7 @@ action_streams:
                 - url
             url: 'http://www.smugmug.com/hack/feed.mg?Type=nicknameRecentPhotos&Data={{ident}}&format=atom10&ImageCount=15'
             atom:
-                thumbnail: id/child::text()
+                thumbnail: id
     steam:
         achievements:
             name: Achievements
@@ -1073,7 +1073,7 @@ action_streams:
                 - tweet
             url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
             atom:
-                tweet: title/child::text()
+                tweet: title
         favorites:
             name: Favorites
             description: Public tweets you saved as favorites
@@ -1124,11 +1124,11 @@ action_streams:
                 foreach: //item
                 get:
                     title: xCal:summary
-                    url: link/child::text()
-                    created_on: dc:date/child::text()
-                    modified_on: dc:date/child::text()
-                    venue: 'xCal:x-calconnect-venue/xCal:adr/xCal:x-calconnect-venue-name/child::text()'
-                    identifier: guid/child::text()
+                    url: link
+                    created_on: dc:date
+                    modified_on: dc:date
+                    venue: 'xCal:x-calconnect-venue/xCal:adr/xCal:x-calconnect-venue-name'
+                    identifier: guid
     viddler:
         videos:
             name: Videos
@@ -1194,9 +1194,9 @@ action_streams:
             url: 'http://www.wists.com/{{ident}}?out=rdf'
             identifier: url
             rss:
-                created_on: dc:date/child::text()
-                tags: dc:tag/child::text()
-                thumbnail: content:encoded/child::text()
+                created_on: dc:date
+                tags: dc:tag
+                thumbnail: content:encoded
     xboxlive:
         gamerscore:
             name: Gamerscore
@@ -1212,7 +1212,7 @@ action_streams:
                 - title
             url: 'http://www.yelp.com/syndicate/user/{{ident}}/atom.xml'
             atom:
-                review: title/child::text()
+                review: title
                 url: link/@href
     youtube:
         favorites:
@@ -1226,7 +1226,7 @@ action_streams:
                 - title
             url: 'http://gdata.youtube.com/feeds/users/{{ident}}/favorites'
             atom:
-                by: author/name/child::text()
+                by: author/name
                 url: "link[@rel='alternate' and @type='text/html']/@href"
                 thumbnail: "media:group/media:thumbnail[position()=1]/@url"
                 created_on: ''
@@ -1253,5 +1253,5 @@ action_streams:
             xpath:
                 foreach: //item
                 get:
-                    identifier: link/child::text()
+                    identifier: link
                     thumbnail: media:content/@url

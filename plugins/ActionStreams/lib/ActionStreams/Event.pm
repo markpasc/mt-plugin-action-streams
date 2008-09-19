@@ -72,11 +72,11 @@ sub update_events {
     }
     elsif (my $atom_params = $stream->{atom}) {
         my $get = {
-            created_on => 'published/child::text()',
-            modified_on => 'updated/child::text()',
-            title => 'title/child::text()',
-            url => q{link[@rel='alternate']/@href},
-            identifier => 'id/child::text()',
+            created_on  => 'published',
+            modified_on => 'updated',
+            title       => 'title',
+            url         => q{link[@rel='alternate']/@href},
+            identifier  => 'id',
         };
         $atom_params = {} if !ref $atom_params;
         @$get{keys %$atom_params} = values %$atom_params;
@@ -96,10 +96,10 @@ sub update_events {
     }
     elsif (my $rss_params = $stream->{rss}) {
         my $get = {
-            title => 'title/child::text()',
-            url => 'link/child::text()',
-            created_on => 'pubDate/child::text()',
-            identifier => 'guid/child::text()',
+            title      => 'title',
+            url        => 'link',
+            created_on => 'pubDate',
+            identifier => 'guid',
         };
         $rss_params = {} if !ref $rss_params;
         @$get{keys %$rss_params} = values %$rss_params;
