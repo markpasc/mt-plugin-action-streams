@@ -972,19 +972,15 @@ sub update_events_for_profile {
     my $mt = MT->app;
     $mt->run_callbacks('pre_update_action_streams_profile.' . $profile->{type},
         $mt, $author, $profile);
-    my $warn = $SIG{__WARN__} || sub { print STDERR $_[0] };
-    my $author_name = $author->name;
+    require ActionStreams::Worker;
     EVENTCLASS: for my $event_class (@event_classes) {
         next EVENTCLASS if !$streams->{$event_class->class_type};
 
-        local $SIG{__WARN__} = sub { my ($msg) = @_; $msg =~ s{ (?=\n \z) }{updating $type events for $author_name}xms; $warn->($msg) };
-        eval {
-            $event_class->update_events( author => $author, %$profile );
-        };
-        MT->log('Error updating events for ' . $author->name . q{'s }
-            . $event_class->properties->{class_type} . ' stream '
-            . '(type ' . $profile->{type} . ' ident ' . $profile->{ident}
-            . '): ' . $@) if $@;
+        ActionStreams::Worker->make_work(
+            author      => $author,
+            event_class => $event_class,
+            %$profile,
+        );
     }
     $mt->run_callbacks('post_update_action_streams_profile.' . $profile->{type},
         $mt, $author, $profile);

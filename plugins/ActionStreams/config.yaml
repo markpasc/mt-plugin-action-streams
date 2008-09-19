@@ -84,6 +84,10 @@ tasks:
         frequency: 1800
         label: Poll for new events
         code: $ActionStreams::ActionStreams::Plugin::update_events
+task_workers:
+    UpdateEvents:
+        label: Update Events
+        class: ActionStreams::Worker
 widgets:
     asotd:
         label: Recent Actions
