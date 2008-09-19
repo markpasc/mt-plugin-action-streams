@@ -8,7 +8,7 @@ use HTTP::Date qw( str2time );
 
 use ActionStreams::Scraper;
 
-our $hide_if_first_update = 0;
+our $first_update = 0;
 
 __PACKAGE__->install_properties({
     column_defs => {
@@ -47,6 +47,35 @@ sub as_html {
     return MT->translate($stream->{html_form} || '',
         MT::Util::encode_html($event->author->nickname),
         map { MT::Util::encode_html($event->$_()) } @{ $stream->{html_params} });
+}
+
+sub update_events_safely {
+    my $class = shift;
+    my %profile = @_;
+
+    my $warn = $SIG{__WARN__} || sub { print STDERR $_[0] };
+    local $SIG{__WARN__} = sub {
+        my ($msg) = @_;
+        $msg =~ s{ \n \z }{}xms;
+        $msg = MT->component('ActionStreams')->translate(
+            '[_1] updating [_2] events for [_3]',
+            $msg, $profile{type}, $profile{author}->name,
+        );
+        $warn->("$msg\n");
+    };
+
+    eval {
+        $class->update_events(%profile);
+    };
+
+    if (my $err = $@) {
+        my $plugin = MT->component('ActionStreams');
+        my $err_msg = $plugin->translate("Error updating events for [_1]'s [_2] stream (type [_3] ident [_4]): [_5]",
+            $profile{author}->name, $class->properties->{class_type},
+            $profile{type}, $profile{ident}, $err);
+        MT->log($err_msg);
+        die $err;  # re-throw so we can handle from job invocation
+    }
 }
 
 sub update_events {
@@ -325,7 +354,7 @@ sub build_results {
             %$item,
         });
         $event->tags(@$tags) if $tags;
-        if ($hide_if_first_update && !$event->created_on) {
+        if ($first_update && !$event->created_on) {
             $event->visible(0);
         }
 

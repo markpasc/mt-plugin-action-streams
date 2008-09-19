@@ -458,7 +458,7 @@ sub remove_other_profile {
 sub first_profile_update {
     my ($cb, $app, $user, $profile) = @_;
     require ActionStreams::Event;
-    local $ActionStreams::Event::hide_if_first_update = 1;
+    local $ActionStreams::Event::first_update = 1;
     update_events_for_profile($user, $profile);
 }
 
@@ -972,15 +972,25 @@ sub update_events_for_profile {
     my $mt = MT->app;
     $mt->run_callbacks('pre_update_action_streams_profile.' . $profile->{type},
         $mt, $author, $profile);
-    require ActionStreams::Worker;
     EVENTCLASS: for my $event_class (@event_classes) {
         next EVENTCLASS if !$streams->{$event_class->class_type};
 
-        ActionStreams::Worker->make_work(
-            author      => $author,
-            event_class => $event_class,
-            %$profile,
-        );
+        if ($ActionStreams::Event::first_update) {
+            # Do the first update synchronously.
+            $event_class->update_events_safely(
+                author => $author,
+                %$profile,
+            );
+        }
+        else {
+            # Defer regular updates to job workers.
+            require ActionStreams::Worker;
+            ActionStreams::Worker->make_work(
+                event_class => $event_class,
+                author      => $author,
+                %$profile,
+            );
+        }
     }
     $mt->run_callbacks('post_update_action_streams_profile.' . $profile->{type},
         $mt, $author, $profile);
