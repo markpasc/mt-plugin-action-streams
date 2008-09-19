@@ -1041,6 +1041,79 @@ action_streams:
             url: 'http://pownce.com/feeds/public/{{ident}}/'
             atom:
                 note: summary
+    reddit:
+        comments:
+            name: Comments
+            description: Comments you posted
+            html_form: '[_1] commented on <a href="[_2]">[_3]</a> at Reddit'
+            html_params:
+                - url
+                - title
+            url: 'http://www.reddit.com/user/{{ident}}/comments/'
+            identifier: title
+            scraper:
+                foreach: 'a.title'
+                get:
+                    title:
+                        - a
+                        - TEXT
+                    url:
+                        - a
+                        - '@href'
+        submitted:
+            name: Submissions
+            description: Articles you submitted
+            html_form: '[_1] submitted <a href="[_2]">[_3]</a> to Reddit'
+            html_params:
+                - url
+                - title
+            url: 'http://www.reddit.com/user/{{ident}}/submitted/'
+            identifier: title
+            scraper:
+                foreach: 'a.title'
+                get:
+                    title:
+                        - a
+                        - TEXT
+                    url:
+                        - a
+                        - '@href'
+        favorites:
+            name: Likes
+            description: Articles you liked (your votes must be public)
+            html_form: '[_1] liked <a href="[_2]">[_3]</a> from Reddit'
+            html_params:
+                - url
+                - title
+            url: 'http://www.reddit.com/user/{{ident}}/liked/'
+            identifier: title
+            scraper:
+                foreach: 'a.title'
+                get:
+                    title:
+                        - a
+                        - TEXT
+                    url:
+                        - a
+                        - '@href'
+        dislikes:
+            name: Dislikes
+            description: Articles you disliked (your votes must be public)
+            html_form: '[_1] disliked <a href="[_2]">[_3]</a> on Reddit'
+            html_params:
+                - url
+                - title
+            url: 'http://www.reddit.com/user/{{ident}}/disliked/'
+            identifier: title
+            scraper:
+                foreach: 'a.title'
+                get:
+                    title:
+                        - a
+                        - TEXT
+                    url:
+                        - a
+                        - '@href'
     smugmug:
         photos:
             name: Photos
