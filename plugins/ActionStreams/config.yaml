@@ -196,6 +196,10 @@ profile_services:
         ident_label: User ID
         ident_example: 12345
         service_type: network
+    ffffound:
+        name: FFFFOUND!
+        url: http://ffffound.com/home/{{ident}}/found/
+        service_type: photos
     flickr:
         name: Flickr
         url: http://flickr.com/photos/{{ident}}/
@@ -589,6 +593,16 @@ action_streams:
                     created_on: pubDate
                     title: title
                     url: link
+    ffffound:
+        favorites:
+            name: Found
+            description: Photos you found
+            html_form: '[_1] ffffound <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: http://ffffound.com/home/{{ident}}/found/feed
+            rss: 1
     flickr:
         favorites:
             name: Favorites

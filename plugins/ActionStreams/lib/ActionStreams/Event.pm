@@ -128,6 +128,7 @@ sub update_events {
             title      => 'title',
             url        => 'link',
             created_on => 'pubDate',
+            thumbnail  => 'media:thumbnail/@url',
             identifier => 'guid',
         };
         $rss_params = {} if !ref $rss_params;
