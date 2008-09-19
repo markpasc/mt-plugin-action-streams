@@ -45,8 +45,9 @@ sub update_events {
     my $scraper = scraper {
         process q{//div[@class='achievementClosed']},
             'achvs[]' => scraper {
-                process 'h3', 'title' => 'TEXT';
-                process 'h5', 'description' => 'TEXT';
+                process 'h3',  'title'       => 'TEXT';
+                process 'h5',  'description' => 'TEXT';
+                process 'img', 'thumbnail'   => '@src';
             };
         result 'achvs';
     };
