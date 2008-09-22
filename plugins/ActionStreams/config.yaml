@@ -351,6 +351,9 @@ profile_services:
     skype:
         name: Skype
         url: callto://{{ident}}
+    slideshare:
+        name: SlideShare
+        url: http://www.slideshare.net/{{ident}}
     smugmug:
         name: Smugmug
         url: http://{{ident}}.smugmug.com/
@@ -1164,6 +1167,28 @@ action_streams:
                     url:
                         - a
                         - '@href'
+    slideshare:
+        favorites:
+            name: Favorites
+            description: Slideshows you saved as favorites
+            html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite slideshow'
+            html_params:
+                - url
+                - title
+            url: 'http://www.slideshare.net/rss/user/{{ident}}/favorites'
+            rss:
+                thumbnail: media:content/media:thumbnail/@url
+                created_on: ''
+        slideshows:
+            name: Slideshows
+            description: Slideshows you posted
+            html_form: '[_1] posted the slideshow <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://www.slideshare.net/rss/user/{{ident}}'
+            rss:
+                thumbnail: media:content/media:thumbnail/@url
     smugmug:
         photos:
             name: Photos
