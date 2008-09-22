@@ -35,6 +35,7 @@ callbacks:
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
     pre_build_action_streams_event.flickr_favorites: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
     pre_build_action_streams_event.gametap_scores: $ActionStreams::ActionStreams::Plugin::fix_gametap_score_stuff
+    pre_build_action_streams_event.identica_statuses: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
     pre_build_action_streams_event.iminta_links: $ActionStreams::ActionStreams::Plugin::fix_iminta_link_title
     pre_build_action_streams_event.iusethis_events: $ActionStreams::ActionStreams::Plugin::fix_iusethis_event_title
     pre_build_action_streams_event.netflix_recent: $ActionStreams::ActionStreams::Plugin::fix_netflix_recent_prefix_thumb
@@ -239,6 +240,10 @@ profile_services:
         ident_label: UIN
         ident_example: 12345
         service_type: contact
+    identica:
+        name: Identi.ca
+        url: http://identi.ca/{{ident}}
+        service_type: status
     iminta:
         name: Iminta
         url: http://iminta.com/people/{{ident}}
@@ -751,6 +756,15 @@ action_streams:
                     url:
                         - a
                         - '@href'
+    identica:
+        statuses:
+            name: Notices
+            description: Notices you posted
+            html_form: '[_1] <a href="[_2]">said</a>, &ldquo;[_3]&rdquo;'
+            url: 'http://identi.ca/{{ident}}/rss'
+            rss:
+                created_on: dc:date
+            class: Identica
     iminta:
         links:
             name: Intas

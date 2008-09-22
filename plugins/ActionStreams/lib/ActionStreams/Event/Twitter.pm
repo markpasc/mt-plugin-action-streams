@@ -8,7 +8,17 @@ use MT::Util qw( encode_url );
 sub profile_link_for_name {
     my $self = shift;
     my ($name) = @_;
-    return qq{<a href="http://twitter.com/$name">$name</a>};
+    my ($type, $stream) = split /_/, $self->properties->{class_type}, 2;
+
+    my $services = MT->instance->registry('profile_services')
+        or return $name;
+    my $service = $services->{$type}
+        or return $name;
+    my $url = $service->{url}
+        or return $name;
+
+    $url =~ s{ (?:\%s|\Q{{ident}}\E) }{$name}xmsg;
+    return qq{<a href="$url">$name</a>};
 }
 
 sub search_link_for_tag {
@@ -21,7 +31,7 @@ sub search_link_for_tag {
 sub autolink {
     my $self = shift;
     my ($text) = @_;
-    return '' unless defined $text;
+    return q{} unless defined $text;
 
     # autolink URLs
     $text =~ s{
