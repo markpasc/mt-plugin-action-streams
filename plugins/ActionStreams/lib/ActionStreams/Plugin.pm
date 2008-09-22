@@ -485,6 +485,18 @@ sub rebuild_action_stream_blogs {
     }
 }
 
+sub _twitter_add_tags_to_item {
+    my ($item) = @_;
+    if (my @tags = $item->{title} =~ m{
+        (?: \A | \s )  # BOT or whitespace
+        \#             # hash
+        (\w\S*\w)      # tag
+        (?<! 's )      # but don't end with 's
+    }xmsg) {
+        $item->{tags} = \@tags;
+    }
+}
+
 sub fix_twitter_tweet_name {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the Twitter username from the front of the tweet.
@@ -492,6 +504,7 @@ sub fix_twitter_tweet_name {
     for my $field (qw( tweet title )) {
         $item->{$field} =~ s{ \A \s* \Q$ident\E : \s* }{}xmsi;
     }
+    _twitter_add_tags_to_item($item);
 }
 
 sub fix_twitter_favorite_author {
@@ -500,6 +513,7 @@ sub fix_twitter_favorite_author {
     if ($item->{title} =~ s{ \A \s* ([^\s:]+) : \s* }{}xms) {
         $item->{tweet_author} = $1;
     }
+    _twitter_add_tags_to_item($item);
 }
 
 sub fix_flickr_photo_thumbnail {
