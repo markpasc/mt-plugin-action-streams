@@ -4,7 +4,7 @@ key: ActionStreams
 author_link: http://www.sixapart.com/
 author_name: Six Apart, Ltd.
 description: Manages authors' accounts and actions on sites elsewhere around the web
-schema_version: 9
+schema_version: 10
 version: 1.1
 plugin_link: http://www.sixapart.com/
 settings:
@@ -30,7 +30,7 @@ callbacks:
     MT::App::CMS::template_source.users_content_nav: $ActionStreams::ActionStreams::Plugin::users_content_nav
     MT::App::CMS::post_add_profile: $ActionStreams::ActionStreams::Plugin::first_profile_update
     post_action_streams_task: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
-    pre_build_action_streams_event.twitter_tweets: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
+    pre_build_action_streams_event.twitter_statuses: $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
     pre_build_action_streams_event.twitter_favorites: $ActionStreams::ActionStreams::Plugin::fix_twitter_favorite_author
     pre_build_action_streams_event.flickr_photos: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
     pre_build_action_streams_event.flickr_favorites: $ActionStreams::ActionStreams::Plugin::fix_flickr_photo_thumbnail
@@ -144,6 +144,9 @@ upgrade_functions:
             type: author
             label: 'Enabling default action streams for selected profiles...'
             code: $ActionStreams::ActionStreams::Plugin::upgrade_enable_existing_streams
+    reclass_actions:
+        version_limit: 10
+        handler: $ActionStreams::ActionStreams::Plugin::upgrade_reclass_actions
 
 profile_services:
     oneup:
@@ -1062,7 +1065,7 @@ action_streams:
             rss:
                 thumbnail: image/url
     pownce:
-        notes:
+        statuses:
             name: Notes
             description: Your public notes
             fields:
@@ -1173,19 +1176,16 @@ action_streams:
             url: 'http://{{ident}}.tumblr.com/rss'
             rss: 1
     twitter:
-        tweets:
+        statuses:
             name: Tweets
             description: Your public tweets
             class: TwitterTweet
-            fields:
-                - tweet
             html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
             html_params:
                 - url
-                - tweet
+                - title
             url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
-            atom:
-                tweet: title
+            atom: 1
         favorites:
             name: Favorites
             description: Public tweets you saved as favorites

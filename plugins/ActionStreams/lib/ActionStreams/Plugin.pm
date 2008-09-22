@@ -314,6 +314,32 @@ sub upgrade_enable_existing_streams {
     $author->save;
 }
 
+sub upgrade_reclass_actions {
+    my ($self, %param) = @_;
+
+    my $action_class = MT->model('profileevent');
+    my $driver = $action_class->driver;
+    my $dbd = $driver->dbd;
+    my $dbh = $driver->rw_handle;
+    my $class_col = $dbd->db_column_name($action_class->datasource, 'class');
+
+    my %reclasses = (
+        'twitter_tweets' => 'twitter_statuses',
+        'pownce_notes'   => 'pownce_notes',
+    );
+
+    while (my ($old_class, $new_class) = each %reclasses) {
+        my $stmt = $dbd->sql_class->new;
+        $stmt->add_where( $class_col => $old_class );
+        my $sql = join q{ }, 'UPDATE', $driver->table_for($action_class),
+            'SET', $class_col, '= ?', $stmt->as_sql_where();
+        $dbh->do($sql, {}, $new_class, @{ $stmt->{bind} })
+            or die $dbh->errstr;
+    }
+
+    return 0;  # done
+}
+
 sub other_profiles {
     my( $app ) = @_;
 
@@ -501,9 +527,7 @@ sub fix_twitter_tweet_name {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the Twitter username from the front of the tweet.
     my $ident = $profile->{ident};
-    for my $field (qw( tweet title )) {
-        $item->{$field} =~ s{ \A \s* \Q$ident\E : \s* }{}xmsi;
-    }
+    $item->{title} =~ s{ \A \s* \Q$ident\E : \s* }{}xmsi;
     _twitter_add_tags_to_item($item);
 }
 

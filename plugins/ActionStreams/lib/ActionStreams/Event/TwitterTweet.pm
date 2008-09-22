@@ -4,14 +4,10 @@ use strict;
 use base qw( ActionStreams::Event ActionStreams::Event::Twitter );
 
 __PACKAGE__->install_properties({
-    class_type => 'twitter_tweets',
+    class_type => 'twitter_statuses',
 });
 
-__PACKAGE__->install_meta({
-    columns => [ qw(
-        tweet
-    ) ],
-});
+sub tweet { return $_[0]->title(@_) }
 
 sub as_html {
     my $event = shift;
@@ -19,8 +15,7 @@ sub as_html {
     return MT->translate($stream->{html_form} || '',
         MT::Util::encode_html($event->author->nickname),
         MT::Util::encode_html( $event->url ),
-        $event->autolink( MT::Util::encode_html( $event->tweet ) ) );
+        $event->autolink( MT::Util::encode_html( $event->title ) ) );
 }
 
 1;
-
