@@ -8,7 +8,7 @@ use HTTP::Date qw( str2time );
 
 use ActionStreams::Scraper;
 
-our $first_update = 0;
+our $hide_timeless = 0;
 
 __PACKAGE__->install_properties({
     column_defs => {
@@ -52,6 +52,10 @@ sub as_html {
 sub update_events_safely {
     my $class = shift;
     my %profile = @_;
+
+    # Keep this option out of band so we don't have to count on
+    # implementations of update_events() passing it through.
+    local $hide_timeless = delete $profile{hide_timeless} ? 1 : 0;
 
     my $warn = $SIG{__WARN__} || sub { print STDERR $_[0] };
     local $SIG{__WARN__} = sub {
@@ -355,7 +359,7 @@ sub build_results {
             %$item,
         });
         $event->tags(@$tags) if $tags;
-        if ($first_update && !$event->created_on) {
+        if ($hide_timeless && !$event->created_on) {
             $event->visible(0);
         }
 

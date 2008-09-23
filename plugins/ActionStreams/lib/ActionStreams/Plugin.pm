@@ -365,6 +365,7 @@ sub other_profiles {
         listing_screen => 1,
         added          => $app->param('added')   ? 1 : 0,
         removed        => $app->param('removed') ? 1 : 0,
+        updated        => $app->param('updated') ? 1 : 0,
         _build_service_data(
             networks => $app->registry('profile_services'),
         ),
@@ -481,11 +482,42 @@ sub remove_other_profile {
     ));
 }
 
+sub itemset_update_profiles {
+    my $app = shift;
+
+    my %users;
+    my $page_author_id;
+    PROFILE: for my $profile ($app->param('id')) {
+        my ($author_id, $type, $ident) = split /:/, $profile, 3;
+
+        my $user = ($users{$author_id} ||= MT->model('author')->load($author_id))
+            or next PROFILE;
+        next PROFILE
+            if $app->user->id != $author_id && !$app->user->is_superuser();
+
+        my $profiles = $user->other_profiles($type);
+        if (!$profiles) {
+            next PROFILE;
+        }
+        my @profiles = grep { $_->{ident} eq $ident } @$profiles;
+        for my $author_profile (@profiles) {
+            update_events_for_profile($user, $author_profile,
+                synchronous => 1);
+        }
+
+        $page_author_id = 1;
+    }
+
+    return $app->redirect($app->uri(
+        mode => 'other_profiles',
+        args => { id => ($page_author_id || $app->user->id), updated => 1 },
+    ));
+}
+
 sub first_profile_update {
     my ($cb, $app, $user, $profile) = @_;
-    require ActionStreams::Event;
-    local $ActionStreams::Event::first_update = 1;
-    update_events_for_profile($user, $profile);
+    update_events_for_profile($user, $profile,
+        synchronous => 1, hide_timeless => 1);
 }
 
 sub rebuild_action_stream_blogs {
@@ -978,9 +1010,7 @@ sub widget_blog_dashboard_only {
 }
 
 sub update_events {
-    require ActionStreams::Event;
     my $mt = MT->app;
-
     $mt->run_callbacks('pre_action_streams_task', $mt);
 
     my $author_iter = MT::Author->search({ type => MT::Author->AUTHOR() });
@@ -999,11 +1029,12 @@ sub update_events {
 }
 
 sub update_events_for_profile {
-    my ($author, $profile) = @_;
+    my ($author, $profile, %param) = @_;
     my $type = $profile->{type};
     my $streams = $profile->{streams};
     return if !$streams || !%$streams;
 
+    require ActionStreams::Event;
     my @event_classes = ActionStreams::Event->classes_for_type($type)
       or return;
 
@@ -1013,10 +1044,10 @@ sub update_events_for_profile {
     EVENTCLASS: for my $event_class (@event_classes) {
         next EVENTCLASS if !$streams->{$event_class->class_type};
 
-        if ($ActionStreams::Event::first_update) {
-            # Do the first update synchronously.
+        if ($param{synchronous}) {
             $event_class->update_events_safely(
-                author => $author,
+                author        => $author,
+                hide_timeless => $param{hide_timeless} ? 1 : 0,
                 %$profile,
             );
         }

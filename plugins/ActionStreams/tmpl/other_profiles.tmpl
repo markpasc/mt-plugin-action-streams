@@ -55,6 +55,13 @@ function verifyDelete( delete_item ){
             <__trans phrase="The selected profiles were removed.">
         </mtapp:statusmsg>
     </mt:if>
+    <mt:if name="updated">
+        <mtapp:statusmsg
+            id="updated"
+            class="success">
+            <__trans phrase="The selected profiles were scanned for updates.">
+        </mtapp:statusmsg>
+    </mt:if>
 </mt:setvarblock>
 
 <mt:setvarblock name="content_nav">
@@ -75,6 +82,10 @@ function verifyDelete( delete_item ){
         accesskey="x"
         title="<__trans phrase="Delete selected profiles (x)">"
         ><__trans phrase="Delete"></a>
+    <a href="javascript:void(0)"
+        onclick="doForMarkedInThisWindow(getByID('profile-listing-form'), '<__trans phrase="profile">', '<__trans phrase="profiles">', 'id', 'itemset_update_profiles'); return false"
+        title="<__trans phrase="Scan now for new actions">"
+        ><__trans phrase="Update Now"></a>
 </mt:setvarblock>
 <mt:var name="position_actions_top" value="1">
 

@@ -22,6 +22,7 @@ applications:
             dialog_add_profile:      $ActionStreams::ActionStreams::Plugin::dialog_add_profile
             add_other_profile:       $ActionStreams::ActionStreams::Plugin::add_other_profile
             remove_other_profile:    $ActionStreams::ActionStreams::Plugin::remove_other_profile
+            itemset_update_profiles: $ActionStreams::ActionStreams::Plugin::itemset_update_profiles
             itemset_hide_events:     $ActionStreams::ActionStreams::Plugin::itemset_hide_events
             itemset_show_events:     $ActionStreams::ActionStreams::Plugin::itemset_show_events
             itemset_hide_all_events: $ActionStreams::ActionStreams::Plugin::itemset_hide_all_events
