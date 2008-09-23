@@ -62,6 +62,13 @@ function verifyDelete( delete_item ){
             <__trans phrase="The selected profiles were scanned for updates.">
         </mtapp:statusmsg>
     </mt:if>
+    <mt:if name="edited">
+        <mtapp:statusmsg
+            id="edited"
+            class="success">
+            <__trans phrase="The changes to the profile have been saved.">
+        </mtapp:statusmsg>
+    </mt:if>
 </mt:setvarblock>
 
 <mt:setvarblock name="content_nav">
@@ -106,7 +113,7 @@ function verifyDelete( delete_item ){
 
     <tr class="<mt:if __odd__>odd<mt:else>even</mt:if>">
         <td class="cb"><input type="checkbox" name="id" class="select" value="<mt:var name="edit_author_id" escape="html">:<mt:var name="type" escape="html">:<mt:var name="ident" escape="html">" /></td>
-        <td class="service network"><span class="service-icon service-<mt:var name="type">"><mt:var name="label" escape="html"></span></td>
+        <td class="service network"><span class="service-icon service-<mt:var name="type">"><a href="javascript:void(0)" onclick="return openDialog(this.form, 'dialog_edit_profile', 'author_id=<mt:var name="edit_author_id">&amp;profile_type=<mt:var name="type" escape="url">&amp;profile_ident=<mt:var name="ident" escape="url">&amp;return_args=<mt:var name="return_args" escape="url">%26author_id=<mt:var name="edit_author_id">')"><mt:var name="label" escape="html"></a></span></td>
         <td class="userid"><mt:var name="ident" escape="html"></td>
         <td class="view si status-view">
             <a href="<mt:var name="uri" escape="html">" target="<__trans phrase="external_link_target">" title="<__trans phrase="View Profile">"><img src="<mt:var name="static_uri">images/spacer.gif" alt="<__trans phrase="View Profile">" width="13" height="9" /></a>

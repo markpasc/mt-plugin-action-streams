@@ -1,4 +1,4 @@
-<mt:setvarblock name="page_title"><__trans phrase="Add Profile"></mt:setvarblock>
+<mt:setvarblock name="page_title"><__trans phrase="Edit Profile"></mt:setvarblock>
 <mt:setvarblock name="html_head" append="1">
     <link rel="stylesheet" type="text/css" href="<mt:var name="static_uri">plugins/ActionStreams/css/action-streams.css" />
 
@@ -33,32 +33,22 @@
 <script type="text/javascript" src="<mt:var name="static_uri">js/tc/client.js"></script>
 <script type="text/javascript" src="<mt:var name="static_uri">js/dialog.js"></script>
 
-<div class="modal_width" id="add-profile">
+<div class="modal_width" id="edit-profile">
 
-<p>Add a profile on a social networking or instant messaging service.</p>
+<p>Edit a profile on a social networking or instant messaging service.</p>
 
-<form id="add-network" method="post" action="<mt:var name="script_url">" onsubmit="return validate(this)" target="_top">
-    <input type="hidden" name="__mode" value="add_other_profile" />
+<form id="edit-network" method="post" action="<mt:var name="script_url">" onsubmit="return validate(this)" target="_top">
+    <input type="hidden" name="__mode" value="edit_other_profile" />
     <input type="hidden" name="author_id" value="<mt:var name="edit_author_id">" />
+    <input type="hidden" name="original_ident" value="<mt:var name="edit_ident" escape="html">" />
     <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
 
     <mtapp:setting
         id="profile_type"
         label="<__trans phrase="Service">"
-        hint="<__trans phrase="Select a service where you already have an account.">"
-        show_hint="1"
         content_class="field-content-text">
-        <select name="profile_type" id="profile_type">
-            <mt:loop name="networks">
-                <mt:if name="user_has_account">
-                    <mt:if name="can_many">
-                        <option value="<mt:var name="type" escape="html">"><mt:var name="label" escape="html"></option>
-                    </mt:if>
-                <mt:else>
-                    <option value="<mt:var name="type" escape="html">"><mt:var name="label" escape="html"></option>
-                </mt:if>
-            </mt:loop>
-        </select>
+        <strong><mt:var name="edit_type_name" escape="html"></strong>
+        <input type="hidden" name="profile_type" id="profile_type" value="<mt:var name="edit_type" escape="html">" />
     </mtapp:setting>
 
     <script type="text/javascript">
@@ -78,6 +68,12 @@
                 </mt:if>
                 label: '<mt:var name="ident_label" escape="js">'
             }<mt:unless var="__last__">,</mt:unless>
+            </mt:loop>
+        };
+
+        var edit_streams = {
+            <mt:loop name="edit_streams">
+            'stream_<mt:var name="__key__" escape="js">': '<mt:var name="__value__" escape="js">'<mt:unless name="__last__">,</mt:unless>
             </mt:loop>
         };
 
@@ -119,7 +115,8 @@
             var stream_boxes = streams.getElementsByTagName('input');
             for (var i = 0; i < stream_boxes.length; i++) {
                 if (stream_boxes[i].type != 'checkbox') continue;
-                stream_boxes[i].checked = true;
+                if (edit_streams[ stream_boxes[i].name ])
+                    stream_boxes[i].checked = true;
             }
 
             var icon = getByID('profile-id-service-icon');
@@ -148,7 +145,7 @@
         content_class="field-content-text">
         <span id="profile-id-service-icon" class="service-icon">
             <span id="profile_id-prefix"></span>
-            <input type="text" name="profile_id" size="30" value="" />
+            <input type="text" name="profile_id" size="30" value="<mt:var name="edit_ident" escape="html">" />
             <span id="profile_id-suffix"></span>
         </span>
     </mtapp:setting>
@@ -186,9 +183,9 @@
         <button
             type="submit"
             accesskey="s"
-            title="<__trans phrase="Add Service (s)">"
+            title="<__trans phrase="Save Changes (s)">"
             class="primary-button"
-            ><__trans phrase="Add Service"></button>
+            ><__trans phrase="Save Changes"></button>
         <button
             onclick="closeDialog(); return false"
             type="submit"

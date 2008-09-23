@@ -19,8 +19,10 @@ applications:
         methods:
             list_profileevent:       $ActionStreams::ActionStreams::Plugin::list_profileevent
             other_profiles:          $ActionStreams::ActionStreams::Plugin::other_profiles
-            dialog_add_profile:      $ActionStreams::ActionStreams::Plugin::dialog_add_profile
+            dialog_add_profile:      $ActionStreams::ActionStreams::Plugin::dialog_add_edit_profile
+            dialog_edit_profile:     $ActionStreams::ActionStreams::Plugin::dialog_add_edit_profile
             add_other_profile:       $ActionStreams::ActionStreams::Plugin::add_other_profile
+            edit_other_profile:      $ActionStreams::ActionStreams::Plugin::edit_other_profile
             remove_other_profile:    $ActionStreams::ActionStreams::Plugin::remove_other_profile
             itemset_update_profiles: $ActionStreams::ActionStreams::Plugin::itemset_update_profiles
             itemset_hide_events:     $ActionStreams::ActionStreams::Plugin::itemset_hide_events

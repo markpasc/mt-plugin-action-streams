@@ -358,21 +358,21 @@ sub other_profiles {
     my @profiles = sort { lc $a->{label} cmp lc $b->{label} }
         @{ $user->other_profiles || [] };
 
+    my %messages = map { $_ => $app->param($_) ? 1 : 0 }
+        (qw( added removed updated edited ));
     return $app->build_page( $tmpl, {
         id             => $user->id,
         edit_author_id => $user->id,
         profiles       => \@profiles,
         listing_screen => 1,
-        added          => $app->param('added')   ? 1 : 0,
-        removed        => $app->param('removed') ? 1 : 0,
-        updated        => $app->param('updated') ? 1 : 0,
         _build_service_data(
             networks => $app->registry('profile_services'),
         ),
+        %messages,
     } );
 }
 
-sub dialog_add_profile {
+sub dialog_add_edit_profile {
     my ($app) = @_;
 
     return $app->error('Not permitted to view')
@@ -380,8 +380,25 @@ sub dialog_add_profile {
     my $author = MT->model('author')->load($app->param('author_id'))
         or return $app->error('No such author [_1]', $app->param('author_id'));
 
+    my %edit_profile;
+    my $tmpl_name = 'dialog_add_profile.tmpl';
+    if (my $edit_type = $app->param('profile_type')) {
+        my $ident = $app->param('profile_ident') || q{};
+        my ($profile) = grep { $_->{ident} eq $ident }
+            @{ $author->other_profiles($edit_type) };
+
+        %edit_profile = (
+            edit_type      => $edit_type,
+            edit_type_name => $app->registry('profile_services', $edit_type, 'name'),
+            edit_ident     => $ident,
+            edit_streams   => $profile->{streams} || [],
+        );
+
+        $tmpl_name = 'dialog_edit_profile.tmpl';
+    }
+
     my $plugin = MT->component('ActionStreams');
-    my $tmpl = $plugin->load_tmpl('dialog_add_profile.tmpl');
+    my $tmpl = $plugin->load_tmpl($tmpl_name);
 
     return $app->build_page($tmpl, {
         edit_author_id => $app->param('author_id'),
@@ -390,11 +407,32 @@ sub dialog_add_profile {
             streams  => $app->registry('action_streams'),
             author   => $author,
         ),
+        %edit_profile,
     });
 }
 
+sub edit_other_profile {
+    my $app = shift;
+    $app->validate_magic() or return;
+
+    my $author_id = $app->param('author_id')
+        or return $app->error('Author id is required');
+    my $user = MT->model('author')->load($author_id)
+        or return $app->error('Author id is invalid');
+    return $app->error('Not permitted to edit')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
+
+    my $type = $app->param('profile_type');
+    my $orig_ident = $app->param('original_ident');
+
+    $user->remove_profile($type, $orig_ident);
+
+    $app->forward('add_other_profile', success_msg => 'edited');
+}
+
 sub add_other_profile {
-    my( $app ) = @_;
+    my $app = shift;
+    my %param = @_;
     $app->validate_magic or return;
 
     my $author_id = $app->param('author_id')
@@ -450,9 +488,10 @@ sub add_other_profile {
     $user->add_profile($profile);
     $app->run_callbacks('post_add_profile.' . $type, $app, $user, $profile);
 
+    my $success_msg = $param{success_msg} || 'added';
     return $app->redirect($app->uri(
         mode => 'other_profiles',
-        args => { id => $author_id, added => 1 },
+        args => { id => $author_id, $success_msg => 1 },
     ));
 }
 
