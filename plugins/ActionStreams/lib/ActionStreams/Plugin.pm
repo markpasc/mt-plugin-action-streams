@@ -325,7 +325,7 @@ sub upgrade_reclass_actions {
 
     my %reclasses = (
         'twitter_tweets' => 'twitter_statuses',
-        'pownce_notes'   => 'pownce_notes',
+        'pownce_notes'   => 'pownce_statuses',
     );
 
     while (my ($old_class, $new_class) = each %reclasses) {

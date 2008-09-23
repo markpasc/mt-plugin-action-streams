@@ -4,7 +4,7 @@ key: ActionStreams
 author_link: http://www.sixapart.com/
 author_name: Six Apart, Ltd.
 description: Manages authors' accounts and actions on sites elsewhere around the web
-schema_version: 10
+schema_version: 11
 version: 1.1
 plugin_link: http://www.sixapart.com/
 settings:
@@ -149,7 +149,7 @@ upgrade_functions:
             label: 'Enabling default action streams for selected profiles...'
             code: $ActionStreams::ActionStreams::Plugin::upgrade_enable_existing_streams
     reclass_actions:
-        version_limit: 10
+        version_limit: 11
         handler: $ActionStreams::ActionStreams::Plugin::upgrade_reclass_actions
 
 profile_services:
@@ -1239,9 +1239,6 @@ action_streams:
             description: Your public tweets
             class: TwitterTweet
             html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
-            html_params:
-                - url
-                - title
             url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
             atom: 1
         favorites:
@@ -1251,10 +1248,6 @@ action_streams:
             fields:
                 - tweet_author
             html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
-            html_params:
-                - url
-                - tweet_author
-                - title
             url: 'http://twitter.com/favorites/{{ident}}.atom'
             atom:
                 created_on: ''
