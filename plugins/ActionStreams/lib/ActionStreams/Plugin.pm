@@ -315,7 +315,7 @@ sub upgrade_enable_existing_streams {
 }
 
 sub upgrade_reclass_actions {
-    my ($self, %param) = @_;
+    my ($upg, %param) = @_;
 
     my $action_class = MT->model('profileevent');
     my $driver = $action_class->driver;
@@ -328,7 +328,15 @@ sub upgrade_reclass_actions {
         'pownce_notes'   => 'pownce_statuses',
     );
 
+    my $app      = MT->instance;
+    my $plugin   = MT->component('ActionStreams');
+    my $services = $app->registry('profile_services');
+    my $streams  = $app->registry('action_streams');
     while (my ($old_class, $new_class) = each %reclasses) {
+        my ($service, $stream) = split /_/, $new_class, 2;
+        $upg->progress($plugin->translate('Updating classification of [_1] [_2] actions...',
+            $services->{$service}->{name}, $streams->{$service}->{$stream}->{name}));
+
         my $stmt = $dbd->sql_class->new;
         $stmt->add_where( $class_col => $old_class );
         my $sql = join q{ }, 'UPDATE', $driver->table_for($action_class),
