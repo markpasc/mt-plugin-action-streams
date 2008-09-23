@@ -162,6 +162,10 @@ profile_services:
         url: aim:goim?screenname={{ident}}
         ident_label: Screen name
         service_type: contact
+    backtype:
+        name: backtype
+        url: http://www.backtype.com/{{ident}}
+        service_type: comments
     bebo:
         name: Bebo
         url: http://www.bebo.com/Profile.jsp?MemberId={{ident}}
@@ -454,6 +458,18 @@ action_streams:
             name: Currently Playing
             description: The games in your collection you're currently playing
             class: OneupPlaying
+    backtype:
+        comments:
+            name: Comments
+            description: Comments you have made on the web
+            fields:
+                - queue
+            html_form: '[_1] commented on <a href="[_2]">[_3]</a>'
+            html_params:
+                - url
+                - title
+            url: 'http://feeds.backtype.com/{{ident}}'
+            rss: 1
     colourlovers:
         colors:
             name: Colors
