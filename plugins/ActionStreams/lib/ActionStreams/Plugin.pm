@@ -998,22 +998,65 @@ sub tag_other_profiles {
     my $user = MT->model('author')->load($author_id)
         or return $ctx->error(MT->trans('No user [_1]', $author_id));
 
-    my $out = "";
-    my $builder = $ctx->stash( 'builder' );
-    my $tokens = $ctx->stash( 'tokens' );
+    my @profiles = @{ $user->other_profiles() };
     my $services;
-    PROFILE: for my $profile ( @{ $user->other_profiles } ) {
-        if ($args->{type}) {
+    if (my $filter_type = $args->{type}) {
+        my $filter_except = $filter_type =~ s{ \A NOT \s+ }{}xmsi ? 1 : 0;
+        @profiles = grep {
+            my $profile = $_;
             my $profile_type = $profile->{type};
             $services ||= MT->app->registry('profile_services');
-            next PROFILE if !$services->{$profile_type};
-            next PROFILE if !$services->{$profile_type}->{service_type};
-            next PROFILE if  $services->{$profile_type}->{service_type} ne $args->{type};
-        }
-        $ctx->stash( other_profile => $profile );
-        $out .= $builder->build( $ctx, $tokens, $cond );
+            my $service_type = ($services->{$profile_type} || {})->{service_type} || q{};
+            $filter_except ? $service_type ne $filter_type : $service_type eq $filter_type;
+        } @profiles;
     }
-    return $out;
+
+    return list(
+        context    => $ctx,
+        arguments  => $args,
+        conditions => $cond,
+        items      => \@profiles,
+        stash_key  => 'other_profile',
+    );
+}
+
+sub list {
+    my %param = @_;
+    my ($ctx, $args, $cond) = @param{qw( context arguments conditions )};
+    my ($items, $stash_key, $code) = @param{qw( items stash_key code )};
+
+    my $builder = $ctx->stash('builder');
+    my $tokens  = $ctx->stash('tokens');
+
+    my $res = q{};
+    my $glue = $args->{glue};
+    my $vars = ($ctx->{__stash}{vars} ||= {});
+    my ($count, $total) = (0, scalar @$items);
+    for my $item (@$items) {
+        local $ctx->{__stash}->{$stash_key} = $item;
+
+        my $row = {};
+        $code->($item, $row) if $code;
+        local @{ $ctx->{__stash} }{keys %$row} = values %$row;
+
+        $count++;
+        my %loop_vars = (
+            __first__   => $count == 1,
+            __last__    => $count == $total,
+            __odd__     => $count % 2,
+            __even__    => !($count % 2),
+            __counter__ => $count,
+        );
+        local @$vars{keys %loop_vars} = values %loop_vars;
+
+        defined (my $out = $builder->build($ctx, $tokens, $cond))
+            or return $ctx->error($builder->errstr);
+
+        $res .= $glue if $res && $glue;
+        $res .= $out;
+    }
+
+    return $res;
 }
 
 sub tag_profile_services {
