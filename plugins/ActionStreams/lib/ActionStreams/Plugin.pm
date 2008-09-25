@@ -998,7 +998,8 @@ sub tag_other_profiles {
     my $user = MT->model('author')->load($author_id)
         or return $ctx->error(MT->trans('No user [_1]', $author_id));
 
-    my @profiles = @{ $user->other_profiles() };
+    my @profiles = sort { lc $a->{type} cmp lc $b->{type} }
+        @{ $user->other_profiles() };
     my $services;
     if (my $filter_type = $args->{type}) {
         my $filter_except = $filter_type =~ s{ \A NOT \s+ }{}xmsi ? 1 : 0;
