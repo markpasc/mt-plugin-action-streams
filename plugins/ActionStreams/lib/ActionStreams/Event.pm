@@ -372,6 +372,19 @@ sub build_results {
     1;
 }
 
+sub save {
+    my $event = shift;
+
+    # Built-in audit field setting will set a local time, so do it ourselves.
+    if (!$event->created_on) {
+        my $ts = MT::Util::epoch2ts(undef, time);
+        $event->created_on($ts);
+        $event->modified_on($ts);
+    }
+
+    return $event->SUPER::save(@_);
+}
+
 sub fetch_scraper {
     my $class = shift;
     my %params = @_;
