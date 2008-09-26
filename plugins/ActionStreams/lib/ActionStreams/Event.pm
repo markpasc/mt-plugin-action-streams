@@ -205,7 +205,7 @@ sub classes_for_type {
     return if !$prevt;
 
     my @classes;
-    while (my ($stream_id, $stream) = each %$prevt) {
+    PACKAGE: while (my ($stream_id, $stream) = each %$prevt) {
         next if 'HASH' ne ref $stream;
         next if !$stream->{class} && !$stream->{url};
 
@@ -213,7 +213,13 @@ sub classes_for_type {
         if ($pkg = $stream->{class}) {
             $pkg = join q{::}, $class, $pkg if $pkg && $pkg !~ m{::}xms;
             if (!eval { $pkg->properties }) {
-                eval "require $pkg; 1" or next;
+                if (!eval "require $pkg; 1") {
+                    my $error = $@ || q{};
+                    my $pl = MT->component('ActionStreams');
+                    MT->log($pl->translate('Could not load class [_1] for stream [_2] [_3]: [_4]',
+                        $pkg, $type, $stream_id, $error));
+                    next PACKAGE;
+                }
             }
         }
         else {
