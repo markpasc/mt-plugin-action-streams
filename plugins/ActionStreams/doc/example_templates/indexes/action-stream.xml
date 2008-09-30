@@ -16,9 +16,11 @@
             <title><$mt:StreamAction remove_html="1" encode_xml="1"$></title>
             <id>tag:<$MTBlogHost exclude_port="1" encode_xml="1"$>,<$MTDate format="%Y"$>:<$MTBlogRelativeURL encode_xml="1"$>/<$MTBlogID$>/actionstreams/<mt:StreamActionVar var="id"></id>
 
-            <mt:setvarblock name="action_url"><mt:StreamActionVar var="url"></mt:setvarblock>
-            <mt:if name="action_url">
-                <link rel="alternate" type="text/html" href="<mt:var name="action_url" encode_html="1"$>" />
+            <mt:if tag="StreamActionURL">
+                <link rel="alternate" type="text/html" href="<mt:StreamActionURL encode_xml="1"$>" />
+            </mt:if>
+            <mt:if tag="StreamActionVia">
+                <link rel="via" type="text/html" href="<mt:StreamActionVia encode_xml="1">" />
             </mt:if>
 
             <published><$MTStreamActionDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"$></published>

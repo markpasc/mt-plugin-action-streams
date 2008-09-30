@@ -762,6 +762,13 @@ sub tag_stream_action_thumbnail_url {
     return $event->thumbnail || '';
 }
 
+sub tag_stream_action_via {
+    my ($ctx, $arg, $cond) = @_;
+    my $event = $ctx->stash('stream_action')
+        or return $ctx->error("Used StreamActionVia in a non-action-stream context!");
+    return $event->via || q{};
+}
+
 sub tag_other_profile_var {
     my( $ctx, $args ) = @_;
     my $profile = $ctx->stash( 'other_profile' )

@@ -16,6 +16,9 @@
             <mt:if tag="StreamActionURL">
                 <link rel="alternate" type="text/html" href="<mt:StreamActionURL encode_xml="1"$>" />
             </mt:if>
+            <mt:if tag="StreamActionVia">
+                <link rel="via" type="text/html" href="<mt:StreamActionVia encode_xml="1"$>" />
+            </mt:if>
 
             <published><$MTStreamActionDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"$></published>
             <updated><$MTStreamActionModifiedDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"$></updated>

@@ -76,6 +76,7 @@ tags:
         StreamActionTitle:        $ActionStreams::ActionStreams::Plugin::tag_stream_action_title
         StreamActionURL:          $ActionStreams::ActionStreams::Plugin::tag_stream_action_url
         StreamActionThumbnailURL: $ActionStreams::ActionStreams::Plugin::tag_stream_action_thumbnail_url
+        StreamActionVia:          $ActionStreams::ActionStreams::Plugin::tag_stream_action_via
         OtherProfileVar:          $ActionStreams::ActionStreams::Plugin::tag_other_profile_var
     block:
         ActionStreams:      $ActionStreams::ActionStreams::Plugin::tag_action_streams_block

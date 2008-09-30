@@ -38,6 +38,8 @@ __PACKAGE__->install_meta({
         title
         url
         thumbnail
+        via
+        via_id
     ) ],
 });
 
@@ -109,6 +111,8 @@ sub update_events {
             modified_on => 'updated',
             title       => 'title',
             url         => q{link[@rel='alternate']/@href},
+            via         => q{link[@rel='alternate']/@href},
+            via_id      => 'id',
             identifier  => 'id',
         };
         $atom_params = {} if !ref $atom_params;
@@ -131,8 +135,10 @@ sub update_events {
         my $get = {
             title      => 'title',
             url        => 'link',
+            via        => 'link',
             created_on => 'pubDate',
             thumbnail  => 'media:thumbnail/@url',
+            via_id     => 'guid',
             identifier => 'guid',
         };
         $rss_params = {} if !ref $rss_params;
