@@ -807,7 +807,10 @@ sub _author_ids_for_args {
             join => MT->model('permission')->join_on('author_id',
                 { blog_id => $blog->id }, { unique => 1 }),
         });
-        @author_ids = map { $_->id } @authors;
+        @author_ids = map { $_->[0]->id }
+            grep { $_->[1]->can_administer_blog || $_->[1]->can_post }
+            map  { [ $_, $_->permissions($blog->id) ] }
+            @authors;
     }
 
     return \@author_ids;
