@@ -938,17 +938,30 @@ sub tag_stream_action_rollup {
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionRollup in a non-action-stream context!");
     my $nexts = $ctx->stash('remaining_stream_actions');
-    return $ctx->_hdlr_pass_tokens_else($arg, $cond)
-        if !$nexts || !@$nexts || $event->class ne $nexts->[0]->class;
-    $nexts ||= [];
+    return $ctx->else($arg, $cond)
+        if !$nexts || !@$nexts;
 
-    my $event_class = $event->class;
+    my $by_spec = $arg->{by} || 'date,action';
+    my %by = map { $_ => 1 } split /\s*,\s*/, $by_spec;
+
     my $event_date  = _event_day($ctx, $event);
+    my $event_class = $event->class;
+    my ($event_service, $event_stream) = split /_/, $event_class, 2;
 
     my @rollup_events = ($event);
-    while (@$nexts && $nexts->[0]->class eq $event_class && $event_date eq _event_day($ctx, $nexts->[0])) {
+    EVENT: while (@$nexts) {
+        my $next = $nexts->[0];
+        last EVENT if $by{date}    && $event_date  ne _event_day($ctx, $next);
+        last EVENT if $by{action}  && $event_class ne $next->class;
+        last EVENT if $by{stream}  && $next->class !~ m{ _ \Q$event_stream\E \z }xms;
+        last EVENT if $by{service} && $next->class !~ m{ \A \Q$event_service\E _ }xms;
+
+        # Eligible to roll up! Remove it from the remaining actions.
         push @rollup_events, shift @$nexts;
     }
+
+    return $ctx->else($arg, $cond)
+        if 1 >= scalar @rollup_events;
 
     my $res;
     my $count = 0;
