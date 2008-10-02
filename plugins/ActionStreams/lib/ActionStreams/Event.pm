@@ -252,17 +252,10 @@ sub ua {
     my $class = shift;
     my %params = @_;
 
-    if (!$ua) {
-        my %agent_params = ();
-        my @classes = (qw( LWPx::ParanoidAgent LWP::UserAgent ));
-        while (my $maybe_class = shift @classes) {
-            if (eval "require $maybe_class; 1") {
-                $ua = $maybe_class->new(%agent_params);
-                $ua->timeout(10);
-                last;
-            }
-        }
-    }
+    $ua ||= MT->new_ua({
+        paranoid => 1,
+        timeout  => 10,
+    });
 
     $ua->agent($params{default_useragent} ? $ua->_agent
         : "mt-actionstreams-lwp/" . MT->component('ActionStreams')->version);
