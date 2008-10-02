@@ -130,17 +130,20 @@ help you customize your templates.
 
 ## Tag reference ##
 
+Action Streams provides template tags for displaying profiles authors have
+entered and the action data collected from those services.
+
 ### Selecting authors ###
 
-Both the `mt:ActionStreams` and `mt:OtherProfiles` tags for listing actions
-and profiles respectively take several options for picking whose actions or
-profiles to show.
+Both the `<mt:ActionStreams>` and `<mt:OtherProfiles>` tags take several
+options for picking whose actions or profiles to show.
 
 If one of the below author selecting attributes is used, it specifies the
 authors. Otherwise, if the tag is used in an author context (such as on an
-author archive page, inside an `mt:Authors` tag, or in an entry context), that
-one author is selected. Otherwise, if the tag is used in a blog context (most
-of the time), all the authors on that blog are selected.
+author archive page, inside an `<mt:Authors>` tag, in an entry context, or on
+an MT Pro profile page), that one author is selected. Otherwise, if the tag is
+used in a blog context (most of the time), all the authors who can post to
+that blog are selected.
 
 The tag attributes for selecting authors are:
 
@@ -158,43 +161,73 @@ A list of the login usernames of authors to select, separated by commas.
 
 ### `mt:ProfileServices` ###
 
+Loops over all the profile services defined in the system, providing variables
+you can use to publish information about them. The available variables are:
+
+* `type`, the registry key/ID for the service
+* `label`, the service's name
+* `icon_url`, the URL to the icon representing the service
+* `ident_label`, a label describing what an identifier for this service
+  represents; if not present, the identifier is a "Username"
+* `ident_example`, an example identifier for this service; if not present,
+  "melody" is a possible example
+* `ident_suffix`, a string to append to an identifier for this service to hint
+  what the profile identifier is; for example, the Vox identifier is one's
+  `.vox.com` domain name, so the `ident_suffix` would be ".vox.com"
+
+Attributes supported by this tag are:
+
+#### `extra` ####
+
+If specified and true, only profile services implemented by other MT plugins
+besides Action Streams are listed.
+
 ### `mt:OtherProfiles` ###
+
+Lists a particular user's profiles on other services. Properties of each
+profile can then be shown using the `<mt:OtherProfileVar>` tag.
+
+See "Selecting authors" above for attributes used to select whose profiles to
+show. Note that even if more than one author is selected, only one author's
+profiles will be listed.
+
+The tag's other possible attributes are:
+
+#### `type` ####
+
+A type of service for which to list profiles. Only profiles for services the
+`service_type` of which match the specified type are shown. Common service
+types are:
+
+* `contact` (AIM, Yahoo! Messenger, etc)
+* `blog` (Vox, Tumblr, the Website service, etc)
+* `photos` (Flickr, Smugmug, etc)
+* `video` (Vimeo, YouTube, etc)
+* `links` (del.icio.us, Digg, etc)
+* `status` (Pownce, Twitter, etc)
+* `network` (Facebook, MySpace, etc)
 
 ### `mt:OtherProfileVar` ###
 
+Provides a property of the current author profile, available in an
+`<mt:OtherProfiles>` loop. Available attributes are:
+
+#### `name` (required) ####
+
+The property of the selected profile to show. The possible values are:
+
+* `type`, the registry key/ID for the profile service
+* `label`, the human readable (for example, "Flickr Profile")
+* `ident`, the author's identifier for the current profile
+* `uri`, the URL of the author's profile on the remote service
+
 ### `mt:ActionStreams` ###
 
-Loops over the actions selected by the author context and specified
-attributes. See "Selecting authors" above.
-
-Inside the `mt:ActionStreams` loop, an action context where you can use the
-other `mt:StreamAction`*`Something`* tags is provided.
+Shows the specified actions collected for the specified authors. (See
+"Selecting authors" above for how to specify authors.) Use the other
+`mt:StreamAction`*`Something`* tags to show information about each action.
 
 The attributes supported by this tag are:
-
-#### `sort_by` ####
-
-The field by which to order the selected actions. By default, actions are
-ordered by the `created_on` field (that is, the time when the action occurred
-or was first found). You cannot sort by any of your streams' additional
-fields, even when limiting actions to those streams.
-
-#### `direction` ####
-
-The direction in which to order the selected actions. Possible values are
-`descend` and `ascend`. By default, actions are ordered in descending order
-(`descend`).
-
-#### `limit` ####
-
-The number of actions at most to show. If fewer actions are available in the
-selected set of actions, fewer will be shown.
-
-#### `days` ####
-
-The number of days of actions at most to show, as determined at publish time
-from the actions' creation times (`created_on` fields). If fewer actions are
-available in the selected set of actions, fewer will be shown.
 
 #### `service` ####
 
@@ -220,6 +253,30 @@ favorites.
 
 To list actions from one particular stream only, use both `service` and
 `stream`.
+
+#### `limit` ####
+
+The number of actions at most to show. If fewer actions are available in the
+selected set of actions, fewer will be shown.
+
+#### `days` ####
+
+The number of days of actions at most to show, as determined at publish time
+from the actions' creation times (`created_on` fields). If fewer actions are
+available in the selected set of actions, fewer will be shown.
+
+#### `sort_by` ####
+
+The field by which to order the selected actions. By default, actions are
+ordered by the `created_on` field (that is, the time when the action occurred
+or was first found). You cannot sort by any of your streams' additional
+fields, even when limiting actions to those streams.
+
+#### `direction` ####
+
+The direction in which to order the selected actions. Possible values are
+`descend` and `ascend`. By default, actions are ordered in descending order
+(`descend`).
 
 ### `mt:StreamAction` ###
 
