@@ -128,6 +128,8 @@ help you customize your templates.
 
 ## Rolling actions up ##
 
+TODO
+
 ## Tag reference ##
 
 Action Streams provides template tags for displaying profiles authors have
@@ -282,18 +284,47 @@ The direction in which to order the selected actions. Possible values are
 
 Provides the recipe authors' suggested markup for the action in context.
 
-### `mt:StreamActionVar` ###
-
 ### `mt:StreamActionTitle` ###
+
+Returns the title of the web asset associated with the current stream action.
 
 ### `mt:StreamActionURL` ###
 
+Returns the URL of the web asset associated with the current stream action.
+
 ### `mt:StreamActionThumbnailURL` ###
+
+Returns the URL of an image thumbnail representing the web asset associated
+with the current stream action. Not all streams provide thumbnails, so this
+tag may evaluate to an empty string.
 
 ### `mt:StreamActionDate` ###
 
+Provides the date when the action occurred or was discovered. See Movable
+Type's documentation of the `<mt:Date>` tag for available attributes.
+
 ### `mt:StreamActionModifiedDate` ###
+
+Provides the date when the action was last changed. See Movable Type's
+documentation of the `<mt:Date>` tag for available attributes.
 
 ### `mt:StreamActionTags` ###
 
+Provides a loop of the tags associated with the current stream action. Not all
+streams provide tags (even when the associated web asset has them). Use the
+Movable Type `<mt:TagName>` template tag to display the text of the tag.
+
+### `mt:StreamActionVar` ###
+
+Returns the value of a specified property of the current stream action. The
+available attributes are:
+
+#### `name` (required) ####
+
+The name of the action property to return. What properties are available for
+an action depends on its stream. Check the plugin's documentation or stream
+recipe for the available fields.
+
 ### `mt:StreamActionRollup` ###
+
+TODO
