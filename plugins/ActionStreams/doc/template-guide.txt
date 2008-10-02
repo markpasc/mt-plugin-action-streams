@@ -23,12 +23,108 @@ a blog's authors, use the template code:
     </ul>
 
 Action Streams also provides CSS and service icons for showing from what
-service each action came from. If you include that CSS, use this list markup
-to enable the icons:
+service each action came from. If you include that CSS, use the
+`action-streams` and `service-icon` classes, as in this markup:
 
-    TODO
+    <!-- inside the <head> -->
+    <link rel="stylesheet" type="text/css"
+        href="<mt:StaticWebPath>plugins/ActionStreams/css/action-streams.css">
+    <!-- styles for any extra Action Stream plugins you install -->
+    <style type="text/css">
+        <mt:ProfileServices extra="1"><mt:if name="icon_url">
+        .service-<mt:var name="type"> {
+            background-image: url(<mt:var name="icon_url">);
+        }
+        </mt:if></mt:ProfileServices>
+    </style>
+
+    <!-- in your list -->
+    <div class="action-streams">
+        <ul class="action-streams-list">
+            <mt:ActionStreams>
+            <li class="service-icon service-<mt:var name="service_type">">
+                <mt:StreamAction>
+            </li>
+            </mt:ActionStreams>
+        </ul>
+    </div>
+
+This will show all the icons for the plugin's known profile services on the
+published actions.
+
+## Custom templates ##
+
+Sometimes the default `<mt:StreamAction>` output doesn't fit, and you want to
+specify the markup yourself. You might be making a recent photos widget, using
+`<mt:ActionStreams stream="photos">` to list only photos, in which case you'd
+want to show only the thumbnails from those actions, not the wordy text you
+get from `<mt:StreamAction>`.
+
+You can fully specify the markup used for actions using the other template
+tags supplied by the plugin. In a recent photos widget, you might want to show
+only linked thumbnails. You would write in your template:
+
+    <div class="widget-photos">
+        <h3>Recent Photos</h3>
+        
+        <ul>
+        <mt:ActionStreams stream="photos">
+        <li>
+            <a href="<mt:StreamActionURL>"
+                title="<mt:StreamActionTitle escape="html">">
+                <img src="<mt:StreamActionThumbnailURL>"></a>
+        </li>
+        </mt:ActionStreams>
+        </ul>
+    </div>
+
+See later in this document for documentation on the provided template tags.
 
 ## Customizing based on type ##
+
+You may also want to customize only *some* action templates. For example, you
+might use Google Reader's sharing feature to keep a feed of your favorite
+podcasts. By default, those actions would show up as:
+
+    <li>
+        Melody shared <a href="...">Favorite Podcast episode #7</a>
+        from <a href="...">Favorite Podcast</a>
+    </li>
+
+Instead, you could *conditionally* use different template code for those
+Google Reader actions, using the `<mt:If>` tag:
+
+    <mt:ActionStreams>
+        <li>
+        <mt:If name="action_type" eq="googlereader_shared">
+            <mt:AuthorDisplayName escape="html">
+            saved <a href="<mt:StreamActionURL escape="html">">
+                <mt:StreamActionTitle escape="html">
+            </a>
+            as a favorite episode of
+            <a href="<mt:StreamActionVar name="source_url" escape="html">">
+                <mt:StreamActionVar name="source_title" escape="html">
+            </a>
+        <mt:Else>
+            <mt:StreamAction>
+        </mt:If>
+        </li>
+    </mt:ActionStreams>
+
+Then all your shared Google Reader items will be customized, but your Digg
+links and Flickr photos will display as normal. You can customize multiple
+actions by specifying test attributes on another `<mt:Else>` tag:
+
+    <mt:If name="action_type" eq="googlereader_shared">
+        <!-- shared on google reader -->
+    <mt:Else name="action_type" eq="digg_links">
+        <!-- dugg on digg -->
+    <mt:Else>
+        <!-- everything else -->
+    </mt:If>
+
+See the documentation for `<mt:ActionStreams>` for the variables it sets to
+help you customize your templates.
 
 ## Rolling actions up ##
 
