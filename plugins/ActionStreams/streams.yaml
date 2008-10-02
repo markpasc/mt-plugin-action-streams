@@ -874,6 +874,17 @@ vox:
         name: Favorites
         description: Public assets you saved as favorites
         class: Vox
+    photos:
+        name: Photos
+        description: Your public photos in your Vox library
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://{{ident}}.vox.com/library/photos/rss.xml'
+        rss:
+            thumbnail: media:thumbnail/@url
+            tags: category
     posts:
         name: Posts
         description: Your public posts to your Vox
