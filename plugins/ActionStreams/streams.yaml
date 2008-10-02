@@ -1,0 +1,963 @@
+oneup:
+    playing:
+        name: Currently Playing
+        description: The games in your collection you're currently playing
+        class: OneupPlaying
+backtype:
+    comments:
+        name: Comments
+        description: Comments you have made on the web
+        fields:
+            - queue
+        html_form: '[_1] commented on <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://feeds.backtype.com/{{ident}}'
+        rss: 1
+colourlovers:
+    colors:
+        name: Colors
+        description: Colors you saved
+        fields:
+            - queue
+        html_form: '[_1] saved the color <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.colourlovers.com/api/colors/new?lover={{ident}}'
+        xpath:
+            foreach: //color
+            get:
+                title: title
+                url: url
+                identifier: url
+                created_on: dateCreated
+                thumbnail: imageUrl
+    palettes:
+        name: Palettes
+        description: Palettes you saved
+        fields:
+            - queue
+        html_form: '[_1] saved the palette <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.colourlovers.com/api/palettes/new?lover={{ident}}'
+        xpath:
+            foreach: //palette
+            get:
+                title: title
+                url: url
+                identifier: url
+                created_on: dateCreated
+                thumbnail: imageUrl
+    patterns:
+        name: Patterns
+        description: Patterns you saved
+        fields:
+            - queue
+        html_form: '[_1] saved the pattern <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.colourlovers.com/api/patterns/new?lover={{ident}}'
+        xpath:
+            foreach: //pattern
+            get:
+                title: title
+                url: url
+                identifier: url
+                created_on: dateCreated
+                thumbnail: imageUrl
+    favpalettes:
+        name: Favorite Palettes
+        description: Palettes you saved as favorites
+        fields:
+            - queue
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite palette'
+        html_params:
+            - url
+            - title
+        url: 'http://www.colourlovers.com/rss/lover/{{ident}}/palettes/favorites'
+        rss: 1
+corkd:
+    reviews:
+        name: Reviews
+        description: Your wine reviews
+        fields:
+            - review
+        html_form: '[_1] reviewed <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.corkd.com/feed/journal/{{ident}}'
+        rss: 1
+    cellar:
+        name: Cellar
+        description: Wines you own
+        fields:
+            - wine
+        html_form: '[_1] owns <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.corkd.com/feed/cellar/{{ident}}'
+        rss: 1
+    list:
+        name: Shopping List
+        description: Wines you want to buy
+        fields:
+            - wine
+        html_form: '[_1] wants <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.corkd.com/feed/shoppinglist/{{ident}}'
+        rss: 1
+delicious:
+    links:
+        name: Links
+        description: Your public links
+        html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://del.icio.us/rss/{{ident}}'
+        identifier: url
+        xpath:
+            foreach: //item
+            get:
+                created_on: dc:date
+                title: title
+                url: link
+digg:
+    links:
+        name: Dugg
+        description: Links you dugg
+        html_form: '[_1] dugg the link <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://digg.com/users/{{ident}}/history/diggs.rss'
+        identifier: url
+        fetch:
+            default_useragent: 1
+        xpath:
+            foreach: //item
+            get:
+                created_on: pubDate
+                title: title
+                url: link
+    submitted:
+        name: Submissions
+        description: Links you submitted
+        html_form: '[_1] submitted the link <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: http://digg.com/users/{{ident}}/history/submissions.rss
+        identifier: url
+        fetch:
+            default_useragent: 1
+        xpath:
+            foreach: //item
+            get:
+                created_on: pubDate
+                title: title
+                url: link
+ffffound:
+    favorites:
+        name: Found
+        description: Photos you found
+        html_form: '[_1] ffffound <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: http://ffffound.com/home/{{ident}}/found/feed
+        rss: 1
+flickr:
+    favorites:
+        name: Favorites
+        description: Photos you marked as favorites
+        fields:
+            - by
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite photo'
+        html_params:
+            - url
+            - title
+        url: 'http://api.flickr.com/services/feeds/photos_faves.gne?nsid={{ident}}&lang=en-us&format=atom_10'
+        atom:
+            thumbnail: content
+            by: author/name
+    photos:
+        name: Photos
+        description: Photos you posted
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
+        atom:
+            thumbnail: content
+friendfeed:
+    likes:
+        name: Likes
+        description: Things from your friends that you "like"
+        html_form: '[_1] likes <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://friendfeed.com/{{ident}}/likes?format=atom'
+        atom:
+            url: link/@href
+gametap:
+    scores:
+        name: Leaderboard scores
+        description: Your high scores in games with leaderboards
+        fields:
+            - score
+        html_form: '[_1] scored <strong>[_2]</strong> in <a href="[_3]">[_4]</a>'
+        html_params:
+            - score
+            - url
+            - title
+        url: http://www.gametap.com/profile/leaderboards.do?sn={{ident}}
+        identifier: title,score
+        scraper:
+            foreach: 'div.buddy-leaderboards div.tr'
+            get:
+                url:
+                    - 'div.name a'
+                    - @href
+                title:
+                    - 'div.name strong'
+                    - TEXT
+                score:
+                    - 'div.name div'
+                    - TEXT
+goodreads:
+    toread:
+        name: To read
+        description: Books on your "to-read" shelf
+        fields:
+            - by
+        html_form: '[_1] saved <a href="[_2]"><i>[_3]</i> by [_4]</a> to read'
+        html_params:
+            - url
+            - title
+            - by
+        url: 'http://www.goodreads.com/review/list_rss/{{ident}}?shelf=to-read'
+        identifier: url
+        xpath:
+            foreach: //item
+            get:
+                title: title
+                url: link
+                created_on: pubDate
+                modified_on: pubDate
+                by: author_name
+    reading:
+        name: Reading
+        description: Books on your "currently-reading" shelf
+        fields:
+            - by
+        html_form: '[_1] started reading <a href="[_2]"><i>[_3]</i> by [_4]</a>'
+        html_params:
+            - url
+            - title
+            - by
+        url: 'http://www.goodreads.com/review/list_rss/{{ident}}?shelf=currently-reading'
+        identifier: url
+        xpath:
+            foreach: //item
+            get:
+                title: title
+                url: link
+                created_on: pubDate
+                modified_on: pubDate
+                by: author_name
+    read:
+        name: Read
+        description: Books on your "read" shelf
+        fields:
+            - by
+        html_form: '[_1] finished reading <a href="[_2]"><i>[_3]</i> by [_4]</a>'
+        html_params:
+            - url
+            - title
+            - by
+        url: 'http://www.goodreads.com/review/list_rss/{{ident}}?shelf=read'
+        identifier: url
+        xpath:
+            foreach: //item
+            get:
+                title: title
+                url: link
+                created_on: pubDate
+                modified_on: pubDate
+                by: author_name
+googlereader:
+    shared:
+        name: Shared
+        description: Your shared items
+        class: GoogleReader
+iconbuffet:
+    icons:
+        name: Deliveries
+        description: Icon sets you were delivered
+        html_form: '[_1] received the icon set <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.iconbuffet.com/people/{{ident}};received_packages'
+        identifier: url
+        scraper:
+            foreach: 'div#icons div.preview-sm'
+            get:
+                title:
+                    - a span
+                    - TEXT
+                url:
+                    - a
+                    - '@href'
+identica:
+    statuses:
+        name: Notices
+        description: Notices you posted
+        html_form: '[_1] <a href="[_2]">said</a>, &ldquo;[_3]&rdquo;'
+        url: 'http://identi.ca/{{ident}}/rss'
+        rss:
+            created_on: dc:date
+        class: Identica
+iminta:
+    links:
+        name: Intas
+        description: Links you saved
+        html_form: '[_1] is inta <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://iminta.com/people/{{ident}}/rss.xml?inta_source_id=11'
+        rss: 1
+istockphoto:
+    photos:
+        name: Photos
+        description: Photos you posted that were approved
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.istockphoto.com/webservices/feeds/?feedFormat=IStockAtom_1_0&feedName=istockfeed.image.newestUploads&feedParams=UserID={{ident}}'
+        identifier: url
+        atom:
+            thumbnail: content/div/a/img/@src
+iusethis:
+    events:
+        name: Recent events
+        description: Events from your recent events feed
+        html_form: '[_1] <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        rss: 1
+        url: 'http://osx.iusethis.com/user/feed.rss/{{ident}}?following=0'
+    osxapps:
+        name: Apps you use
+        description: The applications you saved as ones you use
+        fields:
+            - favorite
+        html_form: '[_1] started using <a href="[_2]">[_3]</a>[quant,_4, (and loves it),,]'
+        html_params:
+            - url
+            - title
+            - favorite
+        url: 'http://osx.iusethis.com/user/{{ident}}'
+iwatchthis:
+    favorites:
+        name: Favorites
+        description: Videos you saved as watched
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite video'
+        html_params:
+            - url
+            - title
+        url: 'http://iwatchthis.com/rss/{{ident}}'
+        rss: 1
+jaiku:
+    jaikus:
+        name: Jaikus
+        description: Jaikus you posted
+        html_form: '[_1] <a href="[_2]">jaiku''d</a>, "[_3]"'
+        html_params:
+            - url
+            - title
+        url: 'http://{{ident}}.jaiku.com/feed/atom'
+        atom: 1
+kongregate:
+    favorites:
+        name: Favorites
+        description: Games you saved as favorites
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite game'
+        html_params:
+            - url
+            - title
+        url: 'http://www.kongregate.com/accounts/{{ident}}'
+        identifier: url
+        scraper:
+            foreach: #favorites dl
+            get:
+                url:
+                    - dd a
+                    - @href
+                title:
+                    - dd a
+                    - TEXT
+                thumbnail:
+                    - dt img
+                    - @src
+    achievements:
+        name: Achievements
+        description: Achievements you won
+        fields:
+            - game_title
+        html_form: '[_1] won the <strong>[_2]</strong> in <a href="[_3]">[_4]</a>'
+        html_params:
+            - title
+            - url
+            - game_title
+        url: 'http://www.kongregate.com/accounts/{{ident}}'
+        identifier: url,title
+        scraper:
+            foreach: #achievements .badge_details
+            get:
+                url:
+                    - dt.badge_img a
+                    - @href
+                thumbnail:
+                    - dt.badge_img img
+                    - @style
+                title:
+                    - dd.badge_name
+                    - TEXT
+                game_title:
+                    - a.badge_game
+                    - TEXT
+lastfm:
+    tracks:
+        name: Tracks
+        description: Songs you recently listened to (High spam potential!)
+        html_form: '[_1] heard <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/recenttracks.rss'
+        rss: 1
+    lovedtracks:
+        name: Loved Tracks
+        description: Songs you marked as "loved"
+        fields:
+            - artist
+        html_form: '[_1] loved <a href="[_2]">[_3]</a> by [_4]'
+        html_params:
+            - url
+            - title
+            - artist
+        url: 'http://pipes.yahoo.com/pipes/pipe.run?_id=4smlkvMW3RGPpBPfTqoASA&_render=rss&lastFM_UserName={{ident}}'
+        identifier: url
+        rss:
+            artist: description
+    journalentries:
+        name: Journal Entries
+        description: Your recent journal entries
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/journals.rss'
+        rss: 1
+    events:
+        name: Events
+        description: The events you said you'll be attending
+        html_form: '[_1] is attending <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/events.rss'
+        rss: 1
+livejournal:
+    posts:
+        name: Posts
+        description: Your public posts to your journal
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://users.livejournal.com/{{ident}}/data/atom'
+        atom: 1
+magnolia:
+    links:
+        name: Links
+        description: Your public links
+        html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://ma.gnolia.com/atom/full/people/{{ident}}'
+        identifier: url
+        atom:
+            tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
+netflix:
+    queue:
+        name: Queue
+        description: Movies you added to your rental queue
+        fields:
+            - queue
+        html_form: '[_1] queued <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://rss.netflix.com/QueueRSS?id={{ident}}'
+        rss:
+            thumbnail: description
+    recent:
+        name: Recent Movies
+        description: Recent Rental Activity
+        fields:
+            - recent
+        html_form: '[_1] is watching <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://rss.netflix.com/TrackingRSS?id={{ident}}'
+        rss:
+            thumbnail: description
+netvibes:
+    links:
+        name: Links
+        description: Links you saved
+        html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www2.netvibes.com/rest/account/{{ident}}/timeline?format=atom'
+        atom: 1
+ohloh:
+    kudos:
+        name: Kudos
+        description: Kudos you have received
+        html_form: '[_1] received kudos from <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.ohloh.net/accounts/{{ident}}/kudos'
+        identifier: url
+        scraper:
+            foreach: 'div.received_kudo'
+            get:
+                url:
+                    - a
+                    - @href
+                title:
+                    - a
+                    - TEXT
+pandora:
+    favorites:
+        name: Favorite Songs
+        description: Songs you marked as favorites
+        fields:
+            - album_art
+            - guid
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite song'
+        html_params:
+            - url
+            - title
+        url: 'http://feeds.pandora.com/feeds/people/{{ident}}/favorites.xml'
+        identifier: guid
+        xpath:
+            foreach: //item
+            get:
+                created_on: pubDate
+                title: title
+                guid: guid
+                url: link
+                album_art: pandora:albumArtUrl
+    favoriteartists:
+        name: Favorite Artists
+        description: Artists you marked as favorites
+        fields:
+            - artist-photo-url
+            - guid
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite artist'
+        html_params:
+            - url
+            - title
+        url: 'http://feeds.pandora.com/feeds/people/{{ident}}/favoriteartists.xml'
+        identifier: guid
+        xpath:
+            foreach: //item
+            get:
+                created_on: pubDate
+                title: title
+                guid: guid
+                url: link
+                artist-photo-url: pandora:stationImageUrl
+    stations:
+        name: Stations
+        description: Radio stations you added
+        fields:
+            - guid
+            - station-image-url
+        html_form: '[_1] added a new radio station named <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://feeds.pandora.com/feeds/people/{{ident}}/stations.xml'
+        identifier: guid
+        xpath:
+            foreach: //item
+            get:
+                created_on: pubDate
+                title: title
+                guid: guid
+                url: pandora:stationLink
+                station-image-url: pandora:stationImageUrl
+picasaweb:
+    photos:
+        name: Photos
+        description: Photos you posted
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://picasaweb.google.com/data/feed/api/user/{{ident}}?kind=photo&max-results=15'
+        atom:
+            thumbnail: media:group/media:thumbnail[position()=2]/@url
+p0pulist:
+    stuff:
+        name: List
+        description: Things you put in your list
+        html_form: '[_1] is enjoying <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://p0pulist.com/list/hot_list/{{ident}}.rss'
+        rss:
+            thumbnail: image/url
+pownce:
+    statuses:
+        name: Notes
+        description: Your public notes
+        fields:
+            - note
+        html_form: '[_1] <a href="[_2]">posted</a>, "[_3]"'
+        html_params:
+            - url
+            - note
+        url: 'http://pownce.com/feeds/public/{{ident}}/'
+        atom:
+            note: summary
+reddit:
+    comments:
+        name: Comments
+        description: Comments you posted
+        html_form: '[_1] commented on <a href="[_2]">[_3]</a> at Reddit'
+        html_params:
+            - url
+            - title
+        url: 'http://www.reddit.com/user/{{ident}}/comments/'
+        identifier: title
+        scraper:
+            foreach: 'a.title'
+            get:
+                title:
+                    - a
+                    - TEXT
+                url:
+                    - a
+                    - '@href'
+    submitted:
+        name: Submissions
+        description: Articles you submitted
+        html_form: '[_1] submitted <a href="[_2]">[_3]</a> to Reddit'
+        html_params:
+            - url
+            - title
+        url: 'http://www.reddit.com/user/{{ident}}/submitted/'
+        identifier: title
+        scraper:
+            foreach: 'a.title'
+            get:
+                title:
+                    - a
+                    - TEXT
+                url:
+                    - a
+                    - '@href'
+    favorites:
+        name: Likes
+        description: Articles you liked (your votes must be public)
+        html_form: '[_1] liked <a href="[_2]">[_3]</a> from Reddit'
+        html_params:
+            - url
+            - title
+        url: 'http://www.reddit.com/user/{{ident}}/liked/'
+        identifier: title
+        scraper:
+            foreach: 'a.title'
+            get:
+                title:
+                    - a
+                    - TEXT
+                url:
+                    - a
+                    - '@href'
+    dislikes:
+        name: Dislikes
+        description: Articles you disliked (your votes must be public)
+        html_form: '[_1] disliked <a href="[_2]">[_3]</a> on Reddit'
+        html_params:
+            - url
+            - title
+        url: 'http://www.reddit.com/user/{{ident}}/disliked/'
+        identifier: title
+        scraper:
+            foreach: 'a.title'
+            get:
+                title:
+                    - a
+                    - TEXT
+                url:
+                    - a
+                    - '@href'
+slideshare:
+    favorites:
+        name: Favorites
+        description: Slideshows you saved as favorites
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite slideshow'
+        html_params:
+            - url
+            - title
+        url: 'http://www.slideshare.net/rss/user/{{ident}}/favorites'
+        rss:
+            thumbnail: media:content/media:thumbnail/@url
+            created_on: ''
+    slideshows:
+        name: Slideshows
+        description: Slideshows you posted
+        html_form: '[_1] posted the slideshow <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.slideshare.net/rss/user/{{ident}}'
+        rss:
+            thumbnail: media:content/media:thumbnail/@url
+smugmug:
+    photos:
+        name: Photos
+        description: Photos you posted
+        html_form: '[_1] posted <a href="[_2]">a photo</a>'
+        html_params:
+            - url
+        url: 'http://www.smugmug.com/hack/feed.mg?Type=nicknameRecentPhotos&Data={{ident}}&format=atom10&ImageCount=15'
+        atom:
+            thumbnail: id
+steam:
+    achievements:
+        name: Achievements
+        description: Your achievements for achievement-enabled games
+        class: Steam
+tumblr:
+    events:
+        name: Stuff
+        description: Things you posted
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://{{ident}}.tumblr.com/rss'
+        rss: 1
+twitter:
+    statuses:
+        name: Tweets
+        description: Your public tweets
+        class: TwitterTweet
+        html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
+        url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
+        atom: 1
+    favorites:
+        name: Favorites
+        description: Public tweets you saved as favorites
+        class: TwitterFavorite
+        fields:
+            - tweet_author
+        html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
+        url: 'http://twitter.com/favorites/{{ident}}.atom'
+        atom:
+            created_on: ''
+            modified_on: ''
+uncrate:
+    saved:
+        name: Saved
+        description: Things you saved as favorites
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> on Uncrate'
+        html_params:
+            - url
+            - title
+        url: 'http://uncrate.com/stuff/{{ident}}'
+        identifier: url
+        scraper:
+            foreach: '#widget h2'
+            get:
+                title:
+                  - a
+                  - TEXT
+                url:
+                  - a
+                  - @href
+upcoming:
+    events:
+        name: Events
+        description: Events you are watching or attending
+        fields:
+            - venue
+        html_form: '[_1] is attending <a href="[_2]">[_3]</a> at [_4]'
+        html_params:
+            - url
+            - title
+            - venue
+        url: 'http://upcoming.yahoo.com/syndicate/v2/my_events/{{ident}}'
+        xpath:
+            foreach: //item
+            get:
+                title: xCal:summary
+                url: link
+                created_on: dc:date
+                modified_on: dc:date
+                venue: 'xCal:x-calconnect-venue/xCal:adr/xCal:x-calconnect-venue-name'
+                identifier: guid
+viddler:
+    videos:
+        name: Videos
+        description: Videos you posted
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.viddler.com/explore/{{ident}}/videos/feed/'
+        rss:
+            thumbnail: media:content/media:thumbnail/@url
+vimeo:
+    videos:
+        name: Videos
+        description: Videos you posted
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: http://vimeo.com/{{ident}}/videos/rss
+        rss:
+            thumbnail: media:thumbnail/@url
+    like:
+        name: Likes
+        description: Videos you liked
+        html_form: '[_1] liked <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: http://vimeo.com/{{ident}}/likes/rss
+        rss:
+            thumbnail: media:thumbnail/@url
+            created_on: ''
+            modified_on: ''
+vox:
+    favorites:
+        name: Favorites
+        description: Public assets you saved as favorites
+        class: Vox
+    posts:
+        name: Posts
+        description: Your public posts to your Vox
+        html_form: '[_1] posted <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://{{ident}}.vox.com/library/posts/atom.xml'
+        atom:
+            tags: category/@label
+website:
+    posted:
+        name: Posts
+        description: The posts available from the website's feed
+        class: Website
+wists:
+    wists:
+        name: Wists
+        description: Stuff you saved
+        html_form: '[_1] wants <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.wists.com/{{ident}}?out=rdf'
+        identifier: url
+        rss:
+            created_on: dc:date
+            tags: dc:tag
+            thumbnail: content:encoded
+xboxlive:
+    gamerscore:
+        name: Gamerscore
+        description: Notes when your gamerscore passes an even number
+        class: XboxGamerscore
+yelp:
+    reviews:
+        name: Reviews
+        description: Places you reviewed
+        html_form: '[_1] reviewed <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://www.yelp.com/syndicate/user/{{ident}}/atom.xml'
+        atom:
+            review: title
+            url: link/@href
+youtube:
+    favorites:
+        name: Favorites
+        description: Videos you saved as favorites
+        fields:
+            - by
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite video'
+        html_params:
+            - url
+            - title
+        url: 'http://gdata.youtube.com/feeds/users/{{ident}}/favorites'
+        atom:
+            by: author/name
+            url: "link[@rel='alternate' and @type='text/html']/@href"
+            thumbnail: "media:group/media:thumbnail[position()=1]/@url"
+            created_on: ''
+            modified_on: ''
+    videos:
+        name: Videos
+        description: Videos you posted
+        html_form: '[_1] posted <a href="[_2]">[_3]</a> to YouTube'
+        html_params:
+            - url
+            - title
+        url: 'http://gdata.youtube.com/feeds/users/{{ident}}/uploads'
+        atom:
+            url: "link[@rel='alternate' and @type='text/html']/@href"
+            thumbnail: "media:group/media:thumbnail[position()=1]/@url"
+zooomr:
+    photos:
+        name: Photos
+        description: Photos you posted
+        html_form: '[_1] posted <a href="[_2]">a photo</a>'
+        html_params:
+            - url
+        url: 'http://www.zooomr.com/services/feeds/public_photos/?id={{ident}}&format=rss_200'
+        xpath:
+            foreach: //item
+            get:
+                identifier: link
+                thumbnail: media:content/@url

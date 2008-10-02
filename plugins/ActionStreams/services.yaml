@@ -1,0 +1,300 @@
+oneup:
+    name: 1up.com
+    url: http://{{ident}}.1up.com/
+fortythreethings:
+    name: 43Things
+    url: http://www.43things.com/person/{{ident}}/
+aim:
+    name: AIM
+    url: aim:goim?screenname={{ident}}
+    ident_label: Screen name
+    service_type: contact
+backtype:
+    name: backtype
+    url: http://www.backtype.com/{{ident}}
+    service_type: comments
+bebo:
+    name: Bebo
+    url: http://www.bebo.com/Profile.jsp?MemberId={{ident}}
+    service_type: network
+catster:
+    name: Catster
+    url: http://www.catster.com/cats/{{ident}}
+colourlovers:
+    name: COLOURlovers
+    url: http://www.colourlovers.com/lover/{{ident}}
+corkd:
+    name: 'Cork''d'
+    url: http://www.corkd.com/people/{{ident}}
+delicious:
+    name: del.icio.us
+    url: http://del.icio.us/{{ident}}/
+    service_type: links
+destructoid:
+    name: Destructoid
+    url: http://www.destructoid.com/elephant/profile.phtml?un={{ident}}
+digg:
+    name: Digg
+    url: http://digg.com/users/{{ident}}/
+    service_type: links
+dodgeball:
+    name: Dodgeball
+    url: http://www.dodgeball.com/user?uid={{ident}}
+dogster:
+    name: Dogster
+    url: http://www.dogster.com/dogs/{{ident}}
+dopplr:
+    name: Dopplr
+    url: http://www.dopplr.com/traveller/{{ident}}/
+facebook:
+    name: Facebook
+    url: http://www.facebook.com/profile.php?id={{ident}}
+    ident_label: User ID
+    ident_example: 12345
+    service_type: network
+ffffound:
+    name: FFFFOUND!
+    url: http://ffffound.com/home/{{ident}}/found/
+    service_type: photos
+flickr:
+    name: Flickr
+    url: http://flickr.com/photos/{{ident}}/
+    ident_example: 36381329@N00
+    service_type: photos
+friendfeed:
+    name: FriendFeed
+    url: http://friendfeed.com/{{ident}}
+    ident_example: JoeUsername
+gametap:
+    name: Gametap
+    url: http://www.gametap.com/profile/show/profile.do?sn={{ident}}
+goodreads:
+    name: Goodreads
+    url: http://www.goodreads.com/user/show/{{ident}}
+    ident_label: User ID
+    ident_example: 12345
+googlereader:
+    name: Google Reader
+    url: http://www.google.com/reader/shared/{{ident}}
+    ident_label: Sharing ID
+    ident_example: http://www.google.com/reader/shared/16793324975410272738
+    service_type: links
+hi5:
+    name: Hi5
+    url: http://hi5.com/friend/profile/displayProfile.do?userid={{ident}}
+    service_type: network
+iconbuffet:
+    name: IconBuffet
+    url: http://www.iconbuffet.com/people/{{ident}}
+icq:
+    name: ICQ
+    url: http://www.icq.com/people/about_me.php?uin={{ident}}
+    ident_label: UIN
+    ident_example: 12345
+    service_type: contact
+identica:
+    name: Identi.ca
+    url: http://identi.ca/{{ident}}
+    service_type: status
+iminta:
+    name: Iminta
+    url: http://iminta.com/people/{{ident}}
+istockphoto:
+    name: iStockPhoto
+    url: http://www.istockphoto.com/user_view.php?id={{ident}}
+    ident_label: User ID
+    ident_example: 123456
+iusethis:
+    name: IUseThis
+    url: http://osx.iusethis.com/user/{{ident}}
+iwatchthis:
+    name: iwatchthis
+    url: http://iwatchthis.com/{{ident}}
+jabber:
+    name: Jabber
+    url: jabber://{{ident}}
+    ident_label: Jabber ID
+    ident_example: melody@example.com
+    service_type: contact
+jaiku:
+    name: Jaiku
+    url: http://{{ident}}.jaiku.com/
+    ident_suffix: .jaiku.com
+    service_type: status
+kongregate:
+    name: Kongregate
+    url: http://www.kongregate.com/accounts/{{ident}}
+lastfm:
+    name: Last.fm
+    url: http://www.last.fm/user/{{ident}}/
+    ident_example: JoeUsername
+linkedin:
+    name: LinkedIn
+    url: http://www.linkedin.com/in/{{ident}}
+    ident_example: MelodyNelson
+    service_type: network
+livejournal:
+    name: LiveJournal
+    url: http://{{ident}}.livejournal.com/
+    ident_suffix: .livejournal.com
+    service_type: blog
+magnolia:
+    name: Ma.gnolia
+    url: http://ma.gnolia.com/people/{{ident}}
+    service_type: links
+mog:
+    name: MOG
+    url: http://mog.com/{{ident}}
+msn:
+    name: 'MSN Messenger'
+    url: msnim:chat?contact={{ident}}
+    service_type: contact
+multiply:
+    name: Multiply
+    url: http://{{ident}}.multiply.com/
+myspace:
+    name: MySpace
+    url: http://www.myspace.com/{{ident}}
+    service_type: network
+netflix:
+    name: Netflix
+    url: http://rss.netflix.com/QueueRSS?id={{ident}}
+    ident_label: Netflix RSS ID
+    ident_example: P0000006746939516625352861892808956
+netvibes:
+    name: Netvibes
+    url: http://www.netvibes.com/{{ident}}
+    service_type: links
+newsvine:
+    name: Newsvine
+    url: http://{{ident}}.newsvine.com/
+ning:
+    name: Ning
+    url: http://{{ident}}.ning.com/
+    service_type: network
+ohloh:
+    name: Ohloh
+    url: http://ohloh.net/accounts/{{ident}}
+orkut:
+    name: Orkut
+    url: http://www.orkut.com/Profile.aspx?uid={{ident}}
+    service_type: network
+pandora:
+    name: Pandora
+    url: http://pandora.com/people/{{ident}}
+    ident_example: JoeUsername
+picasaweb:
+    name: Picasa Web Albums
+    url: http://picasaweb.google.com/{{ident}}
+    service_type: photos
+p0pulist:
+    name: p0pulist
+    url: http://p0pulist.com/list/hot_list/{{ident}}
+    ident_label: User ID
+    ident_example: 12345
+pownce:
+    name: Pownce
+    url: http://pownce.com/{{ident}}/
+    service_type: status
+reddit:
+    name: Reddit
+    url: http://reddit.com/user/{{ident}}/
+    service_type: links
+skype:
+    name: Skype
+    url: callto://{{ident}}
+slideshare:
+    name: SlideShare
+    url: http://www.slideshare.net/{{ident}}
+smugmug:
+    name: Smugmug
+    url: http://{{ident}}.smugmug.com/
+    service_type: photos
+sonicliving:
+    name: SonicLiving
+    url: http://www.sonicliving.com/user/{{ident}}/
+steam:
+    name: Steam
+    url: http://steamcommunity.com/id/{{ident}}
+stumbleupon:
+    name: StumbleUpon
+    url: http://{{ident}}.stumbleupon.com/
+tabblo:
+    name: Tabblo
+    url: http://www.tabblo.com/studio/person/{{ident}}/
+technorati:
+    name: Technorati
+    url: http://technorati.com/people/technorati/{{ident}}
+tribe:
+    name: Tribe
+    url: http://people.tribe.net/{{ident}}
+    service_type: network
+tumblr:
+    name: Tumblr
+    url: http://{{ident}}.tumblr.com
+    ident_label: URL
+    ident_suffix: .tumblr.com
+    service_type: blog
+twitter:
+    name: Twitter
+    url: http://twitter.com/{{ident}}
+    service_type: status
+uncrate:
+    name: Uncrate
+    url: http://uncrate.com/stuff/{{ident}}
+upcoming:
+    name: Upcoming
+    url: http://upcoming.yahoo.com/user/{{ident}}
+    ident_label: User ID
+    ident_example: 12345
+viddler:
+    name: Viddler
+    url: http://www.viddler.com/explore/{{ident}}
+    service_type: video
+vimeo:
+    name: Vimeo
+    url: http://www.vimeo.com/{{ident}}
+    service_type: video
+virb:
+    name: Virb
+    url: http://www.virb.com/{{ident}}
+    service_type: network
+vox:
+    name: Vox
+    url: http://{{ident}}.vox.com/
+    ident_label: Vox name
+    ident_suffix: .vox.com
+    service_type: blog
+website:
+    name: Website
+    url: {{ident}}
+    ident_label: URL
+    ident_example: http://www.example.com/
+    ident_exact: 1
+    can_many: 1
+    service_type: blog
+wists:
+    name: Wists
+    url: http://www.wists.com/{{ident}}
+xboxlive:
+    name: 'Xbox Live'
+    url: http://live.xbox.com/member/{{ident}}
+    ident_label: Gamertag
+yahoo:
+    name: 'Yahoo! Messenger'
+    url: http://edit.yahoo.com/config/send_webmesg?.target={{ident}}
+    service_type: contact
+yelp:
+    name: Yelp
+    url: http://www.yelp.com/user_details?userid={{ident}}
+    ident_label: User ID
+    ident_example: 4BXqlLKW8oP0RBCW1FvaIg
+youtube:
+    name: YouTube
+    url: http://www.youtube.com/user/{{ident}}
+    service_type: video
+zooomr:
+    name: Zooomr
+    url: http://www.zooomr.com/photos/{{ident}}
+    ident_example: 1234567@Z01
+    service_type: photos
