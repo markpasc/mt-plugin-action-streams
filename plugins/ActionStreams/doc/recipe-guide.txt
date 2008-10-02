@@ -208,9 +208,9 @@ with an `xpath` recipe:
             xpath:
                 foreach: //item
                 get:
-                    created_on: dc:date/child::text()
-                    title: title/child::text()
-                    url: link/child::text()
+                    created_on: dc:date
+                    title:      title
+                    url:        link
 
 This specifies that each item in the feed is an XPath `//item`, meaning an
 `item` tag anywhere in the document. Within each `item`, you can find values
@@ -218,9 +218,10 @@ for the `created_on`, `title`, and `url` fields using the given XPath
 selectors. The `identifier: url` statement indicates to use the `url` value as
 the action's unique identifier.
 
-As many services provide as standard web feeds, it's actually even easier to
-collect from those. Instead of `xpath`, specify your recipe as `rss` or
-`atom`, with any additional or special fields as additional XPath selectors:
+As many services provide content as standard web feeds, it's actually even
+easier to collect from those. Instead of `xpath`, specify your recipe as `rss`
+or `atom`, with any additional or special fields as additional XPath
+selectors:
 
     delicious:
         links:
@@ -230,7 +231,7 @@ collect from those. Instead of `xpath`, specify your recipe as `rss` or
             url: 'http://del.icio.us/rss/{{ident}}'
             identifier: url
             rss:
-                created_on: dc:date/child::text()
+                created_on: dc:date
 
 If there are no special fields to collect, you can also specify the recipe as
 simply `1`, as in this recipe for Jaiku:
@@ -278,9 +279,10 @@ inside, while the `title` field is the text linked inside that `a` tag.
 
 #### Custom collectors ####
 
-If you aren't pulling web data, or you can't quite articulate as a set of
-selectors, you can implement your own action collector as a Perl class. You
-then tell what class implements your stream:
+If you aren't pulling web data, or you can't quite articulate the set of
+selectors to pull out the data you want, you can implement your own action
+collector as a Perl class. Specify what class implements your stream as the
+`class` option:
 
     complex:
         posts:
@@ -289,8 +291,8 @@ then tell what class implements your stream:
             # ...
             class: Example::Event::ComplexPosts
 
-Your class then subclasses the plugin's `ActionStreams::Event` class, and
-implements your particular content-finding behavior. As the XML and HTML
+Your class should subclass the plugin's `ActionStreams::Event` class, and
+implement your particular content-finding behavior. As the XML and HTML
 recipes are really the default behavior of an `ActionStreams::Event` object,
 the above techniques are easily accessible from your class too. See some of
 the `ActionStreams::Event` subclasses included with the Action Streams plugin
@@ -298,11 +300,11 @@ for examples.
 
 ### Formatting actions for display ###
 
-While bloggers can customize how actions are published to the blog however
-they wish with the provided template tags, the recipe defines how actions are
-displayed when using the `mt:StreamAction` tag and when displayed in the
-application. This display is governed by the `html_form` and `html_params`
-options, as in the del.icio.us recipe:
+While bloggers can use the provided template tags to customize how actions are
+published to the blog, recipes define how actions are displayed by default:
+when using the `mt:StreamAction` tag and when displayed in the application.
+This display is governed by the `html_form` and `html_params` options, as in
+the del.icio.us recipe:
 
     delicious:
         links:
@@ -317,7 +319,8 @@ options, as in the del.icio.us recipe:
 The `html_form` setting is a pattern in maketext format, making it easy to .
 Each replacement token is numbered. The first replacement token, `[_1]`, is
 always the name of the MT user whose action is being displayed. The next
-tokens represent the fields you specify in (in this case, `url` and `title`).
+tokens represent the fields you specify in the `html_params` list (in this
+case, `url` and `title`).
 
 Note that the result of formatting an action is, in fact, HTML. This markup
 will be returned verbatim when used with the `mt:StreamAction` tag. For
@@ -327,10 +330,11 @@ hyperlink, for example.
 
 ### Cleaning up after your stream ###
 
-Some streams may not leave in the correct displayable format. For example, the
-regular Twitter tweet feeds include the authors' usernames with the tweets.
-The Twitter stream needs to remove to correctly collect only the tweet text.
-How can it remove the usernames from the collected actions?
+The provided collectors described above may not leave the action data in the
+correct displayable format. For example, the regular Twitter tweet feeds
+include the authors' usernames with the tweets. In order to use the feeds, the
+Twitter stream needs to remove the names, so the tweet text is only the tweet
+text. How can it remove the usernames from the collected actions?
 
 Movable Type provides a system for defining *callbacks*, or code hooks that
 are run at certain points of a process. The Action Streams plugin provides
@@ -347,19 +351,19 @@ thus:
         pre_build_action_streams_event.twitter_tweets: \
             $ActionStreams::ActionStreams::Plugin::fix_twitter_tweet_name
 
-The stream callback code is then defined in ActionStreams::Plugin as:
+The stream callback code is then defined in `ActionStreams::Plugin` as:
 
-	sub fix_twitter_tweet_name {
-	    my ($cb, $app, $item, $event, $author, $profile) = @_;
-	    # Remove the Twitter username from the front of the tweet.
-	    my $ident = $profile->{ident};
+    sub fix_twitter_tweet_name {
+        my ($cb, $app, $item, $event, $author, $profile) = @_;
+        # Remove the Twitter username from the front of the tweet.
+        my $ident = $profile->{ident};
         $item->{tweet} =~ s{
-			\A          # start of the string
-			\s*         # any whitespace
-			\Q$ident\E  # the Twitter username
-			: \s*       # followed by a colon and whitespace
-		}{}xms;
-	}
+            \A          # start of the string
+            \s*         # any whitespace
+            \Q$ident\E  # the Twitter username
+            : \s*       # followed by a colon and whitespace
+        }{}xmsi;
+    }
 
 The Action Streams callbacks available to you are documented later. See the
 Movable Type developer documentation for more about defining callbacks.
