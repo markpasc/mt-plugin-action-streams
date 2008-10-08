@@ -416,11 +416,6 @@ sub fetch_scraper {
     return $items;
 }
 
-__PACKAGE__->add_trigger( post_save => sub {
-    my ($obj, $orig_obj) = @_;
-    MT->request('saved_action_stream_events', 1);
-} );
-
 1;
 
 __END__

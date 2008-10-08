@@ -569,7 +569,6 @@ sub first_profile_update {
 
 sub rebuild_action_stream_blogs {
     my ($cb, $app) = @_;
-    return if !$app->request('saved_action_stream_events');
 
     my $plugin = MT->component('ActionStreams');
     my $pd_iter = MT->model('plugindata')->load_iter({
