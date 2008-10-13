@@ -32,6 +32,8 @@ __PACKAGE__->install_properties({
     primary_key => 'id',
 });
 
+__PACKAGE__->add_trigger( post_inflate => \&MT::Object::_post_load_rebless_object );
+
 __PACKAGE__->install_meta({
     columns => [ qw(
         title

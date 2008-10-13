@@ -100,18 +100,20 @@ template_sets:
             module:
                 header:
                     label: Header
-                    filename: ../../../default_templates/header.mtml
                 footer:
                     label: Footer
-                    filename: ../../../default_templates/footer.mtml
                 sidebar:
                     label: Sidebar
-                    filename: ../../../default_templates/sidebar.mtml
             widget:
                 elsewhere:
                     label: Find Authors Elsewhere
                 Action:
                     label: Authors Action Stream
+            widgetset:
+                2column_layout_sidebar:
+                    label: 2-column layout - Sidebar
+                    widgets:
+                        - Find Authors Elsewhere
 upgrade_functions:
     enable_existing_streams:
         version_limit: 9
