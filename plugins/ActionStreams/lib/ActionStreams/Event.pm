@@ -257,6 +257,7 @@ sub ua {
         timeout  => 10,
     });
 
+    $ua->max_size(250_000) if $ua->can('max_size');
     $ua->agent($params{default_useragent} ? $ua->_agent
         : "mt-actionstreams-lwp/" . MT->component('ActionStreams')->version);
     return $ua;
