@@ -260,7 +260,10 @@ sub ua {
     $ua->max_size(250_000) if $ua->can('max_size');
     $ua->agent($params{default_useragent} ? $ua->_agent
         : "mt-actionstreams-lwp/" . MT->component('ActionStreams')->version);
-    return $ua;
+
+    require ActionStreams::UserAgent::Adapter;
+    my $adapter = ActionStreams::UserAgent::Adapter->new( ua => $ua );
+    return $adapter;
 }
 
 sub set_values {
