@@ -267,7 +267,7 @@ vox:
     service_type: blog
 website:
     name: Website
-    url: {{ident}}
+    url: '{{ident}}'
     ident_label: URL
     ident_example: http://www.example.com/
     ident_exact: 1
