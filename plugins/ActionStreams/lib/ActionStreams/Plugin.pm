@@ -1059,6 +1059,7 @@ sub list {
 
     my $res = q{};
     my $glue = $args->{glue};
+    $glue = '' unless defined $glue;
     my $vars = ($ctx->{__stash}{vars} ||= {});
     my ($count, $total) = (0, scalar @$items);
     for my $item (@$items) {
