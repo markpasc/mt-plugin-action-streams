@@ -8,9 +8,6 @@ __PACKAGE__->install_properties({
         etag          => 'string(255)',
         last_modified => 'string(255)',
     },
-    indexes => {
-        url => 1,
-    },
     primary_key => 'url',
     datasource  => 'actions_ua_cache',
 });
