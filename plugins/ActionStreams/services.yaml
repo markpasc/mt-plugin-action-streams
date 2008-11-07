@@ -232,6 +232,7 @@ tribe:
 tumblr:
     name: Tumblr
     url: http://{{ident}}.tumblr.com
+    icon: images/services/tumblr.gif
     ident_label: URL
     ident_suffix: .tumblr.com
     service_type: blog

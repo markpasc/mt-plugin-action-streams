@@ -37,16 +37,16 @@ sub icon_url_for_service {
 
     my $icon_url;
 
-    if ($plug->id eq 'actionstreams') {
-        $icon_url = MT->app->static_path . join q{/}, $plug->envelope,
-            'images', 'services', $type . '.png';
-    }
-    elsif ($ndata->{icon} && $ndata->{icon} =~ m{ \A \w:// }xms) {
+    if ($ndata->{icon} && $ndata->{icon} =~ m{ \A \w:// }xms) {
         $icon_url = $ndata->{icon};
     }
     elsif ($ndata->{icon}) {
         $icon_url = MT->app->static_path . join q{/}, $plug->envelope,
             $ndata->{icon};
+    }
+    elsif ($plug->id eq 'actionstreams') {
+        $icon_url = MT->app->static_path . join q{/}, $plug->envelope,
+            'images', 'services', $type . '.png';
     }
 
     return $icon_url;
@@ -1022,17 +1022,22 @@ sub tag_other_profiles {
 
     my @profiles = sort { lc $a->{type} cmp lc $b->{type} }
         @{ $user->other_profiles() };
-    my $services;
+    my $services = MT->app->registry('profile_services');
     if (my $filter_type = $args->{type}) {
         my $filter_except = $filter_type =~ s{ \A NOT \s+ }{}xmsi ? 1 : 0;
         @profiles = grep {
             my $profile = $_;
             my $profile_type = $profile->{type};
-            $services ||= MT->app->registry('profile_services');
             my $service_type = ($services->{$profile_type} || {})->{service_type} || q{};
             $filter_except ? $service_type ne $filter_type : $service_type eq $filter_type;
         } @profiles;
     }
+
+    my $populate_icon = sub {
+        my ($item, $row) = @_;
+        my $type = $item->{type};
+        $row->{vars}{icon_url} = __PACKAGE__->icon_url_for_service($type, $services->{$type});
+    };
 
     return list(
         context    => $ctx,
@@ -1040,6 +1045,7 @@ sub tag_other_profiles {
         conditions => $cond,
         items      => \@profiles,
         stash_key  => 'other_profile',
+        code       => $populate_icon,
     );
 }
 
@@ -1060,6 +1066,9 @@ sub list {
 
         my $row = {};
         $code->($item, $row) if $code;
+        my $vars = delete $row->{vars} if exists $row->{vars};
+        local @{ $ctx->{__stash}{vars} }{keys %$vars} = values %$vars
+            if $vars;
         local @{ $ctx->{__stash} }{keys %$row} = values %$row;
 
         $count++;
@@ -1075,7 +1084,7 @@ sub list {
         defined (my $out = $builder->build($ctx, $tokens, $cond))
             or return $ctx->error($builder->errstr);
 
-        $res .= $glue if $res && $glue;
+        $res .= $glue if ($res ne '') && ($out ne '') && ($glue ne '');
         $res .= $out;
     }
 
@@ -1093,18 +1102,30 @@ sub tag_profile_services {
     my $out = "";
     my $builder = $ctx->stash( 'builder' );
     my $tokens = $ctx->stash( 'tokens' );
-    my $vars = $ctx->stash('vars');
-    TYPE: for my $type (@network_keys) {
-        my $ndata = $networks->{$type};
+    my $vars = ($ctx->{__stash}{vars} ||= {});
+    if ($args->{extra}) {
         # Skip output completely if it's a "core" service but we want
         # extras only.
-        next TYPE if $args->{extra} && $ndata->{plugin}
-            && $ndata->{plugin}->id eq 'actionstreams';
+        @network_keys = grep { ! $_->{plugin} || ($_->{plugin}->id ne 'actionstreams') } @network_keys;
+    }
+    my ($count, $total) = (0, scalar @network_keys);
+    for my $type (@network_keys) {
+        $count++;
+        my %loop_vars = (
+            __first__   => $count == 1,
+            __last__    => $count == $total,
+            __odd__     => $count % 2,
+            __even__    => !($count % 2),
+            __counter__ => $count,
+        );
+        local @$vars{keys %loop_vars} = values %loop_vars;
 
-        local $vars->{type} = $type;
-        local $vars->{keys %$ndata} = values %$ndata;
+        my $ndata = $networks->{$type};
+        local @$vars{keys %$ndata} = values %$ndata;
         local $vars->{label} = $ndata->{name};
+        local $vars->{type} = $type;
         local $vars->{icon_url} = __PACKAGE__->icon_url_for_service($type, $networks->{$type});
+        local $ctx->{__stash}{profile_service} = $ndata;
         $out .= $builder->build( $ctx, $tokens, $cond );
     }
     return $out;
