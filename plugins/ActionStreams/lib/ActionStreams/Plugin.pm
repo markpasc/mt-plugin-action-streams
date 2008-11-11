@@ -1148,7 +1148,11 @@ sub update_events {
     my $mt = MT->app;
     $mt->run_callbacks('pre_action_streams_task', $mt);
 
-    my $author_iter = MT::Author->search({ type => MT::Author->AUTHOR() });
+    my $au_class = MT->model('author');
+    my $author_iter = $au_class->search({
+        type   => $au_class->AUTHOR(),
+        status => $au_class->ACTIVE(),
+    });
     while (my $author = $author_iter->()) {
         my $profiles = $author->other_profiles();
         $mt->run_callbacks('pre_update_action_streams',  $mt, $author, $profiles);
