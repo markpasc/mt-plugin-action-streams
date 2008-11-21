@@ -1113,7 +1113,7 @@ sub tag_profile_services {
     if ($args->{extra}) {
         # Skip output completely if it's a "core" service but we want
         # extras only.
-        @network_keys = grep { ! $_->{plugin} || ($_->{plugin}->id ne 'actionstreams') } @network_keys;
+        @network_keys = grep { ! $networks->{$_}->{plugin} || ($networks->{$_}->{plugin}->id ne 'actionstreams') } @network_keys;
     }
     my ($count, $total) = (0, scalar @network_keys);
     for my $type (@network_keys) {
