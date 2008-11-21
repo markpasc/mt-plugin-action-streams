@@ -240,6 +240,11 @@ twitter:
     name: Twitter
     url: http://twitter.com/{{ident}}
     service_type: status
+typepad:
+    name: TypePad
+    ident_prefix: http://profile.typepad.com/
+    ident_label: URL
+    url: http://profile.typepad.com/{{ident}}
 uncrate:
     name: Uncrate
     url: http://uncrate.com/stuff/{{ident}}
