@@ -1073,9 +1073,9 @@ sub list {
 
         my $row = {};
         $code->($item, $row) if $code;
-        my $vars = delete $row->{vars} if exists $row->{vars};
-        local @{ $ctx->{__stash}{vars} }{keys %$vars} = values %$vars
-            if $vars;
+        my $lvars = delete $row->{vars} if exists $row->{vars};
+        local @$vars{keys %$lvars} = values %$lvars
+            if $lvars;
         local @{ $ctx->{__stash} }{keys %$row} = values %$row;
 
         $count++;
