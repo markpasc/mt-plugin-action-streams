@@ -698,6 +698,12 @@ sub fix_gametap_score_stuff {
     $item->{url} =~ s{ \A / }{http://www.gametap.com/}xms;
 }
 
+sub fix_typepad_comment_titles {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    $item->{title} =~ s{ \A .*? ' }{}xms;
+    $item->{title} =~ s{ ' \z }{}xms;
+}
+
 sub tag_stream_action {
     my ($ctx, $args, $cond) = @_;
 

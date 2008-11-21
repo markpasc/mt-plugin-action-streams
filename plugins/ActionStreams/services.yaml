@@ -243,7 +243,7 @@ twitter:
 typepad:
     name: TypePad
     ident_prefix: http://profile.typepad.com/
-    ident_label: URL
+    ident_label: Profile URL
     url: http://profile.typepad.com/{{ident}}
 uncrate:
     name: Uncrate
