@@ -552,7 +552,7 @@ sub itemset_update_profiles {
                 synchronous => 1);
         }
 
-        $page_author_id = 1;
+        $page_author_id ||= $author_id;
     }
 
     return $app->redirect($app->uri(
