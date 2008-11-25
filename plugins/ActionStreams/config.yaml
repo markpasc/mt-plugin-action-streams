@@ -80,7 +80,7 @@ tags:
         StreamActionThumbnailURL: $ActionStreams::ActionStreams::Tags::stream_action_thumbnail_url
         StreamActionVia:          $ActionStreams::ActionStreams::Tags::stream_action_via
         StreamActionVerbURI:      $ActionStreams::ActionStreams::Tags::stream_action_verb_uri
-        StreamActionObjectTypeURI:$ActionStreams::ActionStreams::Tags::stream_action_object_type_uri
+        StreamActionObjectTypeURI: $ActionStreams::ActionStreams::Tags::stream_action_object_type_uri
         OtherProfileVar:          $ActionStreams::ActionStreams::Tags::other_profile_var
     block:
         ActionStreams:      $ActionStreams::ActionStreams::Tags::action_streams
