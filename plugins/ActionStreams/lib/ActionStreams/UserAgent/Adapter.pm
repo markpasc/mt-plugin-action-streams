@@ -13,8 +13,13 @@ sub _add_cache_headers {
     my %param = @_;
     my ($uri, $headers) = @param{qw( uri headers )};
 
-    my $cache = MT->model('actions_ua_cache')->load($uri)
+    my $action_type = $self->{action_type}
         or return;
+    my $cache = MT->model('as_ua_cache')->load({
+        url         => $uri,
+        action_type => $action_type,
+    });
+    return if !$cache;
 
     if (my $etag = $cache->etag) {
         $headers->{If_None_Match} = $etag;
@@ -28,8 +33,13 @@ sub _save_cache_headers {
     my $self = shift;
     my ($resp) = @_;
 
+    my $action_type = $self->{action_type}
+        or return;
     my $uri = $resp->request->uri;
-    my $cache = MT->model('actions_ua_cache')->load($uri);
+    my $cache = MT->model('as_ua_cache')->load({
+        url         => $uri,
+        action_type => $action_type,
+    });
 
     my $failed = !$resp->is_success();
     my $no_cache_headers = !$resp->header('Etag') && !$resp->header('Last-Modified');
@@ -38,9 +48,10 @@ sub _save_cache_headers {
         return;
     }
 
-    $cache ||= MT->model('actions_ua_cache')->new();
+    $cache ||= MT->model('as_ua_cache')->new();
     $cache->set_values({
         url           => $uri,
+        action_type   => $action_type,
         etag          => ($resp->header('Etag') || undef),
         last_modified => ($resp->header('Last-Modified') || undef),
     });

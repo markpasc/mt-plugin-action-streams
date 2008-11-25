@@ -261,8 +261,13 @@ sub ua {
     $ua->agent($params{default_useragent} ? $ua->_agent
         : "mt-actionstreams-lwp/" . MT->component('ActionStreams')->version);
 
+    return $ua if $class->class_type eq 'event';
+
     require ActionStreams::UserAgent::Adapter;
-    my $adapter = ActionStreams::UserAgent::Adapter->new( ua => $ua );
+    my $adapter = ActionStreams::UserAgent::Adapter->new(
+        ua          => $ua,
+        action_type => $class->class_type,
+    );
     return $adapter;
 }
 
@@ -290,7 +295,8 @@ sub fetch_xpath {
     my $ua = $class->ua(%params);
     my $res = $ua->get($url);
     if (!$res->is_success()) {
-        MT->log("Could not fetch ${url}: " . $res->status_line());
+        MT->log("Could not fetch ${url}: " . $res->status_line())
+            if $res->code != 304;
         return;
     }
 

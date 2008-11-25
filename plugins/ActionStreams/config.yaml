@@ -4,7 +4,7 @@ key: ActionStreams
 author_link: http://www.sixapart.com/
 author_name: Six Apart Ltd.
 description: Manages authors' accounts and actions on sites elsewhere around the web
-schema_version: 12
+schema_version: 13
 version: 1.1
 plugin_link: http://www.sixapart.com/
 settings:
@@ -48,8 +48,8 @@ callbacks:
     pre_build_action_streams_event.p0pulist_stuff:          $ActionStreams::ActionStreams::Fix::p0pulist_stuff_urls
     pre_build_action_streams_event.typepad_comments:        $ActionStreams::ActionStreams::Fix::typepad_comment_titles
 object_types:
-    profileevent:     ActionStreams::Event
-    actions_ua_cache: ActionStreams::UserAgent::Cache
+    profileevent: ActionStreams::Event
+    as_ua_cache:  ActionStreams::UserAgent::Cache
 list_actions:
     profileevent:
         hide_all:
