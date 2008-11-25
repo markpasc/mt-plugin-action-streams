@@ -47,14 +47,14 @@ sub stream_action_modified_date {
     return $ctx->_hdlr_date($arg);
 }
 
-sub tag_stream_action_title {
+sub stream_action_title {
     my ($ctx, $arg, $cond) = @_;
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionTitle in a non-action-stream context!");
     return $event->title || '';
 }
 
-sub tag_stream_action_url {
+sub stream_action_url {
     my ($ctx, $arg, $cond) = @_;
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionURL in a non-action-stream context!");
