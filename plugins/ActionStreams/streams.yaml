@@ -81,6 +81,8 @@ colourlovers:
             - title
         url: 'http://www.colourlovers.com/rss/lover/{{ident}}/palettes/favorites'
         rss: 1
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
 corkd:
     reviews:
         name: Reviews
@@ -125,6 +127,10 @@ delicious:
             - title
         url: 'http://del.icio.us/rss/{{ident}}'
         identifier: url
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/bookmark
         xpath:
             foreach: //item
             get:
@@ -166,6 +172,10 @@ digg:
                 created_on: pubDate
                 title: title
                 url: link
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/bookmark
 ffffound:
     favorites:
         name: Found
@@ -187,6 +197,10 @@ flickr:
             - url
             - title
         url: 'http://api.flickr.com/services/feeds/photos_faves.gne?nsid={{ident}}&lang=en-us&format=atom_10'
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
         atom:
             thumbnail: content
             by: author/name
@@ -198,6 +212,10 @@ flickr:
             - url
             - title
         url: 'http://api.flickr.com/services/feeds/photos_public.gne?id={{ident}}&lang=en-us&format=atom_10'
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
         atom:
             thumbnail: content
 friendfeed:
@@ -211,6 +229,8 @@ friendfeed:
         url: 'http://friendfeed.com/{{ident}}/likes?format=atom'
         atom:
             url: link/@href
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
 gametap:
     scores:
         name: Leaderboard scores
@@ -302,6 +322,10 @@ googlereader:
         name: Shared
         description: Your shared items
         class: GoogleReader
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/bookmark
 iconbuffet:
     icons:
         name: Deliveries
@@ -330,6 +354,10 @@ identica:
         rss:
             created_on: dc:date
         class: Identica
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/microblogentry
 iminta:
     links:
         name: Intas
@@ -340,6 +368,10 @@ iminta:
             - title
         url: 'http://iminta.com/people/{{ident}}/rss.xml?inta_source_id=11'
         rss: 1
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/bookmark
 istockphoto:
     photos:
         name: Photos
@@ -352,6 +384,10 @@ istockphoto:
         identifier: url
         atom:
             thumbnail: content/div/a/img/@src
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
 iusethis:
     events:
         name: Recent events
@@ -362,6 +398,8 @@ iusethis:
             - title
         rss: 1
         url: 'http://osx.iusethis.com/user/feed.rss/{{ident}}?following=0'
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/event
     osxapps:
         name: Apps you use
         description: The applications you saved as ones you use
@@ -475,6 +513,10 @@ lastfm:
             - title
         url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/journals.rss'
         rss: 1
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/blogentry
     events:
         name: Events
         description: The events you said you'll be attending
@@ -484,6 +526,8 @@ lastfm:
             - title
         url: 'http://ws.audioscrobbler.com/1.0/user/{{ident}}/events.rss'
         rss: 1
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/event
 livejournal:
     posts:
         name: Posts
@@ -494,6 +538,10 @@ livejournal:
             - title
         url: 'http://users.livejournal.com/{{ident}}/data/atom'
         atom: 1
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/blogentry
 magnolia:
     links:
         name: Links
@@ -506,6 +554,10 @@ magnolia:
         identifier: url
         atom:
             tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/bookmark
 netflix:
     queue:
         name: Queue
@@ -632,6 +684,10 @@ picasaweb:
         url: 'http://picasaweb.google.com/data/feed/api/user/{{ident}}?kind=photo&max-results=15'
         atom:
             thumbnail: media:group/media:thumbnail[position()=2]/@url
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
 p0pulist:
     stuff:
         name: List
@@ -741,6 +797,10 @@ slideshare:
         rss:
             thumbnail: media:content/media:thumbnail/@url
             created_on: ''
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/slideshow
     slideshows:
         name: Slideshows
         description: Slideshows you posted
@@ -751,6 +811,10 @@ slideshare:
         url: 'http://www.slideshare.net/rss/user/{{ident}}'
         rss:
             thumbnail: media:content/media:thumbnail/@url
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/slideshow
 smugmug:
     photos:
         name: Photos
@@ -761,6 +825,10 @@ smugmug:
         url: 'http://www.smugmug.com/hack/feed.mg?Type=nicknameRecentPhotos&Data={{ident}}&format=atom10&ImageCount=15'
         atom:
             thumbnail: id
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
 steam:
     achievements:
         name: Achievements
@@ -784,6 +852,10 @@ twitter:
         html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
         url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
         atom: 1
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/microblogentry
     favorites:
         name: Favorites
         description: Public tweets you saved as favorites
@@ -795,6 +867,10 @@ twitter:
         atom:
             created_on: ''
             modified_on: ''
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/microblogentry
 typepad:
     comments:
         name: Comments
@@ -836,6 +912,8 @@ upcoming:
             - title
             - venue
         url: 'http://upcoming.yahoo.com/syndicate/v2/my_events/{{ident}}'
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/event
         xpath:
             foreach: //item
             get:
@@ -856,6 +934,10 @@ viddler:
         url: 'http://www.viddler.com/explore/{{ident}}/videos/feed/'
         rss:
             thumbnail: media:content/media:thumbnail/@url
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/video
 vimeo:
     videos:
         name: Videos
@@ -867,6 +949,10 @@ vimeo:
         url: http://vimeo.com/{{ident}}/videos/rss
         rss:
             thumbnail: media:thumbnail/@url
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/video
     like:
         name: Likes
         description: Videos you liked
@@ -879,11 +965,17 @@ vimeo:
             thumbnail: media:thumbnail/@url
             created_on: ''
             modified_on: ''
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/video
 vox:
     favorites:
         name: Favorites
         description: Public assets you saved as favorites
         class: Vox
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
     photos:
         name: Photos
         description: Your public photos in your Vox library
@@ -895,6 +987,10 @@ vox:
         rss:
             thumbnail: media:thumbnail/@url
             tags: category
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
     posts:
         name: Posts
         description: Your public posts to your Vox
@@ -905,6 +1001,10 @@ vox:
         url: 'http://{{ident}}.vox.com/library/posts/atom.xml'
         atom:
             tags: category/@label
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/blogentry
 website:
     posted:
         name: Posts
@@ -958,6 +1058,10 @@ youtube:
             thumbnail: "media:group/media:thumbnail[position()=1]/@url"
             created_on: ''
             modified_on: ''
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/makefavorite
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/video
     videos:
         name: Videos
         description: Videos you posted
@@ -969,6 +1073,10 @@ youtube:
         atom:
             url: "link[@rel='alternate' and @type='text/html']/@href"
             thumbnail: "media:group/media:thumbnail[position()=1]/@url"
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/video
 zooomr:
     photos:
         name: Photos
@@ -982,3 +1090,7 @@ zooomr:
             get:
                 identifier: link
                 thumbnail: media:content/@url
+        activity_verbs:
+            - http://actionstrea.ms/specs/0.1/post
+        activity_object_types:
+            - http://actionstrea.ms/specs/0.1/photo
