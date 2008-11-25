@@ -79,6 +79,8 @@ tags:
         StreamActionURL:          $ActionStreams::ActionStreams::Tags::stream_action_url
         StreamActionThumbnailURL: $ActionStreams::ActionStreams::Tags::stream_action_thumbnail_url
         StreamActionVia:          $ActionStreams::ActionStreams::Tags::stream_action_via
+        StreamActionVerbURI:      $ActionStreams::ActionStreams::Tags::stream_action_verb_uri
+        StreamActionObjectTypeURI:$ActionStreams::ActionStreams::Tags::stream_action_object_type_uri
         OtherProfileVar:          $ActionStreams::ActionStreams::Tags::other_profile_var
     block:
         ActionStreams:      $ActionStreams::ActionStreams::Tags::action_streams
@@ -86,6 +88,8 @@ tags:
         OtherProfiles:      $ActionStreams::ActionStreams::Tags::other_profiles
         ProfileServices:    $ActionStreams::ActionStreams::Tags::profile_services
         StreamActionRollup: $ActionStreams::ActionStreams::Tags::stream_action_rollup
+        StreamActionVerbs:  $ActionStreams::ActionStreams::Tags::stream_action_verbs
+        StreamActionObjectTypes: $ActionStreams::ActionStreams::Tags::stream_action_object_types
 tasks:
     UpdateEvents:
         frequency: 1800

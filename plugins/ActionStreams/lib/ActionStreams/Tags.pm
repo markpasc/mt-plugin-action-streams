@@ -439,5 +439,59 @@ sub profile_services {
     return $out;
 }
 
+sub stream_action_verbs {
+    my ($ctx, $args, $cond) = @_;
+
+    my @bits = ();
+
+    foreach my $verb_uri ('http://www.example.com/blah', 'http://www.example.com/bosh') {
+        $ctx->stash('stream_action_verb_uri', $verb_uri);
+        my $out = $ctx->slurp($args, $cond);
+        push @bits, $out if defined $out;
+    }
+
+    return join('', @bits);
+}
+
+sub stream_action_object_types {
+    my ($ctx, $args, $cond) = @_;
+
+    my @bits = ();
+
+    foreach my $type_uri ('http://www.example.com/flah', 'http://www.example.com/fosh') {
+        $ctx->stash('stream_action_object_type_uri', $type_uri);
+        my $out = $ctx->slurp($args, $cond);
+        push @bits, $out if defined $out;
+    }
+
+    return join('', @bits);
+}
+
+sub stream_action_verb_uri {
+    my ($ctx, $args, $cond) = @_;
+
+    my $uri = $ctx->stash('stream_action_verb_uri');
+
+    if (defined($uri)) {
+        return $uri;
+    }
+    else {
+        return $ctx->error("Can't use StreamActionVerbURI outside of StreamActionVerbs");
+    }
+}
+
+sub stream_action_object_type_uri {
+    my ($ctx, $args, $cond) = @_;
+
+    my $uri = $ctx->stash('stream_action_object_type_uri');
+
+    if (defined($uri)) {
+        return $uri;
+    }
+    else {
+        return $ctx->error("Can't use StreamActionObjectTypeURI outside of StreamActionObjectTypes");
+    }
+}
+
 1;
 
