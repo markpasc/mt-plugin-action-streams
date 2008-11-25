@@ -2,8 +2,7 @@ package ActionStreams::Tags;
 
 use strict;
 
-use Carp qw( croak );
-use MT::Util qw( relative_date offset_time offset_time_list epoch2ts ts2epoch format_ts );
+use MT::Util qw( offset_time_list epoch2ts ts2epoch );
 use ActionStreams::Plugin;
 
 sub stream_action {
