@@ -585,7 +585,23 @@ sub rebuild_action_stream_blogs {
         # FIXME: We could possibly limit this further so we only rebuild
         # indexes that use actionstreams...
         my $blog = MT->model('blog')->load( $blog_id ) or next;
-        $app->rebuild_indexes( Blog => $blog );
+
+        # Republish all the blog's known non-virtual index fileinfos.
+        my @fileinfos = MT->model('fileinfo')->load({
+            blog_id      => $blog->id,
+            archive_type => 'index',
+            virtual      => [ \'IS NULL', 0 ],
+        });
+
+        require MT::TheSchwartz;
+        require TheSchwartz::Job;
+        for my $fi (@fileinfos) {
+            my $job = TheSchwartz::Job->new();
+            $job->funcname('MT::Worker::Publish');
+            $job->uniqkey($fi->id);
+            $job->run_after(time + 240);  # 4 minutes
+            MT::TheSchwartz->insert($job);
+        }
     }
 }
 
