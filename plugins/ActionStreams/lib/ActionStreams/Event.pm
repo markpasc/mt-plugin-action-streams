@@ -440,7 +440,13 @@ ActionStreams::Event - an Action Streams stream definition
     
     profile_services:
         example:
-            
+            streamid:
+                name:  Dice Example
+                description: A simple die rolling Perl stream example.
+                html_form: [_1] rolled a [_2]!
+                html_params:
+                    - title
+                class: My::Stream
 
     # in plugin's lib/My/Stream.pm
 
