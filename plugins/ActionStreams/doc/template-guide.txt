@@ -377,4 +377,44 @@ recipe for the available fields.
 
 ### `mt:StreamActionRollup` ###
 
-TODO
+When in an `<mt:ActionStreams>` loop, provides an inner loop of the next
+several actions that are of the same type. For example, if in the middle of 20
+random actions are five actions for links posted to Delicious,
+`StreamActionRollup` provides a loop of just those five actions.
+
+When a roll-up loop is used, the similar actions are automatically consumed
+from the outer loop. In the above example, if a template uses
+`StreamActionRollup` to roll up the five Delicious links, the next iteration
+of the outer `ActionStreams` loop will skip ahead five actions to the first
+action that was *not* a Delicious link.
+
+If there are no similar actions to consume, `StreamActionRollup` renders the
+template code in its `<mt:Else>` block instead, in the context of the single
+action from the outer `ActionStreams` loop. That is, you can use the regular
+template code you would use for a single action of that type in this
+`<mt:Else>` section.
+
+Attributes available on `StreamActionRollup` are:
+
+#### by ####
+
+The criteria on which to determine whether actions are similar. Possible
+criteria are:
+
+* `day`, the date on which the action occurred, in the currently publishing
+  blog's time zone
+* `service`, the profile service from which this action was collected, such as
+  `digg`, `flickr`, or `vox`
+* `stream`, the type of stream to which this action belongs, such as `links`
+  or `photos`
+* `action`, the particular action stream to which the action belongs; that is,
+  the combination of `service` and `stream`
+
+You can combine criteria by listing them together, delimited with commas. The
+default behavior if `by` is not given is to roll up by `day, action`.
+
+#### glue ####
+
+If given, the `glue` value is added between the result of each iteration of
+the loop. That is, the `glue` is inserted between the result of the loop for
+each similar action.
