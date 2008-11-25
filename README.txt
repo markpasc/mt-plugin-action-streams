@@ -48,11 +48,14 @@ INSTALLATION
 
 CRONJOB
 
-Add the following lines to your crontab to execute the script at the hour and 30 minutes
-past the hour:
+Action Streams uses Movable Type's scheduled task system to collect your action data
+from remote services. To run scheduled tasks, configure a cron job to run MT's
+tools/run-periodic-tasks script periodically.
 
-  # Movable Type's scheduled tasks script:
-  0,30 * * * * cd /path/to/mt; perl ./tools/run-periodic-tasks
+Add the following lines to your crontab to execute the script every 10 minutes:
+
+  # Movable Type scheduled tasks
+  */10 * * * * cd /path/to/mt; perl ./tools/run-periodic-tasks
 
 
 STYLES
