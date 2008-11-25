@@ -444,7 +444,10 @@ sub stream_action_verbs {
 
     my @bits = ();
 
-    foreach my $verb_uri ('http://www.example.com/blah', 'http://www.example.com/bosh') {
+    my $event = $ctx->stash('stream_action');
+    return $ctx->error("Can't use StreamActionVerbs outside of ActionStream") unless $event;
+
+    foreach my $verb_uri (@{$event->verb_uris}) {
         $ctx->stash('stream_action_verb_uri', $verb_uri);
         my $out = $ctx->slurp($args, $cond);
         push @bits, $out if defined $out;
@@ -458,7 +461,10 @@ sub stream_action_object_types {
 
     my @bits = ();
 
-    foreach my $type_uri ('http://www.example.com/flah', 'http://www.example.com/fosh') {
+    my $event = $ctx->stash('stream_action');
+    return $ctx->error("Can't use StreamActionObjectTypes outside of ActionStream") unless $event;
+
+    foreach my $type_uri (@{$event->object_type_uris}) {
         $ctx->stash('stream_action_object_type_uri', $type_uri);
         my $out = $ctx->slurp($args, $cond);
         push @bits, $out if defined $out;

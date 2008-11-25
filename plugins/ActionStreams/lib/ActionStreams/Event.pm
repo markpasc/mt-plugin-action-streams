@@ -51,6 +51,22 @@ sub as_html {
         map { MT::Util::encode_html($event->$_()) } @{ $stream->{html_params} });
 }
 
+sub verb_uris {
+    my $event = shift;
+
+    # TODO: Should also include verb uris from the source event, maybe in preference to those in our configuration.
+    my $stream = $event->registry_entry or return [];
+    return $stream->{activity_verbs} || [];
+}
+
+sub object_type_uris {
+    my $event = shift;
+
+    # TODO: Should also include type uris from the source event, maybe in preference to those in our configuration.
+    my $stream = $event->registry_entry or return [];
+    return $stream->{activity_object_types} || [];
+}
+
 sub update_events_safely {
     my $class = shift;
     my %profile = @_;
