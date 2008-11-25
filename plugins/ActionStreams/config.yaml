@@ -71,21 +71,21 @@ list_actions:
             continue_prompt: 'Deleted events that are still available from the remote service will be added back in the next scan. Only events that are no longer available from your profile will remain deleted. Are you sure you want to delete the selected event(s)?'
 tags:
     function:
-        StreamAction:             $ActionStreams::ActionStreams::Tags::tag_stream_action
-        StreamActionVar:          $ActionStreams::ActionStreams::Tags::tag_stream_action_var
-        StreamActionDate:         $ActionStreams::ActionStreams::Tags::tag_stream_action_date
-        StreamActionModifiedDate: $ActionStreams::ActionStreams::Tags::tag_stream_action_modified_date
-        StreamActionTitle:        $ActionStreams::ActionStreams::Tags::tag_stream_action_title
-        StreamActionURL:          $ActionStreams::ActionStreams::Tags::tag_stream_action_url
-        StreamActionThumbnailURL: $ActionStreams::ActionStreams::Tags::tag_stream_action_thumbnail_url
-        StreamActionVia:          $ActionStreams::ActionStreams::Tags::tag_stream_action_via
-        OtherProfileVar:          $ActionStreams::ActionStreams::Tags::tag_other_profile_var
+        StreamAction:             $ActionStreams::ActionStreams::Tags::stream_action
+        StreamActionVar:          $ActionStreams::ActionStreams::Tags::stream_action_var
+        StreamActionDate:         $ActionStreams::ActionStreams::Tags::stream_action_date
+        StreamActionModifiedDate: $ActionStreams::ActionStreams::Tags::stream_action_modified_date
+        StreamActionTitle:        $ActionStreams::ActionStreams::Tags::stream_action_title
+        StreamActionURL:          $ActionStreams::ActionStreams::Tags::stream_action_url
+        StreamActionThumbnailURL: $ActionStreams::ActionStreams::Tags::stream_action_thumbnail_url
+        StreamActionVia:          $ActionStreams::ActionStreams::Tags::stream_action_via
+        OtherProfileVar:          $ActionStreams::ActionStreams::Tags::other_profile_var
     block:
-        ActionStreams:      $ActionStreams::ActionStreams::Tags::tag_action_streams_block
-        StreamActionTags:   $ActionStreams::ActionStreams::Tags::tag_stream_action_tags
-        OtherProfiles:      $ActionStreams::ActionStreams::Tags::tag_other_profiles
-        ProfileServices:    $ActionStreams::ActionStreams::Tags::tag_profile_services
-        StreamActionRollup: $ActionStreams::ActionStreams::Tags::tag_stream_action_rollup
+        ActionStreams:      $ActionStreams::ActionStreams::Tags::action_streams
+        StreamActionTags:   $ActionStreams::ActionStreams::Tags::stream_action_tags
+        OtherProfiles:      $ActionStreams::ActionStreams::Tags::other_profiles
+        ProfileServices:    $ActionStreams::ActionStreams::Tags::profile_services
+        StreamActionRollup: $ActionStreams::ActionStreams::Tags::stream_action_rollup
 tasks:
     UpdateEvents:
         frequency: 1800

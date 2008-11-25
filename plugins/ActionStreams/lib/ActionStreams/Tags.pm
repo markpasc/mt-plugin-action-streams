@@ -6,7 +6,7 @@ use Carp qw( croak );
 use MT::Util qw( relative_date offset_time offset_time_list epoch2ts ts2epoch format_ts );
 use ActionStreams::Plugin;
 
-sub tag_stream_action {
+sub stream_action {
     my ($ctx, $args, $cond) = @_;
 
     my $event = $ctx->stash('stream_action')
@@ -14,7 +14,7 @@ sub tag_stream_action {
     return $event->as_html($ctx);
 }
 
-sub tag_stream_action_var {
+sub stream_action_var {
     my ($ctx, $arg, $cond) = @_;
 
     my $event = $ctx->stash('stream_action')
@@ -26,7 +26,7 @@ sub tag_stream_action_var {
     return $event->$var();
 }
 
-sub tag_stream_action_date {
+sub stream_action_date {
     my ($ctx, $arg, $cond) = @_;
 
     my $event = $ctx->stash('stream_action')
@@ -37,7 +37,7 @@ sub tag_stream_action_date {
     return $ctx->_hdlr_date($arg);
 }
 
-sub tag_stream_action_modified_date {
+sub stream_action_modified_date {
     my ($ctx, $arg, $cond) = @_;
 
     my $event = $ctx->stash('stream_action')
@@ -62,21 +62,21 @@ sub tag_stream_action_url {
     return $event->url || '';
 }
 
-sub tag_stream_action_thumbnail_url {
+sub stream_action_thumbnail_url {
     my ($ctx, $arg, $cond) = @_;
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionThumbnailURL in a non-action-stream context!");
     return $event->thumbnail || '';
 }
 
-sub tag_stream_action_via {
+sub stream_action_via {
     my ($ctx, $arg, $cond) = @_;
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionVia in a non-action-stream context!");
     return $event->via || q{};
 }
 
-sub tag_other_profile_var {
+sub other_profile_var {
     my( $ctx, $args ) = @_;
     my $profile = $ctx->stash( 'other_profile' )
         or return $ctx->error( 'No profile defined in ProfileVar' );
@@ -123,7 +123,7 @@ sub _author_ids_for_args {
     return \@author_ids;
 }
 
-sub tag_action_streams_block {
+sub action_streams {
     my ($ctx, $args, $cond) = @_;
 
     my %terms = (
@@ -240,7 +240,7 @@ sub _build_about_event {
     return $out;
 }
 
-sub tag_stream_action_rollup {
+sub stream_action_rollup {
     my ($ctx, $arg, $cond) = @_;
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamActionRollup in a non-action-stream context!");
@@ -291,7 +291,7 @@ sub _event_day {
     return substr(epoch2ts($ctx->stash('blog'), ts2epoch(undef, $event->created_on)), 0, 8);
 }
 
-sub tag_stream_action_tags {
+sub stream_action_tags {
     my ($ctx, $args, $cond) = @_;
 
     require MT::Entry;
@@ -319,7 +319,7 @@ sub tag_stream_action_tags {
     $res;
 }
 
-sub tag_other_profiles {
+sub other_profiles {
     my( $ctx, $args, $cond ) = @_;
 
     my $author_ids = _author_ids_for_args(@_);
@@ -400,7 +400,7 @@ sub list {
     return $res;
 }
 
-sub tag_profile_services {
+sub profile_services {
     my( $ctx, $args, $cond ) = @_;
 
     my $app = MT->app;
