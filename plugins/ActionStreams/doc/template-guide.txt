@@ -128,7 +128,57 @@ help you customize your templates.
 
 ## Rolling actions up ##
 
-TODO
+When there are multiple actions of the same type in a row, the display can be
+repetitive and boring:
+
+    <li>Melody saved <a href="...">some photo</a> as a favorite photo</li>
+    <li>Melody saved <a href="...">this puppy</a> as a favorite photo</li>
+    <li>Melody saved <a href="...">a kitten</a>   as a favorite photo</li>
+    <li>Melody saved <a href="...">omg lol!!</a>  as a favorite photo</li>
+
+By slightly complicating your template code, you can "roll up" these similar
+actions into one single display item:
+
+    <li>
+        Melody saved <a href="...">some photo</a>,
+        <a href="...">this puppy</a>, <a href="...">a kitten</a>, and
+        <a href="...">omg lol!!</a> as favorite photos
+    </li>
+
+The `<mt:StreamActionRollup>` tag allows you to peek ahead in the actions
+loop, producing an inner mini-loop over the next several actions if they are
+of the same type.
+
+    <mt:If name="action_type" eq="flickr_favorites">
+    
+        <mt:StreamActionRollup>
+            <mt:If name="__first__">
+                <mt:AuthorDisplayName escape="html"> saved
+            <mt:Else name="__last__">
+                and
+            <mt:Else>
+                ,
+            </mt:If>
+            
+            <a href="<mt:StreamActionURL escape="html">">
+                <mt:StreamActionTitle escape="html">
+            </a>
+            
+            <mt:If name="__last__">
+                as favorite photos
+            </mt:If>
+        <mt:Else>
+            <!-- no sequential Flickr favorites to roll up -->
+            <mt:StreamAction>
+        </mt:StreamActionRollup>
+    
+    </mt:Else>
+        <!-- not a Flickr favorite -->
+        <mt:StreamAction>
+    </mt:If>
+
+See below for full documentation on the `<mt:StreamActionRollup>` tag and its
+available arguments.
 
 ## Tag reference ##
 
