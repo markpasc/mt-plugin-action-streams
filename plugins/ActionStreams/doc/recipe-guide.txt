@@ -572,7 +572,7 @@ parameters to your callback are the same as for `pre_action_streams_task`.
 
 ### `pre_update_action_streams_profile.`*`type`* ###
 
-Fires before the streams for a particular author's profile are collected. For
+Fires before the streams for a particular author's profile are processed. For
 example, this callback fires once before an author's Twitter streams (both the
 tweets and favorites streams) are collected. The parameters passed to your
 callback routine are:
@@ -585,9 +585,14 @@ callback routine are:
 
 ### `post_update_action_streams_profile.`*`type`* ###
 
-Fires after the streams for a particular author's profile are collected. The
+Fires after the streams for a particular author's profile are processed. The
 parameters passed to your callback routine are the same as to
 `pre_update_action_streams_profile`.
+
+Note that in the current implementation, action streams are collected
+asynchronously, whereas this callback is fired synchronously after the
+collection jobs are queued. The new actions from the author's profile will
+*not* have been collected when this callback occurs.
 
 ### `pre_build_action_streams_event.`*`type`* ###
 
@@ -598,9 +603,8 @@ are:
 * `$mt`, the current MT instance through which the stream event was collected
 * `$item`, a hashref containing the data collected for this event
 * `$event`, the `ActionStreams::Event` into which the event data will put;
-  this is either a new empty `ActionStreams::Event`, or the previously version
-  of this event as determined by the value of the stream recipe's identifier
-  field
+  this is either a new empty `ActionStreams::Event`, or the previous version
+  of this event as determined by the stream recipe's identifier
 * `$author`, the MT::Author whose stream is being collected
 * `$profile`, a hashref containing all the information about the profile; this
   is the same as the `$profile` argument to the `pre_add_profile` callback
