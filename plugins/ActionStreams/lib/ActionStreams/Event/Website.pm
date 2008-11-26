@@ -30,7 +30,7 @@ sub update_events {
     my $class = shift;
     my %profile = @_;
     my ($ident, $author) = @profile{qw( ident author )};
-    
+
     my $links = $class->fetch_scraper(
         url     => $ident,
         scraper => scraper {
