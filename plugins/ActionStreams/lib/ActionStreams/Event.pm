@@ -537,14 +537,35 @@ Other information about the stream, such as the URL pattern into which the
 C<ident> parameter can be replaced, is available through the
 C<$class-E<gt>registry_entry()> method.
 
-=head2 C<$self-E<GT>as_html()>
+=head2 C<$self-E<GT>as_html(%params)>
 
 Returns the HTML version of the action, suitable for display to readers.
 
 The default implementation uses the stream's registry definition to construct
-the action: the author's name and the action's values as named in `html_params`
-are replaced into the stream's `html_form` setting. You need override it only
-if you have more complex requirements.
+the action: the author's name and the action's values as named in
+C<html_params> are replaced into the stream's C<html_form> setting. You need
+override it only if you have more complex requirements.
+
+Optional members of C<%params> are:
+
+=over 4
+
+=item * C<form>
+
+The formatting string to use. If not given, the C<html_form> specified for
+this stream in the registry is used.
+
+=item * C<name>
+
+The text to use as the author's name if C<as_html> needs to provide it
+automatically in the result. Author names are provided if there are more
+tokens in C<html_form> than there are fields specified in C<html_params>.
+
+If not given, the event's author's nickname is provided. Note that a defined
+but empty name (such as C<q{}>) I<will> be used; in this case, the name will
+appear to be omitted from the result of the C<as_html> call.
+
+=back
 
 =head1 AVAILABLE METHODS
 

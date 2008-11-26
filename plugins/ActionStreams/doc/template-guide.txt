@@ -333,6 +333,13 @@ The direction in which to order the selected actions. Possible values are
 ### `mt:StreamAction` ###
 
 Provides the recipe authors' suggested markup for the action in context.
+Attributes supported by this tag are:
+
+#### `name` ####
+
+The name of the author whose action this is. If not given, the author's
+nickname is used. Note that by specifying an empty name (that is, `name=""`),
+the name will be omitted from the `StreamAction` result.
 
 ### `mt:StreamActionTitle` ###
 

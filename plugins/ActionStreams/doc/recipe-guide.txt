@@ -427,14 +427,28 @@ action object is changed.
 
 ### `html_form` ###
 
-The formatting string for formatting an action for display. Numbered
-replacement tokens are replaced with the author's name and the values of the
-fields named in `html_params`.
+The formatting string for formatting an action for display.
+
+Numbered replacement tokens, beginning with `[_` and ending with `]`, are
+replaced with the author's name and the values of the fields named in
+`html_params`. For example, `[_2]` in the `html_form` will be replaced with
+the value of the second field specified in `html_params`.
 
 ### `html_params` ###
 
 The list of additional fields to replace into `html_form` when displaying an
+action. The values of the event fields named here are replaced into the
+numbered replacement tokens of `html_form` to produce the HTML version of an
 action.
+
+If `html_form` has more tokens than there are fields specified in
+`html_params`, the nickname of the author whose action is being rendered is
+provided for your convenience. That is, if you omit the first field, `[_1]` in
+your `html_form` will automatically be replaced with the action's author's
+name.
+
+If your event class is implemented as a Perl class, you can also use the names
+of any additional *methods* that class implements in your `html_params`.
 
 ### `url` ###
 
