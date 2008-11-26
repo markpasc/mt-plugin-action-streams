@@ -68,7 +68,10 @@ sub as_html {
     my @content = map { $event->encode_field_for_html($_) }
         @{ $stream->{html_params} };
     if ($max > scalar @content) {
-        unshift @content, encode_html($event->author->nickname);
+        my $name = defined $params{name} ? $params{name}
+                 :                         $event->author->nickname
+                 ;
+        unshift @content, encode_html($name);
     }
 
     return MT->translate($form, @content);

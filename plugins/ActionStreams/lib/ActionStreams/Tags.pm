@@ -7,10 +7,11 @@ use ActionStreams::Plugin;
 
 sub stream_action {
     my ($ctx, $args, $cond) = @_;
-
     my $event = $ctx->stash('stream_action')
         or return $ctx->error("Used StreamAction in a non-action-stream context!");
-    return $event->as_html($ctx);
+    return $event->as_html(
+        defined $args->{name} ? (name => $args->{name}) : ()
+    );
 }
 
 sub stream_action_var {
