@@ -6,6 +6,8 @@ use base qw( MT::Object MT::Taggable MT::Scorable );
 our @EXPORT_OK = qw( classes_for_type );
 use HTTP::Date qw( str2time );
 
+use MT::Util qw( encode_html );
+
 use ActionStreams::Scraper;
 
 our $hide_timeless = 0;
@@ -46,9 +48,23 @@ __PACKAGE__->install_meta({
 sub as_html {
     my $event = shift;
     my $stream = $event->registry_entry or return '';
-    return MT->translate($stream->{html_form} || '',
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } @{ $stream->{html_params} });
+
+    # How many spaces are there in the form?
+    my $form = $stream->{html_form} || q{};
+    my @nums = $form =~ m{ \[ _ (\d+) \] }xmsg;
+    my $max = shift @nums;
+    for my $num (@nums) {
+        $max = $num if $max < $num;
+    }
+
+    # Do we need to supply the author name?
+    my @content = map { encode_html( $event->$_() ) }
+        @{ $stream->{html_params} };
+    if ($max > scalar @content) {
+        unshift @content, encode_html($event->author->nickname);
+    }
+
+    return MT->translate($form, @content);
 }
 
 sub update_events_safely {
