@@ -301,6 +301,12 @@ googlereader:
     shared:
         name: Shared
         description: Your shared items
+        html_form: '[_1] shared <a href="[_2]">[_3]</a> from <a href="[_4]">[_5]</a>'
+        html_params:
+            - url
+            - title
+            - source_url
+            - source_title
         class: GoogleReader
 iconbuffet:
     icons:
@@ -765,6 +771,12 @@ steam:
     achievements:
         name: Achievements
         description: Your achievements for achievement-enabled games
+        html_form: '[_1] won the <strong>[_2]</strong> achievement in <a href="http://steamcommunity.com/id/[_3]/stats/[_4]?tab=achievements">[_5]</a>'
+        html_params:
+            - title
+            - ident
+            - gamecode
+            - game
         class: Steam
 tumblr:
     events:
@@ -782,6 +794,9 @@ twitter:
         description: Your public tweets
         class: TwitterTweet
         html_form: '[_1] <a href="[_2]">tweeted</a>, "[_3]"'
+        html_params:
+            - url
+            - title
         url: 'http://twitter.com/statuses/user_timeline/{{ident}}.atom'
         atom: 1
     favorites:
@@ -791,6 +806,10 @@ twitter:
         fields:
             - tweet_author
         html_form: '[_1] saved <a href="[_2]">[_3]''s tweet</a>, "[_4]" as a favorite'
+        html_params:
+            - url
+            - tweet_author
+            - title
         url: 'http://twitter.com/favorites/{{ident}}.atom'
         atom:
             created_on: ''
@@ -883,6 +902,10 @@ vox:
     favorites:
         name: Favorites
         description: Public assets you saved as favorites
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite'
+        html_params:
+            - url
+            - title
         class: Vox
     photos:
         name: Photos
@@ -909,6 +932,12 @@ website:
     posted:
         name: Posts
         description: The posts available from the website's feed
+        html_form: '[_1] posted <a href="[_2]">[_3]</a> on <a href="[_4]">[_5]</a>'
+        html_params:
+            - url
+            - title
+            - source_url
+            - source_title
         class: Website
 wists:
     wists:
@@ -928,6 +957,10 @@ xboxlive:
     gamerscore:
         name: Gamerscore
         description: Notes when your gamerscore passes an even number
+        html_form: '[_1] passed <strong>[_2]</strong> gamerscore <a href="[_3]">on Xbox Live</a>'
+        html_params:
+            - score
+            - url
         class: XboxGamerscore
 yelp:
     reviews:

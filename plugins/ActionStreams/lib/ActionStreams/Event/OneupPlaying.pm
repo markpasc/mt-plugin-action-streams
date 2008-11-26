@@ -18,12 +18,10 @@ __PACKAGE__->install_meta({
 
 sub as_html {
     my $event = shift;
-    return MT->translate(
-        $event->playing ? '[_1] started playing <a href="[_2]">[_3]</a>'
-                        : '[_1] played <a href="[_2]">[_3]</a>'
-                        ,
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } qw( url title ));
+    my $form = $event->playing ? '[_1] started playing <a href="[_2]">[_3]</a>'
+             :                   '[_1] played <a href="[_2]">[_3]</a>'
+             ;
+    return $event->SUPER::as_html( form => $form );
 }
 
 sub update_events {

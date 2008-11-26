@@ -17,17 +17,6 @@ __PACKAGE__->install_meta({
     ) ],
 });
 
-sub as_html {
-    my $event = shift;
-    my $html = MT->translate('[_1] shared <a href="[_2]">[_3]</a> from <a href="[_4]">[_5]</a>',
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } qw( url title source_url source_title ));
-    if (($event->annotation || '') ne '') {
-        $html .= " &mdash; <em>&ldquo;" . $event->annotation . "&rdquo;</em>";
-    }
-    return $html;
-}
-
 sub update_events {
     my $class = shift;
     my %profile = @_;

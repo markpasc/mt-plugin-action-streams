@@ -61,4 +61,11 @@ sub autolink {
     return $text;
 }
 
+sub encode_and_autolink_title_field {
+    my $event = shift;
+    my ($field) = @_;
+    my $value = ActionStreams::Event::encode_field_for_html($event, @_);
+    return $field eq 'title' ? $event->autolink($value) : $value;
+}
+
 1;

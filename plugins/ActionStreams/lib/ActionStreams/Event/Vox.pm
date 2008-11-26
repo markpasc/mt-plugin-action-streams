@@ -10,13 +10,6 @@ __PACKAGE__->install_properties({
     class_type => 'vox_favorites',
 });
 
-sub as_html {
-    my $event = shift;
-    return MT->translate('[_1] saved <a href="[_2]">[_3]</a> as a favorite',
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } qw( url title ));
-}
-
 sub update_events {
     my $class = shift;
     my %profile = @_;

@@ -19,13 +19,6 @@ __PACKAGE__->install_meta({
     ) ],
 });
 
-sub as_html {
-    my $event = shift;
-    return MT->translate('[_1] posted <a href="[_2]">[_3]</a> on <a href="[_4]">[_5]</a>',
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } qw( url title source_url source_title ));
-}
-
 sub update_events {
     my $class = shift;
     my %profile = @_;

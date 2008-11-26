@@ -17,13 +17,6 @@ __PACKAGE__->install_meta({
     ) ],
 });
 
-sub as_html {
-    my $event = shift;
-    return MT->translate('[_1] passed <strong>[_2]</strong> gamerscore <a href="[_3]">on Xbox Live</a>',
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } qw( score url ));
-}
-
 sub update_events {
     my $class = shift;
     my %profile = @_;

@@ -10,13 +10,8 @@ __PACKAGE__->install_properties({
 
 sub tweet { return $_[0]->title(@_) }
 
-sub as_html {
-    my $event = shift;
-    my $stream = $event->registry_entry or return '';
-    return MT->translate($stream->{html_form} || '',
-        MT::Util::encode_html($event->author->nickname),
-        MT::Util::encode_html( $event->url ),
-        $event->autolink( MT::Util::encode_html( $event->title ) ) );
+sub encode_field_for_html {
+    return shift->encode_and_autolink_title_field(@_);
 }
 
 1;

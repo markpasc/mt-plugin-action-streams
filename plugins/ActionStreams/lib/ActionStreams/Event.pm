@@ -45,12 +45,19 @@ __PACKAGE__->install_meta({
     ) ],
 });
 
+sub encode_field_for_html {
+    my $event = shift;
+    my ($field) = @_;
+    return encode_html( $event->$field() );
+}
+
 sub as_html {
     my $event = shift;
+    my %params = @_;
     my $stream = $event->registry_entry or return '';
 
     # How many spaces are there in the form?
-    my $form = $stream->{html_form} || q{};
+    my $form = $params{form} || $stream->{html_form} || q{};
     my @nums = $form =~ m{ \[ _ (\d+) \] }xmsg;
     my $max = shift @nums;
     for my $num (@nums) {
@@ -58,7 +65,7 @@ sub as_html {
     }
 
     # Do we need to supply the author name?
-    my @content = map { encode_html( $event->$_() ) }
+    my @content = map { $event->encode_field_for_html($_) }
         @{ $stream->{html_params} };
     if ($max > scalar @content) {
         unshift @content, encode_html($event->author->nickname);

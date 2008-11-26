@@ -25,13 +25,6 @@ my %game_for_code = (
     'DOD:S'   => 'Day of Defeat: Source',
 );
 
-sub as_html {
-    my $event = shift;
-    return MT->translate('[_1] won the <strong>[_2]</strong> achievement in <a href="http://steamcommunity.com/id/[_3]/stats/[_4]?tab=achievements">[_5]</a>',
-        MT::Util::encode_html($event->author->nickname),
-        map { MT::Util::encode_html($event->$_()) } qw( title ident gamecode game ));
-}
-
 sub game {
     my $event = shift;
     $game_for_code{$event->gamecode} || $event->gamecode;
