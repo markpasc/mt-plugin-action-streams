@@ -25,7 +25,7 @@ with tools your readers may be using.
 
 PREREQUISITES
 
-- Movable Type 4.1 or higher
+- Movable Type 4.2 or higher
 - Scheduled task or cron job to execute the Periodic Tasks script (see below)
 
 The Action Streams plugin ships with all of the external libraries you should
@@ -83,7 +83,33 @@ See the Template Author Guide in the doc/ folder for help with Action Streams'
 template tags.
 
 
+CHANGES
+
+2.0   30 January 2009
+      Wrote documentation (see plugin's doc/ directory or web site).
+      Provided editing of external profiles that have already been added.
+      Added "Update Now" button to profiles list.
+      Hotlinking of Twitter and Identi.ca tweets in default rendering.
+      Support for conditional HTTP requests when collecting actions.
+      Provided filtering of the "Action Streams" listing in the app.
+      Added `StreamActionRollup` tag for "rolling up" similar actions.
+      Bundled the "Recent Actions" blog dashboard widget. (Thanks, Bryan!)
+      Added support for RSS feeds in the Website stream.
+      Provided code to make easy "rss" recipes from RSS feeds.
+      Improved template set (incl. fixes for MT 4.2 support).
+      Switched to asynchronous job processing for action collecting.
+      Made installation easier (less dependent on Web::Scraper, moved extlib
+      into plugin as per MT 4.2 capability, removed Iwtst plugin).
+      Added many new profiles and streams!
+
+1.0   30 January 2008
+      Initial release.
+
+
 CREDITS
+
+Thanks to Bryan Tighe, Brad Choate, and Alex Bain for their contributions of
+various features and stream recipes.
 
 This distribution contains icons from Silk, an icon set by Mark James,
 licensed under the Creative Commons Attribution 2.5 License.
