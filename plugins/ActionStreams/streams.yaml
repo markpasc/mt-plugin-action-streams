@@ -229,7 +229,7 @@ gametap:
             get:
                 url:
                     - 'div.name a'
-                    - @href
+                    - '@href'
                 title:
                     - 'div.name strong'
                     - TEXT
@@ -414,13 +414,13 @@ kongregate:
             get:
                 url:
                     - dd a
-                    - @href
+                    - '@href'
                 title:
                     - dd a
                     - TEXT
                 thumbnail:
                     - dt img
-                    - @src
+                    - '@src'
     achievements:
         name: Achievements
         description: Achievements you won
@@ -438,10 +438,10 @@ kongregate:
             get:
                 url:
                     - dt.badge_img a
-                    - @href
+                    - '@href'
                 thumbnail:
                     - dt.badge_img img
-                    - @style
+                    - '@style'
                 title:
                     - dd.badge_name
                     - TEXT
@@ -562,7 +562,7 @@ ohloh:
             get:
                 url:
                     - a
-                    - @href
+                    - '@href'
                 title:
                     - a
                     - TEXT
@@ -842,7 +842,7 @@ uncrate:
                   - TEXT
                 url:
                   - a
-                  - @href
+                  - '@href'
 upcoming:
     events:
         name: Events
