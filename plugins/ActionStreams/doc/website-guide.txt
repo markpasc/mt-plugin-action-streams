@@ -1,0 +1,104 @@
+# Guide to Using the Website Stream #
+
+The Action Streams plugin includes a "Website" stream for easy adding of your
+blogs and other websites with feeds to your action stream.
+
+## Adding a website ##
+
+You can add any web site with discoverable Atom or RSS feeds as a "Website"
+profile. Viewing these sites in modern web browsers such as Internet Explorer,
+Firefox or Safari causes an "RSS" or feed icon to appear in the location bar.
+
+To add such a web site as a profile, go to the Add Profile dialog as with any
+other Action Streams profile, select "Website" for the service, and enter the
+URL of the web page in the "URL" field.
+
+Unlike most streams, you can still add additional "Website" profiles to
+collect posts to other web sites.
+
+## Customizing the display ##
+
+By default, entries in the feeds are displayed as though they are blog posts
+you posted:
+
+    Melody posted <a href="...">Kittens!</a> on
+    <a href="...">Melody's Cute Blog</a>
+
+As with other streams, you can customize this display through template code.
+Two common changes would be to display sites' favicons. Consult the Template
+Author Guide for additional tags and options available to you when writing
+action stream templates.
+
+### Showing favicons ###
+
+If the web site's favicon is discoverable from the web page content, the
+Website stream will collect it for use in your templates. (The Website profile
+won't collect favicons that are at the default `favicon.ico` location but not
+declared in the web site's HTML.)
+
+The favicon URL is in the `icon_url` action variable, so you can display it
+with this template code:
+
+    <mt:ActionStreams>
+        <li class="icon icon-<mt:Var name="service_type">"
+        <mt:If name="action_type" eq="website_posts">
+            <!-- move the icon_url action var to a regular var -->
+            <mt:StreamActionVar name="icon_url" setvar="website_icon_url">
+            
+            <mt:If name="website_icon_url">
+            style="list-style-image: url(<mt:Var name="website_icon_url">)"
+            </mt:If>
+            
+        </mt:If>
+        >
+            <mt:StreamAction>
+        </li>
+    </mt:ActionStreams>
+
+If you are customizing your templates for particular sites, you can also use
+CSS in your stylesheet. Use the `source_url` or `source_title` action
+variables in a CSS class name, and style the actions in your stylesheet
+however you wish.
+
+    <mt:ActionStreams>
+        <li class="icon icon-<mt:Var name="service_type">
+            <mt:If name="action_type" eq="website_posts">
+            icon-website-<mt:StreamActionVar name="source_title" dirify="-">
+            </mt:If>
+        ">
+            <mt:StreamAction>
+        </li>
+    </mt:ActionStreams>
+
+### Customizing text for non-blog content ###
+
+Despite the default text, the Website stream can be used with other feeds
+besides blogs. You can customize the text on a per-site basis by checking the
+`source_url` action variable, like so:
+
+    <mt:ActionStreams>
+        <li class="icon icon-<mt:Var name="service_type">">
+        <mt:If name="action_type" eq="website_posts">
+            <!-- move the source_url action var to a regular var -->
+            <mt:StreamActionVar name="source_url" setvar="website_url">
+            
+            <!-- example book review site -->
+            <mt:If name="website_url" eq="http://books.example.com/">
+            
+                <!-- book review -->
+                <mt:AuthorDisplayName escape="html">
+                reviewed
+                <a href="<mt:StreamActionURL escape="html">">
+                    <mt:StreamActionTitle escape="html">
+                </a>
+
+            <mt:Else>
+                <!-- some other website -->
+                <mt:StreamAction>
+            </mt:If>
+        <mt:Else>
+            <!-- some other stream -->
+            <mt:StreamAction>
+        </mt:If>
+    </mt:ActionStreams>
+
