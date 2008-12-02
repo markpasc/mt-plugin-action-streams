@@ -97,6 +97,7 @@ Google Reader actions, using the `<mt:If>` tag:
     <mt:ActionStreams>
         <li>
         <mt:If name="action_type" eq="googlereader_shared">
+        
             <mt:AuthorDisplayName escape="html">
             saved <a href="<mt:StreamActionURL escape="html">">
                 <mt:StreamActionTitle escape="html">
@@ -105,6 +106,7 @@ Google Reader actions, using the `<mt:If>` tag:
             <a href="<mt:StreamActionVar name="source_url" escape="html">">
                 <mt:StreamActionVar name="source_title" escape="html">
             </a>
+        
         <mt:Else>
             <mt:StreamAction>
         </mt:If>
