@@ -77,6 +77,9 @@ sub update_events {
             $item->{ident}     = $ident;
             $item->{gamecode}  = $gamecode;
             $item->{url}       = $url;
+            # Stringify thumbnail url as our complicated structure
+            # prevents fetch_scraper() from stringifying it for us.
+            $item->{thumbnail} = q{} . $item->{thumbnail};
         }
 
         $class->build_results(
