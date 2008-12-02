@@ -12,6 +12,7 @@ __PACKAGE__->install_properties({
 
 __PACKAGE__->install_meta({
     columns => [ qw(
+        gametitle
         gamecode
         ident
         description
@@ -27,7 +28,8 @@ my %game_for_code = (
 
 sub game {
     my $event = shift;
-    $game_for_code{$event->gamecode} || $event->gamecode;
+    return $event->gametitle || $game_for_code{$event->gamecode}
+        || $event->gamecode;
 }
 
 sub update_events {
@@ -35,33 +37,51 @@ sub update_events {
     my %profile = @_;
     my ($ident, $author) = @profile{qw( ident author )};
 
-    my $scraper = scraper {
+    my $achv_scraper = scraper {
+        process q{div#BG_top h2},
+            'title' => 'TEXT';
         process q{//div[@class='achievementClosed']},
             'achvs[]' => scraper {
                 process 'h3',  'title'       => 'TEXT';
                 process 'h5',  'description' => 'TEXT';
                 process 'img', 'thumbnail'   => '@src';
             };
-        result 'achvs';
     };
 
-    for my $gamecode (keys %game_for_code) {
-        my $url = "http://steamcommunity.com/id/$ident/stats/$gamecode?tab=achievements";
+    my $games = $class->fetch_scraper(
+        url => "http://steamcommunity.com/id/$ident/games",
+        scraper => scraper {
+            process q{div#mainContents a.linkStandard},
+                'urls[]' => '@href';
+            result 'urls';
+        },
+    );
+    return if !$games;
+
+    for my $url (@$games) {
+        my $gamecode = "$url";
+        $gamecode =~ s{ \A .* / }{}xms;
+
+        $url = "$url?tab=achievements";  # TF2's stats page has tabs
         my $items = $class->fetch_scraper(
             url     => $url,
-            scraper => $scraper,
+            scraper => $achv_scraper,
         );
         next if !$items;
 
-        for my $item (@$items) {
-            $item->{ident}    = $ident;
-            $item->{gamecode} = $gamecode;
-            $item->{url}      = $url;
+        my ($title, $achvs) = @$items{qw( title achvs )};
+        $title =~ s{ \s* Stats \z }{}xmsi;
+
+        for my $item (@$achvs) {
+            $item->{gametitle} = $title;
+            $item->{ident}     = $ident;
+            $item->{gamecode}  = $gamecode;
+            $item->{url}       = $url;
         }
 
         $class->build_results(
             author     => $author,
-            items      => $items,
+            items      => $achvs,
             identifier => 'ident,gamecode,title',
         );
     }

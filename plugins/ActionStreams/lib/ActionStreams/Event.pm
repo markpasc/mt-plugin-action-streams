@@ -438,7 +438,8 @@ sub fetch_scraper {
     return $items if !ref $items;
     return $items if 'ARRAY' ne ref $items;
 
-    for my $item (@$items) {
+    ITEM: for my $item (@$items) {
+        next ITEM if !ref $item || ref $item ne 'HASH';
         for my $field (keys %$item) {
             if ($field eq 'tags') {
                 $item->{$field} = [ map { "$_" } @{ $item->{$field} } ];
