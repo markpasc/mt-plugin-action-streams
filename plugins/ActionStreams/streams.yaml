@@ -119,6 +119,8 @@ delicious:
     links:
         name: Links
         description: Your public links
+        fields:
+            - note
         html_form: '[_1] saved the link <a href="[_2]">[_3]</a>'
         html_params:
             - url
@@ -131,6 +133,7 @@ delicious:
                 created_on: dc:date
                 title: title
                 url: link
+                note: description
 digg:
     links:
         name: Dugg
