@@ -27,8 +27,8 @@ corkd:
     name: 'Cork''d'
     url: http://www.corkd.com/people/{{ident}}
 delicious:
-    name: del.icio.us
-    url: http://del.icio.us/{{ident}}/
+    name: Delicious
+    url: http://delicious.com/{{ident}}/
     service_type: links
 destructoid:
     name: Destructoid

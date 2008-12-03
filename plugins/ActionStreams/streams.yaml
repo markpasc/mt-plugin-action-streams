@@ -123,7 +123,7 @@ delicious:
         html_params:
             - url
             - title
-        url: 'http://del.icio.us/rss/{{ident}}'
+        url: 'http://feeds.delicious.com/rss/{{ident}}'
         identifier: url
         xpath:
             foreach: //item

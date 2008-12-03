@@ -102,7 +102,7 @@ types are:
 * `blog` (Vox, Tumblr, the Website service, etc)
 * `photos` (Flickr, Smugmug, etc)
 * `video` (Vimeo, YouTube, etc)
-* `links` (del.icio.us, Digg, etc)
+* `links` (Delicious, Digg, etc)
 * `status` (Pownce, Twitter, etc)
 * `network` (Facebook, MySpace, etc)
 
@@ -165,7 +165,7 @@ posted photos across all services, use `photos` for your stream ID.
 Some of the standard stream IDs used in the standard provided streams are:
 
 * `links`, web pages or resources that have been bookmarked (as in
-  del.icio.us, Digg, Magnolia)
+  Delicious, Digg, Magnolia)
 * `photos`, photos posted by the author (as in Flickr, Picasa on the Web,
   Smugmug)
 * `favorites`, assets and objects of others' that the author saved as a
@@ -195,7 +195,7 @@ feeds, HTML scrapers, and custom collectors.
 #### XML feeds ####
 
 It's easy to collect data from XML feeds. Action Streams accepts recipes using
-XPath syntax. For example, you might collect data from del.icio.us' RSS feeds
+XPath syntax. For example, you might collect data from Delicious' RSS feeds
 with an `xpath` recipe:
 
     delicious:
@@ -203,7 +203,7 @@ with an `xpath` recipe:
             name: Links
             description: Your public links
             # ...
-            url: 'http://del.icio.us/rss/{{ident}}'
+            url: 'http://delicious.com/rss/{{ident}}'
             identifier: url
             xpath:
                 foreach: //item
@@ -228,7 +228,7 @@ selectors:
             name: Links
             description: Your public links
             # ...
-            url: 'http://del.icio.us/rss/{{ident}}'
+            url: 'http://delicious.com/rss/{{ident}}'
             identifier: url
             rss:
                 created_on: dc:date
@@ -304,7 +304,7 @@ While bloggers can use the provided template tags to customize how actions are
 published to the blog, recipes define how actions are displayed by default:
 when using the `mt:StreamAction` tag and when displayed in the application.
 This display is governed by the `html_form` and `html_params` options, as in
-the del.icio.us recipe:
+the Delicious recipe:
 
     delicious:
         links:
@@ -324,7 +324,7 @@ case, `url` and `title`).
 
 Note that the result of formatting an action is, in fact, HTML. This markup
 will be returned verbatim when used with the `mt:StreamAction` tag. For
-display in the Movable Type application, the HTML is removed; del.icio.us
+display in the Movable Type application, the HTML is removed; Delicious
 links are the text "*Author name* saved the link *title*" without the
 hyperlink, for example.
 

@@ -257,7 +257,7 @@ types are:
 * `blog` (Vox, Tumblr, the Website service, etc)
 * `photos` (Flickr, Smugmug, etc)
 * `video` (Vimeo, YouTube, etc)
-* `links` (del.icio.us, Digg, etc)
+* `links` (Delicious, Digg, etc)
 * `status` (Pownce, Twitter, etc)
 * `network` (Facebook, MySpace, etc)
 
@@ -287,7 +287,7 @@ The attributes supported by this tag are:
 
 The ID of the service from which to show actions. Service IDs are the keys
 used in their service definitions; for example, Twitter's ID is `twitter`, and
-del.icio.us' ID is `delicious`.
+Delicious' ID is `delicious`.
 
 For services with multiple streams, limiting only by `service` without a
 `stream` will list all actions from all of those streams. For example,
@@ -296,7 +296,7 @@ For services with multiple streams, limiting only by `service` without a
 #### `stream` ####
 
 The ID of the stream from which to show actions. Stream IDs are the keys used
-in their recipe definitions; for example, the stream of del.icio.us links has
+in their recipe definitions; for example, the stream of Delicious links has
 the ID `links`, and the stream of Flickr photos has the ID `photos`.
 
 Because similar streams for all services use the same stream IDs, you can use
