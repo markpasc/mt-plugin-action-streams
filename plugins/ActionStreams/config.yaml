@@ -40,6 +40,7 @@ callbacks:
     pre_build_action_streams_event.iminta_links:            $ActionStreams::ActionStreams::Fix::iminta_link_title
     pre_build_action_streams_event.iusethis_events:         $ActionStreams::ActionStreams::Fix::iusethis_event_title
     pre_build_action_streams_event.kongregate_achievements: $ActionStreams::ActionStreams::Fix::kongregate_achievement_title_thumb
+    pre_build_action_streams_event.magnolia_links:          $ActionStreams::ActionStreams::Fix::magnolia_link_notes
     pre_build_action_streams_event.netflix_queue:           $ActionStreams::ActionStreams::Fix::netflix_queue_prefix_thumb
     pre_build_action_streams_event.netflix_recent:          $ActionStreams::ActionStreams::Fix::netflix_recent_prefix_thumb
     pre_build_action_streams_event.p0pulist_stuff:          $ActionStreams::ActionStreams::Fix::p0pulist_stuff_urls

@@ -1,7 +1,10 @@
+
 package ActionStreams::Fix;
 
 use strict;
 use warnings;
+
+use ActionStreams::Scraper;
 
 sub _twitter_add_tags_to_item {
     my ($item) = @_;
@@ -116,6 +119,22 @@ sub typepad_comment_titles {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     $item->{title} =~ s{ \A .*? ' }{}xms;
     $item->{title} =~ s{ ' \z }{}xms;
+}
+
+sub magnolia_link_notes {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    my $scraper = scraper {
+        process '//p[position()=2]', note => 'TEXT';
+    };
+
+    my $result = $scraper->scrape(\$item->{note});
+
+    if ($result->{note}) {
+        $item->{note} = $result->{note};
+    }
+    else {
+        delete $item->{note};
+    }
 }
 
 1;
