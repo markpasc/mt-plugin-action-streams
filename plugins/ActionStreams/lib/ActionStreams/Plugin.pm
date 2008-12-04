@@ -323,10 +323,10 @@ sub upgrade_reclass_actions {
     my $dbh = $driver->rw_handle;
     my $class_col = $dbd->db_column_name($action_class->datasource, 'class');
 
-    my %reclasses = (
-        'twitter_tweets' => 'twitter_statuses',
-        'pownce_notes'   => 'pownce_statuses',
-    );
+    my $reg_reclasses = MT->component('ActionStreams')->registry(
+        'upgrade_data', 'reclass_actions');
+    my %reclasses = %$reg_reclasses;
+    delete $reclasses{plugin};  # just in case
 
     my $app      = MT->instance;
     my $plugin   = MT->component('ActionStreams');
@@ -365,18 +365,9 @@ sub upgrade_rename_action_metadata {
     my $type_col    = $dbd->db_column_name($meta_class->datasource, 'type');
     my $meta_id_col = $dbd->db_column_name($meta_class->datasource, 'profileevent_id');
 
-    my @renames = (
-        {
-            action_type => 'delicious_links',
-            old         => 'annotation',
-            new         => 'note',
-        },
-        {
-            action_type => 'googlereader_shared',
-            old         => 'annotation',
-            new         => 'note',
-        },
-    );
+    my $reg_renames = MT->component('ActionStreams')->registry('upgrade_data',
+        'rename_action_metadata');
+    my @renames = @$reg_renames;
 
     for my $rename (@renames) {
         my $stmt = $dbd->sql_class->new;

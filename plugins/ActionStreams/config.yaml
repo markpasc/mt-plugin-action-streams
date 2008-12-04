@@ -157,5 +157,16 @@ upgrade_functions:
     rename_action_metadata:
         version_limit: 14
         handler: $ActionStreams::ActionStreams::Plugin::upgrade_rename_action_metadata
+upgrade_data:
+    reclass_actions:
+        twitter_tweets: twitter_statuses
+        pownce_notes:   pownce_statuses
+    rename_action_metadata:
+        - action_type: delicious_links
+          old:         annotation
+          new:         note
+        - action_type: googlereader_shared
+          old:         annotation
+          new:         note
 profile_services: services.yaml
 action_streams:   streams.yaml
