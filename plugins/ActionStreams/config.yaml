@@ -33,20 +33,20 @@ callbacks:
     MT::App::CMS::template_source.users_content_nav: $ActionStreams::ActionStreams::Plugin::users_content_nav
     MT::App::CMS::post_add_profile: $ActionStreams::ActionStreams::Plugin::first_profile_update
     post_action_streams_task: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
-    pre_build_action_streams_event.twitter_statuses:        $ActionStreams::ActionStreams::Fix::twitter_tweet_name
-    pre_build_action_streams_event.twitter_favorites:       $ActionStreams::ActionStreams::Fix::twitter_favorite_author
-    pre_build_action_streams_event.flickr_photos:           $ActionStreams::ActionStreams::Fix::flickr_photo_thumbnail
     pre_build_action_streams_event.flickr_favorites:        $ActionStreams::ActionStreams::Fix::flickr_photo_thumbnail
+    pre_build_action_streams_event.flickr_photos:           $ActionStreams::ActionStreams::Fix::flickr_photo_thumbnail
     pre_build_action_streams_event.gametap_scores:          $ActionStreams::ActionStreams::Fix::gametap_score_stuff
     pre_build_action_streams_event.identica_statuses:       $ActionStreams::ActionStreams::Fix::twitter_tweet_name
     pre_build_action_streams_event.iminta_links:            $ActionStreams::ActionStreams::Fix::iminta_link_title
     pre_build_action_streams_event.iusethis_events:         $ActionStreams::ActionStreams::Fix::iusethis_event_title
-    pre_build_action_streams_event.netflix_recent:          $ActionStreams::ActionStreams::Fix::netflix_recent_prefix_thumb
-    pre_build_action_streams_event.netflix_queue:           $ActionStreams::ActionStreams::Fix::netflix_queue_prefix_thumb
     pre_build_action_streams_event.kongregate_achievements: $ActionStreams::ActionStreams::Fix::kongregate_achievement_title_thumb
-    pre_build_action_streams_event.wists_wists:             $ActionStreams::ActionStreams::Fix::wists_thumb
+    pre_build_action_streams_event.netflix_queue:           $ActionStreams::ActionStreams::Fix::netflix_queue_prefix_thumb
+    pre_build_action_streams_event.netflix_recent:          $ActionStreams::ActionStreams::Fix::netflix_recent_prefix_thumb
     pre_build_action_streams_event.p0pulist_stuff:          $ActionStreams::ActionStreams::Fix::p0pulist_stuff_urls
+    pre_build_action_streams_event.twitter_favorites:       $ActionStreams::ActionStreams::Fix::twitter_favorite_author
+    pre_build_action_streams_event.twitter_statuses:        $ActionStreams::ActionStreams::Fix::twitter_tweet_name
     pre_build_action_streams_event.typepad_comments:        $ActionStreams::ActionStreams::Fix::typepad_comment_titles
+    pre_build_action_streams_event.wists_wists:             $ActionStreams::ActionStreams::Fix::wists_thumb
 object_types:
     profileevent: ActionStreams::Event
     as_ua_cache:  ActionStreams::UserAgent::Cache
