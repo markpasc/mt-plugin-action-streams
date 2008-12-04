@@ -623,8 +623,9 @@ sub update_events {
 
     my $au_class = MT->model('author');
     my $author_iter = $au_class->search({
-        type   => $au_class->AUTHOR(),
         status => $au_class->ACTIVE(),
+    }, {
+        join => [ $au_class->meta_pkg, 'author_id', { type => 'other_profiles' } ],
     });
     while (my $author = $author_iter->()) {
         my $profiles = $author->other_profiles();
