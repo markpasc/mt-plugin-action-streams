@@ -348,6 +348,51 @@ sub upgrade_reclass_actions {
     return 0;  # done
 }
 
+sub upgrade_rename_action_metadata {
+    my ($upg, %param) = @_;
+
+    my $action_class = MT->model('profileevent');
+    my $driver       = $action_class->driver;
+    my $dbd          = $driver->dbd;
+    my $dbh          = $driver->rw_handle;
+
+    my $action_table    = $driver->table_for($action_class);
+    my $action_type_col = $dbd->db_column_name($action_class->datasource, 'class');
+    my $action_id_col   = $dbd->db_column_name($action_class->datasource, 'id');
+
+    my $meta_class  = $action_class->meta_pkg;
+    my $meta_table  = $driver->table_for($meta_class);
+    my $type_col    = $dbd->db_column_name($meta_class->datasource, 'type');
+    my $meta_id_col = $dbd->db_column_name($meta_class->datasource, 'profileevent_id');
+
+    my @renames = (
+        {
+            action_type => 'delicious_links',
+            old         => 'annotation',
+            new         => 'note',
+        },
+        {
+            action_type => 'googlereader_shared',
+            old         => 'annotation',
+            new         => 'note',
+        },
+    );
+
+    for my $rename (@renames) {
+        my $stmt = $dbd->sql_class->new;
+        $stmt->add_where( $type_col        => $rename->{old} );
+        $stmt->add_where( $action_type_col => $rename->{action_type} );
+        $stmt->add_where( $meta_id_col     => \"= $action_id_col");
+
+        my $sql = join q{ }, 'UPDATE', $meta_table, q{,}, $action_table,
+            'SET', $type_col, '= ?', $stmt->as_sql_where();
+        $dbh->do($sql, {}, $rename->{new}, @{ $stmt->{bind} })
+            or die $dbh->errstr;
+    }
+
+    return 0;  # done
+}
+
 sub other_profiles {
     my( $app ) = @_;
 

@@ -13,7 +13,7 @@ __PACKAGE__->install_meta({
         summary
         source_title
         source_url
-        annotation
+        note
     ) ],
 });
 
@@ -32,7 +32,7 @@ sub update_events {
             enclosure    => q(link[@rel='enclosure']/@href),
             source_title => 'source/title/child::text()',
             source_url   => q(source/link[@rel='alternate']/@href),
-            annotation   => 'gr:annotation/content/child::text()',
+            note         => 'gr:annotation/content/child::text()',
         },
     );
 	return if !$items;
