@@ -369,7 +369,16 @@ sub upgrade_rename_action_metadata {
         'rename_action_metadata');
     my @renames = @$reg_renames;
 
+    my $app      = MT->instance;
+    my $plugin   = MT->component('ActionStreams');
+    my $services = $app->registry('profile_services');
+    my $streams  = $app->registry('action_streams');
     for my $rename (@renames) {
+        my ($service, $stream) = split /_/, $rename->{action_type}, 2;
+        $upg->progress($plugin->translate('Renaming "[_1]" data of [_2] [_3] actions...',
+            $rename->{old},
+            $services->{$service}->{name}, $streams->{$service}->{$stream}->{name}));
+
         my $stmt = $dbd->sql_class->new;
         $stmt->add_where( $type_col        => $rename->{old} );
         $stmt->add_where( $action_type_col => $rename->{action_type} );
