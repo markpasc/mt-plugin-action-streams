@@ -5,7 +5,7 @@ use strict;
 use base qw( ActionStreams::Event );
 
 __PACKAGE__->install_properties({
-    class_type => 'googlereader_shared',
+    class_type => 'googlereader_links',
 });
 
 __PACKAGE__->install_meta({

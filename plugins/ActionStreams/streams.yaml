@@ -301,7 +301,7 @@ goodreads:
                 modified_on: pubDate
                 by: author_name
 googlereader:
-    shared:
+    links:
         name: Shared
         description: Your shared items
         html_form: '[_1] shared <a href="[_2]">[_3]</a> from <a href="[_4]">[_5]</a>'

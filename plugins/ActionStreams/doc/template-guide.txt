@@ -96,7 +96,7 @@ Google Reader actions, using the `<mt:If>` tag:
 
     <mt:ActionStreams>
         <li>
-        <mt:If name="action_type" eq="googlereader_shared">
+        <mt:If name="action_type" eq="googlereader_links">
         
             <mt:AuthorDisplayName escape="html">
             saved <a href="<mt:StreamActionURL escape="html">">
@@ -117,7 +117,7 @@ Then all your shared Google Reader items will be customized, but your Digg
 links and Flickr photos will display as normal. You can customize multiple
 actions by specifying test attributes on another `<mt:Else>` tag:
 
-    <mt:If name="action_type" eq="googlereader_shared">
+    <mt:If name="action_type" eq="googlereader_links">
         <!-- shared on google reader -->
     <mt:Else name="action_type" eq="digg_links">
         <!-- dugg on digg -->
