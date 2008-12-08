@@ -978,7 +978,6 @@ yelp:
             - title
         url: 'http://www.yelp.com/syndicate/user/{{ident}}/atom.xml'
         atom:
-            review: title
             url: link/@href
 youtube:
     favorites:
