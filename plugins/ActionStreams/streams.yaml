@@ -335,6 +335,9 @@ identica:
         name: Notices
         description: Notices you posted
         html_form: '[_1] <a href="[_2]">said</a>, &ldquo;[_3]&rdquo;'
+        html_params:
+            - url
+            - title
         url: 'http://identi.ca/{{ident}}/rss'
         rss:
             created_on: dc:date
