@@ -593,22 +593,31 @@ sub rebuild_action_stream_blogs {
         plugin => $plugin->key,
         key => { like => 'configuration:blog:%' }
     });
+
     my %rebuild;
     while ( my $pd = $pd_iter->() ) {
         next unless $pd->data('rebuild_for_action_stream_events');
         my ($blog_id) = $pd->key =~ m/:blog:(\d+)$/;
         $rebuild{$blog_id} = 1;
     }
-    foreach my $blog_id (keys %rebuild) {
-        # FIXME: We could possibly limit this further so we only rebuild
-        # indexes that use actionstreams...
+
+    for my $blog_id (keys %rebuild) {
+        # TODO: limit this to indexes that publish action stream data, once
+        # we can magically infer template content before building it
         my $blog = MT->model('blog')->load( $blog_id ) or next;
 
-        # Republish all the blog's known non-virtual index fileinfos.
-        my @fileinfos = MT->model('fileinfo')->load({
+        # Republish all the blog's known non-virtual index fileinfos that
+        # have real template objects.
+        my $finfo_class = MT->model('fileinfo');
+        my $finfo_template_col = $finfo_class->driver->dbd->db_column_name(
+            $finfo_class->datasource, 'template_id');
+        my @fileinfos = $finfo_class->load({
             blog_id      => $blog->id,
             archive_type => 'index',
             virtual      => [ \'IS NULL', 0 ],
+        }, {
+            join => MT->model('template')->join_on(undef,
+                { id => \"= $finfo_template_col" }),
         });
 
         require MT::TheSchwartz;
