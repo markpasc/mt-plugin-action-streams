@@ -478,6 +478,75 @@ sub remove_other_profile {
     ));
 }
 
+sub profile_add_external_profile {
+    my $app = shift;
+    my %param = @_;
+
+    my $user = $app->_login_user_commenter();
+    return $app->error( $app->translate("Invalid request.") )
+        unless $user;
+
+    $app->validate_magic or return;
+
+    # TODO: make sure profile is an accepted type
+
+    $app->param('author_id', $user->id);
+    my $type = $app->param('profile_type')
+        or return $app->error( $app->translate("Invalid request.") );
+
+    # The profile side interface doesn't have stream selection, so select
+    # them all by default.
+    # TODO: factor out the adding logic (and parameterize stream selection) to stop faking params
+    foreach my $stream ( keys %{ $app->registry('action_streams', $type) || {} } ) {
+        next if $stream eq 'plugin';
+        $app->param(join('_', 'stream', $type, $stream), 1);
+    }
+
+    add_other_profile($app);
+    return if $app->errstr;
+
+    # forward on to community profile view
+    return $app->redirect($app->uri(
+        mode => 'view',
+        args => { id => $user->id,
+            ( $app->blog ? ( blog_id => $app->blog->id ) : () ) },
+    ));
+}
+
+sub profile_first_update_events {
+    my ($cb, $app, $user, $profile) = @_;
+    update_events_for_profile($user, $profile,
+        synchronous => 1, hide_timeless => 1);
+}
+
+sub profile_delete_external_profile {
+    my $app = shift;
+    my %param = @_;
+
+    my $user = $app->_login_user_commenter();
+    return $app->error( $app->translate("Invalid request.") )
+        unless $user;
+
+    $app->validate_magic or return;
+
+    # TODO: make sure profile is an accepted type
+
+    # TODO: factor out this logic instead of having to fake params
+    my $id = scalar $app->param('id');
+    $id = $user->id . ':' . $id;
+    $app->param('id', $id);
+
+    remove_other_profile($app);
+    return if $app->errstr;
+
+    # forward on to community profile view
+    return $app->redirect($app->uri(
+        mode => 'view',
+        args => { id => $user->id,
+            ( $app->blog ? ( blog_id => $app->blog->id ) : () ) },
+    ));
+}
+
 sub itemset_update_profiles {
     my $app = shift;
 

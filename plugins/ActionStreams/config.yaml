@@ -29,6 +29,12 @@ applications:
             itemset_show_events:     $ActionStreams::ActionStreams::Plugin::itemset_show_events
             itemset_hide_all_events: $ActionStreams::ActionStreams::Plugin::itemset_hide_all_events
             itemset_show_all_events: $ActionStreams::ActionStreams::Plugin::itemset_show_all_events
+    community:
+        methods:
+            profile_add_external_profile:    $ActionStreams::ActionStreams::Plugin::profile_add_external_profile
+            profile_delete_external_profile: $ActionStreams::ActionStreams::Plugin::profile_delete_external_profile
+        callbacks:
+            post_add_profile: $ActionStreams::ActionStreams::Plugin::profile_first_update_events
 callbacks:
     MT::App::CMS::template_source.users_content_nav: $ActionStreams::ActionStreams::Plugin::users_content_nav
     MT::App::CMS::post_add_profile: $ActionStreams::ActionStreams::Plugin::first_profile_update
