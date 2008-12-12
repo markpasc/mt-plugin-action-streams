@@ -151,14 +151,14 @@ upgrade_functions:
         updater:
             type: author
             label: 'Enabling default action streams for selected profiles...'
-            code: $ActionStreams::ActionStreams::Plugin::upgrade_enable_existing_streams
+            code: $ActionStreams::ActionStreams::Upgrade::upgrade_enable_existing_streams
     reclass_actions:
         version_limit: 15
-        handler: $ActionStreams::ActionStreams::Plugin::upgrade_reclass_actions
+        handler: $ActionStreams::ActionStreams::Upgrade::upgrade_reclass_actions
         priority: 8
     rename_action_metadata:
         version_limit: 15
-        handler: $ActionStreams::ActionStreams::Plugin::upgrade_rename_action_metadata
+        handler: $ActionStreams::ActionStreams::Upgrade::upgrade_rename_action_metadata
         priority: 9
 upgrade_data:
     reclass_actions:
