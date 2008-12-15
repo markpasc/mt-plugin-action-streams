@@ -11,7 +11,8 @@ __PACKAGE__->install_properties({
         action_type   => 'string(255) not null',
     },
     indexes => {
-        url_type => { columns => [ 'url', 'action_type' ] },
+        url         => 1,
+        action_type => 1,
     },
     primary_key => 'id',
     datasource  => 'as_ua_cache',

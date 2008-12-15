@@ -4,7 +4,7 @@ key: ActionStreams
 author_link: http://www.sixapart.com/
 author_name: Six Apart Ltd.
 description: Manages authors' accounts and actions on sites elsewhere around the web
-schema_version: 15
+schema_version: 16
 version: 2.0
 plugin_link: http://www.sixapart.com/
 settings:
