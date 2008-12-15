@@ -3,7 +3,7 @@ package ActionStreams::Upgrade;
 use strict;
 use warnings;
 
-sub upgrade_enable_existing_streams {
+sub enable_existing_streams {
     my ($author) = @_;
     my $app = MT->app;
 
@@ -20,7 +20,7 @@ sub upgrade_enable_existing_streams {
     $author->save;
 }
 
-sub upgrade_reclass_actions {
+sub reclass_actions {
     my ($upg, %param) = @_;
 
     my $action_class = MT->model('profileevent');
@@ -54,7 +54,7 @@ sub upgrade_reclass_actions {
     return 0;  # done
 }
 
-sub upgrade_rename_action_metadata {
+sub rename_action_metadata {
     my ($upg, %param) = @_;
 
     my $action_class = MT->model('profileevent');
