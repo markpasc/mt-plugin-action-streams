@@ -17,12 +17,12 @@ sub users_content_nav {
 
     my $html = <<"EOF";
     <mt:if var="USER_VIEW">
-        <li><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="EDIT_AUTHOR_ID">">$open_bold<__trans phrase="Other Profiles">$close_bold</a></li>
-        <li><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="EDIT_AUTHOR_ID">">$open_bold<__trans phrase="Action Stream">$close_bold</a></li>
+        <li><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="EDIT_AUTHOR_ID" escape="url">">$open_bold<__trans phrase="Other Profiles">$close_bold</a></li>
+        <li><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="EDIT_AUTHOR_ID" escape="url">">$open_bold<__trans phrase="Action Stream">$close_bold</a></li>
     </mt:if>
     <mt:if var="edit_author">
-        <li<mt:if name="other_profiles"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="id">">$open_bold<__trans phrase="Other Profiles">$close_bold</a></li>
-        <li<mt:if name="list_profileevent"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="id">">$open_bold<__trans phrase="Action Stream">$close_bold</a></li>
+        <li<mt:if name="other_profiles"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="id" escape="url">">$open_bold<__trans phrase="Other Profiles">$close_bold</a></li>
+        <li<mt:if name="list_profileevent"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="id" escape="url">">$open_bold<__trans phrase="Action Stream">$close_bold</a></li>
     </mt:if>
 EOF
 

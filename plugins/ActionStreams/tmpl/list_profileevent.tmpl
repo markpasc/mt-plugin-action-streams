@@ -164,7 +164,7 @@
 <form id="filter-form" method="get" action="<mt:var name="mt_url">">
     <input type="hidden" name="__mode" value="<mt:var name="mode">" />
     <mt:if name="id">
-    <input type="hidden" name="id" value="<mt:var name="id">" />
+    <input type="hidden" name="id" value="<mt:var name="id" escape="url">" />
     </mt:if>
     <mt:if name="is_power_edit">
     <input type="hidden" name="is_power_edit" value="1" />
@@ -177,7 +177,7 @@
         <div id="filter-title">
             <mt:if name="filter_key">
                 <strong>Showing only: <mt:var name="filter_label" escape="html"></strong>
-                <a class="filter-link" href="<mt:var name="script_url">?__mode=<mt:var name="mode">&amp;id=<mt:var name="id">">[ Remove filter ]</a>
+                <a class="filter-link" href="<mt:var name="script_url">?__mode=<mt:var name="mode">&amp;id=<mt:var name="id" escape="url">">[ Remove filter ]</a>
             <mt:else>
                 <mt:if name="filter">
                 <mt:else>
