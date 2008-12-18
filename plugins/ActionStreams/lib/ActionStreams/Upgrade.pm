@@ -99,5 +99,154 @@ sub rename_action_metadata {
     return 0;  # done
 }
 
+sub rename_action_table {
+    my ($upg, %param) = @_;
+
+    my $action_class = MT->model('profileevent');
+    my $driver       = $action_class->driver;
+    my $ddl_class    = $driver->dbd->ddl_class;
+    if (0 && $ddl_class =~ m{ \b mysql \z }xms) {
+        $upg->add_step('rename_action_table_mysql');
+    }
+    else {
+        $upg->add_step('rename_action_table_copy');
+        $upg->add_step('rename_action_table_meta');
+    }
+
+    return 0;  # delegated
+}
+
+sub rename_action_table_mysql {
+    my ($upg, %param) = @_;
+
+    my $plugin = MT->component('ActionStreams');
+    $upg->progress($plugin->translate('Copying action data over to new tables...'));
+
+    my $action_class = MT->model('profileevent');
+    my $driver       = $action_class->driver;
+    my $ddl_class    = $driver->dbd->ddl_class;
+    my $table_name   = $action_class->table_name;
+
+    my $sql = $ddl_class->create_table_as_sql($action_class);
+    my $old_table_name = join q{}, $driver->prefix, 'profileevent';
+    $sql =~ s{ \b \Q$table_name\E          \b }{$old_table_name}xmsg;
+    $sql =~ s{ \b \Q$table_name\E _upgrade \b }{$table_name}xmsg;
+
+    my $dbh = $driver->rw_handle;
+    $dbh->do(qq{INSERT IGNORE INTO $table_name SELECT * FROM $old_table_name})
+        or die $dbh->errstr;
+    $dbh->do(qq{INSERT IGNORE INTO ${table_name}_meta SELECT * FROM ${old_table_name}_meta})
+        or die $dbh->errstr;
+
+    return 0;  # done
+}
+
+sub rename_action_table_copy {
+    my $props = MT->model('profileevent')->properties;
+    return _rename_some_action_table(@_,
+        info => {
+            pkg   => 'ActionStreams::Event',
+            base  => 'MT::Object',
+            ds    => 'profileevent',
+            clone => sub { return (
+                column_defs => { %{ $props->{column_defs} } },
+                primary_key => $props->{primary_key},
+            ) },
+            iter  => sub { return shift->load_iter(@_) },
+            prog  => 'Copying action data over to new tables ([_1]%)...',
+        },
+    );
+}
+
+sub _clone_property_for_action_meta_table {
+    my ($stuff) = @_;
+    my @ret = map { $_ eq 'as_id' ? 'profileevent_id' : $_ } @$stuff;
+    return \@ret;
+}
+
+sub _get_remapped_properties_for_action_meta_table {
+    my $meta_props = MT->model('profileevent')->meta_pkg->properties;
+    return (
+        columns     => _clone_property_for_action_meta_table($meta_props->{columns}),
+        primary_key => _clone_property_for_action_meta_table($meta_props->{primary_key}),
+    );
+}
+
+sub rename_action_table_meta {
+    return _rename_some_action_table(@_,
+        info => {
+            pkg   => 'ActionStreams::Event::Meta',
+            base  => 'MT::Object::Meta',
+            ds    => 'profileevent_meta',
+            clone => \&_get_remapped_properties_for_action_meta_table,
+            iter  => sub { return scalar shift->search(@_) },
+            prog  => 'Copying more action data over to new tables ([_1]%)...',
+            fix   => sub { $_[0]->{as_id} = delete $_[0]->{profileevent_id} },
+        },
+    );
+}
+
+sub _rename_some_action_table {
+    my ($upg, %param) = @_;
+
+    my $plugin = MT->component('ActionStreams');
+    my $info = delete $param{info}
+        or die $plugin->translate('Tried to rename an action table with no table info?');
+    my ($pkg, $base, $clone, $datasource, $load_iter, $progress_str, $fixup)
+        = @$info{qw( pkg base clone ds iter prog fix )};
+    my $clone_pkg = $pkg;
+    $pkg = "Old::$pkg";
+
+    # Define our legacy model if it hasn't already been defined.
+    if (!eval { $pkg->properties }) {
+        eval "package $pkg; use base qw( $base ); 1"
+            or die $@;
+
+        my %clone_props = $clone->();
+        $pkg->install_properties({
+            %clone_props,
+            datasource => $datasource,
+        });
+    }
+
+    my $limit    = 50;
+    my $complete = 1000;
+    my $offset   = $param{offset} || 0;
+    my $count    = $pkg->count();
+    if ($count) {
+        $complete = int ($offset / $count * 100);
+        $complete = 100 if $complete > 100;
+    }
+
+    $upg->progress($plugin->translate($progress_str, $complete),
+        $param{step});
+
+    # Build a sort parameter that ensures we get a stable search throughout
+    # all the runs of this step.
+    my @sort = map { +{ column => $_, desc => 'DESC' } }
+        @{ $pkg->primary_key_tuple };
+
+    my $iter = $load_iter->($pkg, {}, {
+        sort   => \@sort,
+        limit  => $limit,
+        offset => $offset,
+    }) or die $pkg->errstr;
+
+    my $moved_actions;
+    while (my $old_action = $iter->()) {
+        my $values = $old_action->column_values;
+        $fixup->($values) if $fixup;
+
+        my $action = $clone_pkg->new;
+        $action->set_values($values);
+        $action->save or die $action->errstr;
+
+        $moved_actions = 1;
+    }
+    $iter->('finish');
+
+    return $moved_actions ? $offset + $limit : 0;
+}
+
 1;
 

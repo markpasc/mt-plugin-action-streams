@@ -31,7 +31,7 @@ __PACKAGE__->install_properties({
     class_type  => 'event',
     audit       => 1,
     meta        => 1,
-    datasource  => 'profileevent',
+    datasource  => 'as',
     primary_key => 'id',
 });
 

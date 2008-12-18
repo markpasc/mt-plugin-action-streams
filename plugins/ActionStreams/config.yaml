@@ -4,7 +4,7 @@ key: ActionStreams
 author_link: http://www.sixapart.com/
 author_name: Six Apart Ltd.
 description: Manages authors' accounts and actions on sites elsewhere around the web
-schema_version: 16
+schema_version: 17
 version: 2.0
 plugin_link: http://www.sixapart.com/
 settings:
@@ -166,6 +166,19 @@ upgrade_functions:
         version_limit: 15
         handler: $ActionStreams::ActionStreams::Upgrade::rename_action_metadata
         priority: 9
+    rename_action_table:
+        version_limit: 17
+        handler: $ActionStreams::ActionStreams::Upgrade::rename_action_table
+        priority: 2
+    rename_action_table_mysql:
+        handler: $ActionStreams::ActionStreams::Upgrade::rename_action_table_mysql
+        priority: 2
+    rename_action_table_copy:
+        handler: $ActionStreams::ActionStreams::Upgrade::rename_action_table_copy
+        priority: 2
+    rename_action_table_meta:
+        handler: $ActionStreams::ActionStreams::Upgrade::rename_action_table_meta
+        priority: 3
 upgrade_data:
     reclass_actions:
         twitter_tweets:      twitter_statuses
