@@ -141,7 +141,7 @@ sub action_streams {
     undef $app unless $app->isa('MT::App');
 
     if (my $limit = $args->{limit} || $args->{lastn}) {
-        $args{limit} = $limit eq 'auto' ? ( $app ? $app->param('limit') || 20 ) : $limit;
+        $args{limit} = $limit eq 'auto' ? ( $app ? $app->param('limit') : 20 ) : $limit;
     }
     elsif (my $days = $args->{days}) {
         my @ago = offset_time_list(time - 3600 * 24 * $days,
