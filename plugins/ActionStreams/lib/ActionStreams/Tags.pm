@@ -137,8 +137,11 @@ sub action_streams {
         direction => ($args->{direction} || 'descend'),
     );
 
+    my $app = MT->app;
+    undef $app unless $app->isa('MT::App');
+
     if (my $limit = $args->{limit} || $args->{lastn}) {
-        $args{limit} = $limit;
+        $args{limit} = $limit eq 'auto' ? ( $app ? $app->param('limit') || 20 ) : $limit;
     }
     elsif (my $days = $args->{days}) {
         my @ago = offset_time_list(time - 3600 * 24 * $days,
@@ -150,6 +153,16 @@ sub action_streams {
     }
     else {
         $args{limit} = 20;
+    }
+
+    if (my $offset = $args->{offset}) {
+        if ($offset eq 'auto') {
+            $args{offset} = $app->param('offset')
+                if $app && $app->param('offset') > 0;
+        }
+        elsif ($offset =~ m/^\d+$/) {
+            $args{offset} = $offset;
+        }
     }
 
     my ($service, $stream) = @$args{qw( service stream )};
