@@ -105,7 +105,7 @@ sub rename_action_table {
     my $action_class = MT->model('profileevent');
     my $driver       = $action_class->driver;
     my $ddl_class    = $driver->dbd->ddl_class;
-    if (0 && $ddl_class =~ m{ \b mysql \z }xms) {
+    if ($ddl_class =~ m{ \b mysql \z }xms) {
         $upg->add_step('rename_action_table_mysql');
     }
     else {
