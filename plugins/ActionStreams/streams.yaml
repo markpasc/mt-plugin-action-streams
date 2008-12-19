@@ -239,6 +239,28 @@ gametap:
                 score:
                     - 'div.name div'
                     - TEXT
+gblogs:
+    posts:
+        name: Posts
+        description: Blog posts about your search term
+        html_form: 'Google Blog Search result: <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://blogsearch.google.com/blogsearch_feeds?q=%22{{ident}}%22&ie=utf-8&num=10&output=atom&scoring=d'
+        identifier: url
+        atom: 1
+gnews:
+    stories:
+        name: Stories
+        description: News Stories matching your search
+        html_form: 'Google News search result: <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://news.google.com/news?num=100&q=%22{{ident}}%22&output=atom'
+        identifier: url
+        atom: 1
 goodreads:
     toread:
         name: To read
@@ -1023,3 +1045,4 @@ zooomr:
             get:
                 identifier: link
                 thumbnail: media:content/@url
+

@@ -68,6 +68,16 @@ friendfeed:
 gametap:
     name: Gametap
     url: http://www.gametap.com/profile/show/profile.do?sn={{ident}}
+gblogs:
+    name: Google Blogs
+    url: http://blogsearch.google.com/blogsearch?q=%s
+#    icon: http://www.google.com/mobile/images/news-24x24.gif
+    ident-label: Search term
+gnews:
+    name: Google News
+    url: http://news.google.com/news?q=%s
+#    icon: http://www.google.com/mobile/images/news-24x24.gif
+    ident_label: Search for
 goodreads:
     name: Goodreads
     url: http://www.goodreads.com/user/show/{{ident}}
@@ -304,3 +314,4 @@ zooomr:
     url: http://www.zooomr.com/photos/{{ident}}
     ident_example: 1234567@Z01
     service_type: photos
+
