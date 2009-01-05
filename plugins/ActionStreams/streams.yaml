@@ -15,6 +15,7 @@ backtype:
             - title
         url: 'http://feeds.backtype.com/{{ident}}'
         rss: 1
+        identifier: url
 colourlovers:
     colors:
         name: Colors
