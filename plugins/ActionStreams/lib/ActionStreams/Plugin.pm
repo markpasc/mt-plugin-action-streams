@@ -9,6 +9,8 @@ use MT::Util qw( relative_date offset_time epoch2ts ts2epoch format_ts );
 sub users_content_nav {
     my ($cb, $app, $html_ref) = @_;
 
+    return unless $app->param('id');
+
     $$html_ref =~ s{class=["']active["']}{}xmsg
         if $app->mode eq 'list_profileevent' || $app->mode eq 'other_profiles';
 
