@@ -115,7 +115,7 @@ sub _author_ids_for_args {
                 { blog_id => $blog->id }, { unique => 1 }),
         });
         @author_ids = map { $_->[0]->id }
-            grep { $_->[1]->can_administer_blog || $_->[1]->can_post }
+            grep { $_->[1]->can_administer_blog || $_->[1]->can_create_post }
             map  { [ $_, $_->permissions($blog->id) ] }
             @authors;
     }
