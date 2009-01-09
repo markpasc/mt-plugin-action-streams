@@ -79,6 +79,7 @@ list_actions:
 tags:
     function:
         StreamAction:             $ActionStreams::ActionStreams::Tags::stream_action
+        StreamActionID:           $ActionStreams::ActionStreams::Tags::stream_action_id
         StreamActionVar:          $ActionStreams::ActionStreams::Tags::stream_action_var
         StreamActionDate:         $ActionStreams::ActionStreams::Tags::stream_action_date
         StreamActionModifiedDate: $ActionStreams::ActionStreams::Tags::stream_action_modified_date

@@ -14,6 +14,13 @@ sub stream_action {
     );
 }
 
+sub stream_action_id {
+    my ($ctx, $arg, $cond) = @_;
+    my $event = $ctx->stash('stream_action')
+        or return $ctx->error("Used StreamActionURL in a non-action-stream context!");
+    return $event->id || '';
+}
+
 sub stream_action_var {
     my ($ctx, $arg, $cond) = @_;
 
