@@ -191,6 +191,7 @@ sub action_streams {
         ActionStreams::Event->classes_for_type($service);
     }
 
+    $app->run_callbacks('actionstreams_pre_search', \%terms, \%args );
     my @events = ActionStreams::Event->search(\%terms, \%args);
     return $ctx->_hdlr_pass_tokens_else($args, $cond)
         if !@events;
