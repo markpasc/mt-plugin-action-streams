@@ -45,6 +45,24 @@ __PACKAGE__->install_meta({
     ) ],
 });
 
+# Oracle does not like an identifier of more than 30 characters.
+sub datasource {
+    my $class = shift;
+    my $r = MT->request;
+    my $ds = $r->cache('as_event_ds');
+    return $ds if $ds;
+    my $dss_oracle = qr/(db[id]::)?oracle/;
+    if ( my $type = MT->config('ObjectDriver') ) {
+        if ((lc $type) =~ m/^$dss_oracle$/) {
+            $ds = 'as';
+        }
+    }
+    $ds = $class->properties->{datasource}
+        unless $ds;
+    $r->cache('as_event_ds', $ds);
+    return $ds;
+}
+
 sub encode_field_for_html {
     my $event = shift;
     my ($field) = @_;
