@@ -52,6 +52,7 @@ facebook:
     ident_label: User ID
     ident_example: 12345
     service_type: network
+    ident_hint: You can find your Facebook userid within your profile URL.  For example, http://www.facebook.com/profile.php?id=24400320.
 ffffound:
     name: FFFFOUND!
     url: http://ffffound.com/home/{{ident}}/found/
@@ -61,6 +62,7 @@ flickr:
     url: http://flickr.com/photos/{{ident}}/
     ident_example: 36381329@N00
     service_type: photos
+    ident_hint: Enter your Flickr userid which contains "@" in it, e.g. 36381329@N00.  Flickr userid is NOT the username in the URL of your photostream.
 friendfeed:
     name: FriendFeed
     url: http://friendfeed.com/{{ident}}
@@ -72,7 +74,7 @@ gblogs:
     name: Google Blogs
     url: http://blogsearch.google.com/blogsearch?q=%s
 #    icon: http://www.google.com/mobile/images/news-24x24.gif
-    ident-label: Search term
+    ident_label: Search term
 gnews:
     name: Google News
     url: http://news.google.com/news?q=%s
@@ -83,6 +85,7 @@ goodreads:
     url: http://www.goodreads.com/user/show/{{ident}}
     ident_label: User ID
     ident_example: 12345
+    ident_hint: You can find your Goodreads userid within your profile URL. For example, http://www.goodreads.com/user/show/123456.
 googlereader:
     name: Google Reader
     url: http://www.google.com/reader/shared/{{ident}}
@@ -114,6 +117,7 @@ istockphoto:
     url: http://www.istockphoto.com/user_view.php?id={{ident}}
     ident_label: User ID
     ident_example: 123456
+    ident_hint: You can find your istockphoto userid within your profile URL.  For example, http://www.istockphoto.com/user_view.php?id=1234567.
 iusethis:
     name: IUseThis
     url: http://osx.iusethis.com/user/{{ident}}
@@ -142,6 +146,8 @@ linkedin:
     name: LinkedIn
     url: http://www.linkedin.com/in/{{ident}}
     ident_example: MelodyNelson
+    ident_prefix: http://www.linkedin.com/in/
+    ident_label: Profile URL
     service_type: network
 livejournal:
     name: LiveJournal
@@ -165,12 +171,15 @@ multiply:
 myspace:
     name: MySpace
     url: http://www.myspace.com/{{ident}}
+    ident_label: User ID
+    ident_prefix: http://www.myspace.com/
     service_type: network
 netflix:
     name: Netflix
     url: http://rss.netflix.com/QueueRSS?id={{ident}}
     ident_label: Netflix RSS ID
     ident_example: P0000006746939516625352861892808956
+    ident_hint: To find your Netflix RSS ID, click "RSS" at the bottom of any page on the Netflix site, then copy and paste in your "Queue" link.
 netvibes:
     name: Netvibes
     url: http://www.netvibes.com/{{ident}}
@@ -182,13 +191,19 @@ ning:
     name: Ning
     url: http://{{ident}}.ning.com/
     service_type: network
+    ident_suffix: .ning.com/
+    ident_prefix: http://
+    ident_label: Social Network URL
 ohloh:
     name: Ohloh
     url: http://ohloh.net/accounts/{{ident}}
 orkut:
     name: Orkut
     url: http://www.orkut.com/Profile.aspx?uid={{ident}}
+    ident_label: User ID
+    ident_example: 1234567890123456789
     service_type: network
+    ident_hint: You can find your orkut uid within your profile URL. For example, http://www.orkut.com/Main#Profile.aspx?rl=ls&uid=1234567890123456789
 pandora:
     name: Pandora
     url: http://pandora.com/people/{{ident}}
@@ -202,6 +217,7 @@ p0pulist:
     url: http://p0pulist.com/list/hot_list/{{ident}}
     ident_label: User ID
     ident_example: 12345
+    ident_hint: You can find your p0pulist user id within your Hot List URL. for example, http://p0pulist.com/list/hot_list/10000
 pownce:
     name: Pownce
     url: http://pownce.com/{{ident}}/
@@ -223,6 +239,9 @@ smugmug:
 sonicliving:
     name: SonicLiving
     url: http://www.sonicliving.com/user/{{ident}}/
+    ident_label: User ID
+    ident_example: 12345
+    ident_hint: You can find your SonicLiving userid within your share&subscribe URL. For example, http://sonicliving.com/user/12345/feeds
 steam:
     name: Steam
     url: http://steamcommunity.com/id/{{ident}}
@@ -239,6 +258,8 @@ tribe:
     name: Tribe
     url: http://people.tribe.net/{{ident}}
     service_type: network
+    ident_label: User ID
+    ident_hint: You can find your tribe userid within your profile URL.  For example, http://people.tribe.net/dcdc61ed-696a-40b5-80c1-e9a9809a726a.
 tumblr:
     name: Tumblr
     url: http://{{ident}}.tumblr.com
@@ -275,6 +296,8 @@ virb:
     name: Virb
     url: http://www.virb.com/{{ident}}
     service_type: network
+    ident_label: User ID
+    ident_hint: You can find your VIRB userid within your home URL.  For example, http://www.virb.com/backend/2756504321310091/your_home.
 vox:
     name: Vox
     url: http://{{ident}}.vox.com/

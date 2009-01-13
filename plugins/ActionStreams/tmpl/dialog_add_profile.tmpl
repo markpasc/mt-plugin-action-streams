@@ -76,6 +76,9 @@
                 <mt:if name="ident_suffix">
                     suffix: '<mt:var name="ident_suffix" escape="js">',
                 </mt:if>
+                <mt:if name="ident_hint">
+                    hint: '<mt:var name="ident_hint" escape="js">',
+                </mt:if>
                 label: '<mt:var name="ident_label" escape="js">'
             }<mt:unless var="__last__">,</mt:unless>
             </mt:loop>
@@ -101,9 +104,15 @@
                 var f = getByID('profile_id-' + l);
                 f.innerHTML = datum;
             }
+            if (networks[v.value] && networks[v.value]['hint']) {
+                var f = getByID('profile_id-hint-inner');
+                f.innerHTML = networks[v.value]['hint'];
+                show('profile_id-hint',document);
+            } else {
+                hide('profile_id-hint',document);
+            }
 
             if (last_network) {
-                hide('help-' + last_network, document);
                 hide('streams-' + last_network, document);
 
                 var streams = getByID('streams-' + last_network);
@@ -113,7 +122,6 @@
                     stream_boxes[i].checked = false;
                 }
             }
-            show('help-' + v.value, document);
             show('streams-' + v.value, document);
             var streams = getByID('streams-' + v.value);
             var stream_boxes = streams.getElementsByTagName('input');
@@ -153,16 +161,11 @@
         </span>
     </mtapp:setting>
 
-    <div id="help-facebook" class="hidden">
-        <div class="hint">You can find your Facebook userid within your profile URL.  For example, http://www.facebook.com/profile.php?id=24400320.</div>
+    <div id="profile_id-hint" class="hidden">
+        <div id="profile_id-hint-inner" class="hint"></div>
     </div>
 
     <div id="help-netflix" class="hidden">
-        <mtapp:statusmsg class="info">To find your Netflix RSS ID, click "RSS" at the bottom of any page on the Netflix site, then copy and paste in your "Queue" link.</mtapp:statusmsg>
-    </div>
-
-    <div id="help-flickr" class="hidden">
-        <div class="hint">Enter your Flickr userid which contains "@" in it, e.g. 36381329@N00.  Flickr userid is NOT the username in the URL of your photostream.</div>
     </div>
 
     <h3>Action Streams</h3>
