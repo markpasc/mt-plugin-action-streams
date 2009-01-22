@@ -348,8 +348,7 @@ sub other_profiles {
     my $user = MT->model('author')->load($author_id)
         or return $ctx->error(MT->trans('No user [_1]', $author_id));
 
-    my @profiles = sort { lc $a->{type} cmp lc $b->{type} }
-        @{ $user->other_profiles() };
+    my @profiles = @{ $user->other_profiles() };
     my $services = MT->app->registry('profile_services');
     if (my $filter_type = $args->{type}) {
         my $filter_except = $filter_type =~ s{ \A NOT \s+ }{}xmsi ? 1 : 0;
@@ -360,6 +359,10 @@ sub other_profiles {
             $filter_except ? $service_type ne $filter_type : $service_type eq $filter_type;
         } @profiles;
     }
+    @profiles = map { $_->[1] }
+        sort { $a->[0] cmp $b->[0] }
+        map { [ lc (($services->{ $_->{type} } || {})->{name} || q{}), $_ ] }
+        @profiles;
 
     my $populate_icon = sub {
         my ($item, $row) = @_;
