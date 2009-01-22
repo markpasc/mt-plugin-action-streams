@@ -64,6 +64,10 @@ sub astest {
             plugins => Storable::dclone( \%MT::Plugins ),
         },
 
+        user => {
+            profiles => $app->user->other_profiles,
+        },
+
     };
 
     require Data::Dumper;
