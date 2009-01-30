@@ -41,10 +41,10 @@ sub work {
 
     # If the class doesn't exist or isn't an ActionStreams::Event... well,
     # we did all the updating we could, right?
-    eval { $event_class->properties && $event_class->can('update_events_safely') }
+    eval { $event_class->properties && $event_class->can('update_events_loggily') }
         or return $job->completed();
 
-    eval { $event_class->update_events_safely(%profile); 1 }
+    eval { $event_class->update_events_loggily(%profile); 1 }
         or return $job->permanent_failure($@ || q{});
     return $job->completed();
 }

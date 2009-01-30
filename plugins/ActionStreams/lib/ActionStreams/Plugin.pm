@@ -702,7 +702,7 @@ sub update_events_for_profile {
         next EVENTCLASS if !$streams->{$event_class->class_type};
 
         if ($param{synchronous}) {
-            $event_class->update_events_safely(
+            $event_class->update_events_loggily(
                 author        => $author,
                 hide_timeless => $param{hide_timeless} ? 1 : 0,
                 %$profile,

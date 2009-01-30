@@ -95,7 +95,7 @@ sub as_html {
     return MT->translate($form, @content);
 }
 
-sub update_events_safely {
+sub update_events_loggily {
     my $class = shift;
     my %profile = @_;
 
