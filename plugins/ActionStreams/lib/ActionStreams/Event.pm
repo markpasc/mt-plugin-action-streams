@@ -309,8 +309,9 @@ sub ua {
 
     require ActionStreams::UserAgent::Adapter;
     my $adapter = ActionStreams::UserAgent::Adapter->new(
-        ua          => $ua,
-        action_type => $class->class_type,
+        ua                  => $ua,
+        action_type         => $class->class_type,
+        die_on_not_modified => $params{die_on_not_modified} || 0,
     );
     return $adapter;
 }
@@ -449,8 +450,15 @@ sub fetch_scraper {
     my %params = @_;
     my ($url, $scraper) = @params{qw( url scraper )};
 
-    $scraper->user_agent($class->ua(%params));
-    my $items = $scraper->scrape(URI->new($url));
+    $scraper->user_agent( $class->ua( %params, die_on_not_modified => 1 ) );
+    my $uri_obj = URI->new($url);
+    my $items = eval { $scraper->scrape($uri_obj) };
+
+    # Ignore Web::Scraper errors due to 304 Not Modified responses.
+    if (!$items && $@ && !UNIVERSAL::isa($@, 'ActionStreams::UserAgent::NotModified')) {
+        die;  # rethrow
+    }
+
     # we're only being used for our scraper.
     return if !$items;
     return $items if !ref $items;

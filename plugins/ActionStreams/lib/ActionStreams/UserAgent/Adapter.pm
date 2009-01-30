@@ -1,4 +1,19 @@
 
+package ActionStreams::UserAgent::NotModified;
+
+use overload q{""} => \&as_string;
+
+sub new {
+    my ($class, $string) = @_;
+    return bless \$string, $class;
+}
+
+sub as_string {
+    my $self = shift;
+    return $$self;
+}
+
+
 package ActionStreams::UserAgent::Adapter;
 
 sub new {
@@ -66,6 +81,11 @@ sub get {
     my ($uri, %headers) = @_;
     $self->_add_cache_headers( uri => $uri, headers => \%headers );
     my $resp = $self->{ua}->get($uri, %headers);
+    if ($self->{die_on_not_modified} && $resp->code == 304) {
+        die ActionStreams::UserAgent::NotModified->new(
+            join q{ }, "GET", $uri, "failed:", $resp->status_line,
+        );
+    }
     $self->_save_cache_headers($resp);
     return $resp;
 }
