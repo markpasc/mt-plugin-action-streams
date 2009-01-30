@@ -701,8 +701,20 @@ is returned from the C<registry_entry()> method.
 =head2 C<$class-E<gt>ua(%param)>
 
 Returns the common HTTP user-agent, an instance of C<LWP::UserAgent>, with
-which you can fetch web resources. No arguments are required; possible optional
-parameters are:
+which you can fetch web resources.
+
+The resulting user agent may provide automatic conditional HTTP support when
+you call its C<get> method. A UA with conditional HTTP support enabled will
+store the values of the conditional HTTP headers (C<ETag> and
+C<Last-Modified>) received in responses as C<ActionStreams::UserAgent::Cache>
+objects and, on subsequent requests of the same URL, automatically supply the
+header values. When the remote HTTP server reports that such a resource has
+not changed, the C<HTTP::Response> will be a C<304 Not Modified> response; the
+user agent does not itself store and supply the resource content. Using other
+C<LWP::UserAgent> methods such as C<post> or C<request> will I<not> trigger
+automatic conditional HTTP support.
+
+No arguments are required; possible optional parameters are:
 
 =over 4
 
@@ -711,6 +723,23 @@ parameters are:
 If set, the returned HTTP user-agent will use C<LWP::UserAgent>'s default
 identifier in the HTTP C<User-Agent> header. If omitted, the UA will use the
 Action Streams identifier of C<mt-actionstreams-lwp/I<version>>.
+
+=item * C<unconditional>
+
+If set, the return HTTP user-agent will I<not> automatically use conditional
+HTTP to avoid requesting old content from compliant servers. That is, if
+omitted, the UA I<will> automatically use conditional HTTP when you call its
+C<get> method.
+
+=item * C<die_on_not_modified>
+
+If set, when the response of the HTTP user-agent's C<get> method is a
+conditional HTTP C<304 Not Modified> response, throw an exception instead of
+returning the response. (Use this option to return control to yourself when
+passing UAs with conditional HTTP support to other Perl modules that don't
+expect 304 responses.)
+
+The thrown exception is an C<ActionStreams::UserAgent::NotModified> exception.
 
 =back
 
