@@ -21,7 +21,7 @@ sub import {
             scraper       => sub (&) { die $import_error },
             result        => sub     { die $import_error },
             process       => sub     { die $import_error },
-            process_first => sub { die $import_error },
+            process_first => sub     { die $import_error },
         );
     }
 
