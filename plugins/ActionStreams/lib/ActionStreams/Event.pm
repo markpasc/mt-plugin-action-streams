@@ -534,7 +534,7 @@ for you to implement your own streams in Perl code.
 These are the methods one commonly implements (overrides) when implementing a
 stream subclass.
 
-=head2 C<$class-E<GT>update_events(%profile)>
+=head2 C<$class-E<gt>update_events(%profile)>
 
 Fetches the web resource specified by the profile parameters, collects data
 from it into actions, and saves the action records for use later. Required
@@ -556,7 +556,7 @@ Other information about the stream, such as the URL pattern into which the
 C<ident> parameter can be replaced, is available through the
 C<$class-E<gt>registry_entry()> method.
 
-=head2 C<$self-E<GT>as_html(%params)>
+=head2 C<$self-E<gt>as_html(%params)>
 
 Returns the HTML version of the action, suitable for display to readers.
 
@@ -591,11 +591,11 @@ appear to be omitted from the result of the C<as_html> call.
 These are the methods provided by I<ActionStreams::Event> to perform common
 tasks. Call them from your overridden methods.
 
-=head2 C<$self-E<GT>set_values(\%values)>
+=head2 C<$self-E<gt>set_values(\%values)>
 
 Stores the data given in C<%values> as members of this event.
 
-=head2 C<$class-E<GT>fetch_xpath(%param)>
+=head2 C<$class-E<gt>fetch_xpath(%param)>
 
 Returns the items discovered by scanning a web resource by the given XPath
 recipe. Required members of C<%param> are:
@@ -625,7 +625,7 @@ Returned items are hashrefs containing the discovered fields, suitable for
 turning into C<ActionStreams::Event> records with the C<build_results()>
 method.
 
-=head2 C<$class-E<GT>fetch_scraper(%param)>
+=head2 C<$class-E<gt>fetch_scraper(%param)>
 
 Returns the items discovered by scanning by the given recipe. Required members
 of C<%param> are:
@@ -651,7 +651,7 @@ method.
 
 See also the below I<NOTE ON WEB::SCRAPER>.
 
-=head2 C<$class-E<GT>build_results(%param)>
+=head2 C<$class-E<gt>build_results(%param)>
 
 Converts a set of collected items into saved action records of type C<$class>.
 The required members of C<%param> are:
@@ -689,7 +689,7 @@ is returned from the C<registry_entry()> method.
 
 =back
 
-=head2 C<$class-E<GT>ua(%param)>
+=head2 C<$class-E<gt>ua(%param)>
 
 Returns the common HTTP user-agent, an instance of C<LWP::UserAgent>, with
 which you can fetch web resources. No arguments are required; possible optional
@@ -705,24 +705,24 @@ Action Streams identifier of C<mt-actionstreams-lwp/I<version>>.
 
 =back
 
-=head2 C<$self-E<GT>author()>
+=head2 C<$self-E<gt>author()>
 
 Returns the C<MT::Author> instance associated with this event, if its
 C<author_id> field has been set.
 
-=head2 C<$class-E<GT>install_properties(\%properties)>
+=head2 C<$class-E<gt>install_properties(\%properties)>
 
 I<TODO>
 
-=head2 C<$class-E<GT>install_meta(\%properties)>
+=head2 C<$class-E<gt>install_meta(\%properties)>
 
 I<TODO>
 
-=head2 C<$class-E<GT>registry_entry()>
+=head2 C<$class-E<gt>registry_entry()>
 
 Returns the registry data for the stream represented by C<$class>.
 
-=head2 C<$class-E<GT>classes_for_type($service_id)>
+=head2 C<$class-E<gt>classes_for_type($service_id)>
 
 Given a profile service ID (that is, a key from the C<profile_services> section
 of the registry), returns a list of stream classes for scanning that service's
