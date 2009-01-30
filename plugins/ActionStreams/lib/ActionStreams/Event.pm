@@ -306,6 +306,7 @@ sub ua {
         : "mt-actionstreams-lwp/" . MT->component('ActionStreams')->version);
 
     return $ua if $class->class_type eq 'event';
+    return $ua if $params{unconditional};
 
     require ActionStreams::UserAgent::Adapter;
     my $adapter = ActionStreams::UserAgent::Adapter->new(

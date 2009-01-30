@@ -25,8 +25,9 @@ sub update_events {
     my ($ident, $author) = @profile{qw( ident author )};
 
     my $links = $class->fetch_scraper(
-        url     => $ident,
-        scraper => scraper {
+        unconditional => 1,
+        url           => $ident,
+        scraper       => scraper {
             process 'head link[type="application/atom+xml"]', 'atom[]' => '@href';
             process 'head link[type="application/rss+xml"]',  'rss[]'  => '@href';
             process 'head link[rel~="shortcut"]',             'icon[]' => '@href';
