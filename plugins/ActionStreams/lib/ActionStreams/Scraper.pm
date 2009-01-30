@@ -5,7 +5,7 @@ my $import_error = 'Cannot update stream without Web::Scraper; a prerequisite ma
 
 sub import {
     my %methods;
-    
+
     if (eval { require Web::Scraper; 1 }) {
         Web::Scraper->import();
         %methods = (
@@ -24,7 +24,7 @@ sub import {
             process_first => sub { die $import_error },
         );
     }
-    
+
     # Export these methods like Web::Scraper does.
     my $pkg = caller;
     no strict 'refs';
