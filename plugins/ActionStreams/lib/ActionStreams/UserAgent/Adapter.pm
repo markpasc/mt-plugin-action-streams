@@ -33,6 +33,9 @@ sub _save_cache_headers {
     my $self = shift;
     my ($resp) = @_;
 
+    # Don't do anything if our existing cache headers were effective.
+    return if $resp->code == 304;
+
     my $action_type = $self->{action_type}
         or return;
     my $uri = $resp->request->uri;
