@@ -237,9 +237,11 @@ sub _build_about_event {
 
     my $type = $event->class_type;
     my ($service, $stream_id) = split /_/, $type, 2;
-    my $profile = $author->other_profiles($service);
-    next EVENT if !$profile;
-    local $ctx->{__stash}{other_profile} = $profile;
+    # TODO: find from the event which other_profile is really associated
+    # instead of guessing it's the first one.
+    my $profiles = $author->other_profiles($service);
+    next EVENT if !$profiles || !@$profiles;
+    local ($ctx->{__stash}{other_profile}) = @$profiles;
 
     my $vars = $ctx->{__stash}{vars} ||= {};
     local $vars->{action_type} = $type;
