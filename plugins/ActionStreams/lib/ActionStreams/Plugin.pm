@@ -54,31 +54,16 @@ sub icon_url_for_service {
     return $icon_url;
 }
 
-sub _edit_author {
-    my $app = shift;
-    my $author_id = $app->param('id')
-        || ($app->user ? $app->user->id : undef);
-
-    my $class = MT->model('author');
-    my $author = $class->load($author_id) if $author_id;
-
-    $author or return $app->error(
-        $app->translate( "No such [_1].", lc( $class->class_label ) ) );
-
-    return $app->error( $app->translate("Permission denied.") )
-        if ! $app->user
-        or $app->user->id != $author_id && !$app->user->is_superuser();
-
-    return $author;
-}
-
 sub list_profileevent {
     my $app = shift;
     my %param = @_;
 
     $app->return_to_dashboard( redirect => 1 ) if $app->param('blog_id');
 
-    my $author = _edit_author($app) or return;
+    my $author_id = $app->param('id')
+        or return;
+    return $app->error('Not permitted to view')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
 
     my %service_styles;
     my @service_styles_loop;
@@ -132,9 +117,6 @@ sub list_profileevent {
     my %params = map { $_ => $app->param($_) ? 1 : 0 }
         qw( saved_deleted hidden shown );
 
-    $params{id}   = $params{edit_author_id}   = $author->id;
-    $params{name} = $params{edit_author_name} = $author->name;
-
     $params{services} = [];
     my $services = $app->registry('profile_services');
     while (my ($prevt, $service) = each %$services) {
@@ -147,7 +129,7 @@ sub list_profileevent {
 
     my %terms = (
         class => '*',
-        author_id => $author->id,
+        author_id => $author_id,
     );
     my %args = (
         sort => 'created_on',
@@ -168,6 +150,8 @@ sub list_profileevent {
             $terms{visible} = $filter_val eq 'show' ? 1 : 0;
         }
     }
+
+    $params{id} = $params{edit_author_id} = $author_id;
     $params{service_styles} = \@service_styles_loop;
     $app->listing({
         type     => 'profileevent',
@@ -229,8 +213,7 @@ sub _itemset_hide_show_all_events {
 
     my $author_id = $event->author_id;
     return $app->error('Not permitted to modify')
-        if ! $app->user
-        or ! $app->user->is_superuser() && $author_id != $app->user->id;
+        if $author_id != $app->user->id && !$app->is_superuser();
 
     my $driver = $event_class->driver;
     my $stmt = $driver->prepare_statement($event_class, {
@@ -321,22 +304,24 @@ sub other_profiles {
 
     $app->return_to_dashboard( redirect => 1 ) if $app->param('blog_id');
 
-    my $author = _edit_author($app) or return;
-
-    my %params;
-    $params{id}   = $params{edit_author_id}   = $author->id;
-    $params{name} = $params{edit_author_name} = $author->name;
+    my $author_id = $app->param('id')
+        or return $app->error('Author id is required');
+    my $user = MT->model('author')->load($author_id)
+        or return $app->error('Author id is invalid');
+    return $app->error('Not permitted to view')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
 
     my $plugin = MT->component('ActionStreams');
     my $tmpl = $plugin->load_tmpl( 'other_profiles.tmpl' );
 
     my @profiles = sort { lc $a->{label} cmp lc $b->{label} }
-        @{ $author->other_profiles || [] };
+        @{ $user->other_profiles || [] };
 
     my %messages = map { $_ => $app->param($_) ? 1 : 0 }
         (qw( added removed updated edited ));
     return $app->build_page( $tmpl, {
-        %params,
+        id             => $user->id,
+        edit_author_id => $user->id,
         profiles       => \@profiles,
         listing_screen => 1,
         _build_service_data(
