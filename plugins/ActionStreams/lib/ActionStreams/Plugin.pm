@@ -213,7 +213,7 @@ sub _itemset_hide_show_all_events {
 
     my $author_id = $event->author_id;
     return $app->error('Not permitted to modify')
-        if $author_id != $app->user->id && !$app->is_superuser();
+        if $author_id != $app->user->id && !$app->user->is_superuser();
 
     my $driver = $event_class->driver;
     my $stmt = $driver->prepare_statement($event_class, {
