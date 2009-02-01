@@ -169,7 +169,8 @@ sub list_profileevent {
         }
     }
 
-    $params{id} = $params{edit_author_id} = $author->id;
+    $params{id}   = $params{edit_author_id} = $author->id;
+    $params{name} = $params{edit_author_name} = $author->name;
     $params{service_styles} = \@service_styles_loop;
     $app->listing({
         type     => 'profileevent',
@@ -328,11 +329,14 @@ sub other_profiles {
     my @profiles = sort { lc $a->{label} cmp lc $b->{label} }
         @{ $author->other_profiles || [] };
 
+    my %params = map { $_ => $author->$_ } qw( id name );
+    $params{edit_author_id}   = $params{id};
+    $params{edit_author_name} = $params{name};
+
     my %messages = map { $_ => $app->param($_) ? 1 : 0 }
         (qw( added removed updated edited ));
     return $app->build_page( $tmpl, {
-        id             => $author->id,
-        edit_author_id => $author->id,
+        %params,
         profiles       => \@profiles,
         listing_screen => 1,
         _build_service_data(
