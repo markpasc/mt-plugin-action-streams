@@ -6,7 +6,8 @@ use base qw( MT::Object MT::Taggable MT::Scorable );
 our @EXPORT_OK = qw( classes_for_type );
 use HTTP::Date qw( str2time );
 
-use MT::Util qw( encode_html );
+use MT::Util qw( encode_html remove_html encode_url );
+use MT::I18N;
 
 use ActionStreams::Scraper;
 
@@ -66,7 +67,7 @@ sub datasource {
 sub encode_field_for_html {
     my $event = shift;
     my ($field) = @_;
-    return encode_html( $event->$field() );
+    return encode_html( remove_html( $event->$field() ) );
 }
 
 sub as_html {
@@ -139,7 +140,9 @@ sub update_events {
     local $profile{url} = $stream->{url};
     die "Oops, no url?" if !$profile{url};
     die "Oops, no ident?" if !$profile{ident};
-    $profile{url} =~ s/ {{ident}} / $profile{ident} /xmsge;
+    require MT::I18N;
+    my $ident = encode_url(MT::I18N::encode_text($profile{ident}, undef, 'utf-8'));
+    $profile{url} =~ s/ {{ident}} / $ident /xmsge;
 
     my $items;
     if (my $xpath_params = $stream->{xpath}) {
@@ -335,14 +338,25 @@ sub fetch_xpath {
 
     my $url = $params{url} || '';
     if (!$url) {
-        MT->log("No URL to fetch for $class results");
+        MT->log(
+            MT->component('ActionStreams')->translate(
+                "No URL to fetch for [_1] results", $class));
         return;
     }
     my $ua = $class->ua(%params);
     my $res = $ua->get($url);
     if (!$res->is_success()) {
-        MT->log("Could not fetch ${url}: " . $res->status_line())
+        MT->log(
+            MT->component('ActionStreams')->translate(
+                "Could not fetch [_1]: [_2]", $url, $res->status_line()))
             if $res->code != 304;
+        return;
+    }
+    # Do not continue if contents is incomplete.
+    if (my $abort = $res->{_headers}{'client-aborted'}) {
+        MT->log(
+            MT->component('ActionStreams')->translate(
+                'Aborted fetching [_1]: [_2]', $url, $abort));
         return;
     }
 
@@ -363,13 +377,13 @@ sub fetch_xpath {
                 my @outvals = $item->findnodes($val)
                     or next VALUE;
 
-                $item_data{$key} = [ map { $_->getNodeValue } @outvals ];
+                $item_data{$key} = [ map { MT::I18N::utf8_off( $_->getNodeValue ) } @outvals ];
             }
             else {
                 my $outval = $item->findvalue($val)
                     or next VALUE;
 
-                $outval = "$outval";
+                $outval = MT::I18N::utf8_off("$outval");
                 if ($outval && ($key eq 'created_on' || $key eq 'modified_on')) {
                     # try both RFC 822/1123 and ISO 8601 formats
                     $outval = MT::Util::epoch2ts(undef, str2time($outval))
@@ -469,15 +483,21 @@ sub fetch_scraper {
         next ITEM if !ref $item || ref $item ne 'HASH';
         for my $field (keys %$item) {
             if ($field eq 'tags') {
-                $item->{$field} = [ map { "$_" } @{ $item->{$field} } ];
+                $item->{$field} = [ map { MT::I18N::utf8_off( "$_" ) } @{ $item->{$field} } ];
             }
             else {
-                $item->{$field} = q{} . $item->{$field};
+                $item->{$field} = MT::I18N::utf8_off( q{} . $item->{$field} );
             }
         }
     }
 
     return $items;
+}
+
+sub backup_terms_args {
+    my $class = shift;
+    my ($blog_ids) = @_;
+    return { terms => { 'class' => '*' }, args => undef };
 }
 
 1;
@@ -765,6 +785,10 @@ Returns the registry data for the stream represented by C<$class>.
 Given a profile service ID (that is, a key from the C<profile_services> section
 of the registry), returns a list of stream classes for scanning that service's
 streams.
+
+=head2 C<$class-E<GT>backup_terms_args
+
+Used in backup/restore.  See I<MT::BackupRestore> for more detail.
 
 =head1 NOTE ON WEB::SCRAPER
 

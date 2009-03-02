@@ -1,4 +1,3 @@
-<mt:setvar name="edit_author" value="1">
 <mt:setvar name="list_profileevent" value="1">
 <mt:setvarblock name="page_title"><__trans phrase="Action Stream for [_1]" params="<mt:Var name="edit_author_name">"></mt:setvarblock>
 
@@ -176,28 +175,28 @@
     <div class="filter">
         <div id="filter-title">
             <mt:if name="filter_key">
-                <strong>Showing only: <mt:var name="filter_label" escape="html"></strong>
-                <a class="filter-link" href="<mt:var name="script_url">?__mode=<mt:var name="mode">&amp;id=<mt:var name="id" escape="url">">[ Remove filter ]</a>
+                <strong><__trans phrase="Showing only: [_1]" params="<$mt:var name="filter_label" escape="html"$>"></strong>
+                <a class="filter-link" href="<mt:var name="script_url">?__mode=<mt:var name="mode">&amp;id=<mt:var name="id" escape="url">">[ <__trans phrase="Remove filter"> ]</a>
             <mt:else>
                 <mt:if name="filter">
                 <mt:else>
-                    <strong>All stream actions</strong>
-                    <a class="filter-link" href="javascript:void(0)" onclick="toggleFilter()">[ change ]</a>
+                    <strong><__trans phrase="All stream actions"></strong>
+                    <a class="filter-link" href="javascript:void(0)" onclick="toggleFilter()">[ <__trans phrase="change"> ]</a>
                 </mt:if>
             </mt:if>
         </div>
         <div id="filter-select" class="page-title" style="display: none">
-            Show only actions where
+            <__trans phrase="Show only actions where">
             <select id="filter-col" name="filter" onchange="setFilterCol(this.options[this.selectedIndex].value); enableFilterButton(this)">
                 <!-- option value="stream">stream</option -->
-                <option value="service">service</option>
-                <option value="visible">visibility</option>
+                <option value="service"><__trans phrase="service"></option>
+                <option value="visible"><__trans phrase="visibility"></option>
             </select>
-            is
+            <__trans phrase="is">
             <span id="filter-visible">
                 <select id="visible-val" name="filter_val" onchange="enableFilterButton()">
-                    <option value="hide">hidden</option>
-                    <option value="show">shown</option>
+                    <option value="hide"><__trans phrase="hidden"></option>
+                    <option value="show"><__trans phrase="shown"></option>
                 </select>
             </span>
             <span id="filter-service">
@@ -213,11 +212,11 @@
                     id="filter-button"
                     onclick="return execFilter(getByID('filter-select-form'))"
                     type="submit"
-                    >Filter</a>
+                    ><__trans phrase="Filter"></a>
                 <a href="javascript:void(0)"
                     onclick="toggleFilter(); return false"
                     type="submit"
-                    >Cancel</a>
+                    ><__trans phrase="Cancel"></a>
             </span>
         </div>
     </div>

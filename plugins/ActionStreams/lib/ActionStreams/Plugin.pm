@@ -7,28 +7,76 @@ use Carp qw( croak );
 use MT::Util qw( relative_date offset_time epoch2ts ts2epoch format_ts );
 
 sub users_content_nav {
-    my ($cb, $app, $html_ref) = @_;
+    my ($cb, $app, $param, $tmpl) = @_;
 
-    return unless $app->param('id');
+    my $author_id = $app->param('id') or return;
+    my $author = MT->model('author')->load( $author_id )
+        or return $cb->error('failed to load author');
+    $param->{edit_author} = 1 if $author->type == MT::Author::AUTHOR();
 
-    $$html_ref =~ s{class=["']active["']}{}xmsg
-        if $app->mode eq 'list_profileevent' || $app->mode eq 'other_profiles';
-
-    $$html_ref =~ m{ "> ((?:<b>)?) <__trans \s phrase="Permissions"> ((?:</b>)?) </a> }xms;
-    my ($open_bold, $close_bold) = ($1, $2);
-
-    my $html = <<"EOF";
-    <mt:if var="USER_VIEW">
-        <li><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="EDIT_AUTHOR_ID" escape="url">">$open_bold<__trans phrase="Other Profiles">$close_bold</a></li>
-        <li><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="EDIT_AUTHOR_ID" escape="url">">$open_bold<__trans phrase="Action Stream">$close_bold</a></li>
-    </mt:if>
-    <mt:if var="edit_author">
-        <li<mt:if name="other_profiles"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="id" escape="url">">$open_bold<__trans phrase="Other Profiles">$close_bold</a></li>
-        <li<mt:if name="list_profileevent"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="id" escape="url">">$open_bold<__trans phrase="Action Stream">$close_bold</a></li>
-    </mt:if>
+    my $menu_str = <<"EOF";
+    <__trans_section component="actionstreams"><mt:if var="USER_VIEW">
+        <li><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="EDIT_AUTHOR_ID" escape="url">"><b><__trans phrase="Other Profiles"></b></a></li>
+        <li><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="EDIT_AUTHOR_ID" escape="url">"><b><__trans phrase="Action Stream"></b></a></li>
+    <mt:else>
+        <li<mt:if name="other_profiles"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=other_profiles&amp;id=<mt:var name="id" escape="url">"><b><__trans phrase="Other Profiles"></b></a></li>
+        <li<mt:if name="list_profileevent"> class="active"</mt:if>><a href="<mt:var name="SCRIPT_URL">?__mode=list_profileevent&amp;id=<mt:var name="id" escape="url">"><b><__trans phrase="Action Stream"></b></a></li>
+    </mt:if></__trans_section>
 EOF
 
-    $$html_ref =~ s{(?=</ul>)}{$html}xmsg;
+    require MT::Builder;
+    my $builder = MT::Builder->new;
+    my $ctx = $tmpl->context();
+    my $menu_tokens = $builder->compile( $ctx, $menu_str )
+        or return $cb->error($builder->errstr);
+
+    if ( $param->{line_items} ) {
+        push @{ $param->{line_items} }, bless $menu_tokens, 'MT::Template::Tokens';
+    }
+    else {
+        $ctx->{__stash}{vars}{line_items} = [ bless $menu_tokens, 'MT::Template::Tokens' ];
+        $param->{line_items} = [ bless $menu_tokens, 'MT::Template::Tokens' ];
+    }
+    if ( ( $app->mode eq 'other_profiles' ) || ( $app->mode eq 'list_profileevent' ) ) {
+        $param->{profile_inactive} = 1;
+    }
+    1;
+}
+
+sub param_list_member {
+    my ($cb, $app, $param, $tmpl) = @_;
+    my $loop = $param->{object_loop};
+    my @author_ids = map { $_->{id} } @$loop;
+    my $author_iter = MT->model('author')->load_iter({ id => \@author_ids });
+    my %profile_counts;
+    while ( my $author = $author_iter->() ) {
+        $profile_counts{$author->id} = scalar @{ $author->other_profiles };
+    }
+    for my $loop_item ( @$loop ) {
+        $loop_item->{profiles} = $profile_counts{ $loop_item->{id} };
+    }
+
+    my $header = <<'MTML';
+        <th><__trans_section component="actionstreams"><__trans phrase="Profiles"></__trans_section></th>
+MTML
+    my $body = <<'MTML';
+<mt:if name="has_edit_access">
+                <td><a href="<mt:var name="script_url">?__mode=other_profiles&amp;id=<mt:var name="id">"><mt:var name="profiles"></a></td>
+<mt:else>
+                <td><mt:var name="profiles"></td>
+</mt:if>
+MTML
+
+    require MT::Builder;
+    my $builder = MT::Builder->new;
+    my $ctx = $tmpl->context();
+    my $body_tokens = $builder->compile( $ctx, $body )
+        or return $cb->error($builder->errstr);
+    $param->{more_column_headers} ||= [];
+    $param->{more_columns} ||= [];
+    push @{ $param->{more_column_headers} }, $header;
+    push @{ $param->{more_columns} }, bless $body_tokens, 'MT::Template::Tokens';
+    1;
 }
 
 sub icon_url_for_service {
@@ -163,8 +211,8 @@ sub list_profileevent {
             $args{like} = { class => 1 };
         }
         elsif ($filter eq 'visible') {
-            $params{filter_label} = ($filter_val eq 'show') ? 'Actions that are shown'
-                : 'Actions that are hidden';
+            $params{filter_label} = ($filter_val eq 'show') ? $app->translate('Actions that are shown')
+                : $app->translate('Actions that are hidden');
             $terms{visible} = $filter_val eq 'show' ? 1 : 0;
         }
     }
@@ -281,6 +329,7 @@ sub _build_service_data {
     TYPE: for my $type (@network_keys) {
         my $ndata = $networks->{$type}
             or next TYPE;
+        next TYPE if $info{no_deprecated} && $ndata->{deprecated};
 
         my @streams;
         if ($streams) {
@@ -293,13 +342,26 @@ sub _build_service_data {
                 keys %$streamdata;
         }
 
+        $ndata->{ident_hint}
+            = MT->component('ActionStreams')->translate( $ndata->{ident_hint} )
+            if $ndata->{ident_hint};
+
         my $ret = {
             type => $type,
             %$ndata,
             label => $ndata->{name},
             user_has_account => ($has_profiles{$type} ? 1 : 0),
         };
-        $ret->{streams} = \@streams if @streams;
+        if (@streams) {
+            for my $stream (@streams) {
+                $stream->{name}
+                    = MT->component('ActionStreams')->translate( $stream->{name} );
+                $stream->{description}
+                    = MT->component('ActionStreams')->translate( $stream->{description} );
+            }
+            $ret->{streams} = \@streams if @streams;
+        }
+
         push @networks, $ret;
 
         if (!$ndata->{plugin} || $ndata->{plugin}->id ne 'actionstreams') {
@@ -374,9 +436,10 @@ sub dialog_add_edit_profile {
     return $app->build_page($tmpl, {
         edit_author_id => $author->id,
         _build_service_data(
-            networks => $app->registry('profile_services'),
-            streams  => $app->registry('action_streams'),
-            author   => $author,
+            networks      => $app->registry('profile_services'),
+            streams       => $app->registry('action_streams'),
+            author        => $author,
+            no_deprecated => 1,
         ),
         %edit_profile,
     });
@@ -407,7 +470,7 @@ sub add_other_profile {
         my $reg = $app->registry('profile_services');
         my $network = $reg->{$type}
             or croak "Unknown network $type";
-        $label = $network->{name} . ' Profile';
+        $label = MT->component('ActionStreams')->translate( '[_1] Profile', $network->{name} );
 
         $ident = $app->param( 'profile_id' );
         $ident =~ s{ \A \s* }{}xms;
@@ -674,6 +737,8 @@ sub update_events_for_profile {
     my $type = $profile->{type};
     my $streams = $profile->{streams};
     return if !$streams || !%$streams;
+    my $services = MT->registry('profile_services');
+    return if !exists $services->{$type} || $services->{$type}->{deprecated};
 
     require ActionStreams::Event;
     my @event_classes = ActionStreams::Event->classes_for_type($type)

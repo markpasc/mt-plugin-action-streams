@@ -3,7 +3,7 @@ id: ActionStreams
 key: ActionStreams
 author_link: http://www.sixapart.com/
 author_name: Six Apart Ltd.
-description: Manages authors' accounts and actions on sites elsewhere around the web
+description: <MT_TRANS phrase="Manages authors' accounts and actions on sites elsewhere around the web">
 schema_version: 16
 version: 2.0
 plugin_link: http://www.sixapart.com/
@@ -11,6 +11,7 @@ settings:
     rebuild_for_action_stream_events:
         Default: 0
         Scope: blog
+l10n_class: ActionStreams::L10N
 blog_config_template: blog_config_template.tmpl
 
 init_app: $ActionStreams::ActionStreams::Init::init_app
@@ -36,7 +37,10 @@ applications:
         callbacks:
             post_add_profile: $ActionStreams::ActionStreams::Plugin::profile_first_update_events
 callbacks:
-    MT::App::CMS::template_source.users_content_nav: $ActionStreams::ActionStreams::Plugin::users_content_nav
+    MT::App::CMS::template_param.edit_author: $ActionStreams::ActionStreams::Plugin::users_content_nav
+    MT::App::CMS::template_param.list_member: $ActionStreams::ActionStreams::Plugin::param_list_member
+    MT::App::CMS::template_param.other_profiles: $ActionStreams::ActionStreams::Plugin::users_content_nav
+    MT::App::CMS::template_param.list_profileevent: $ActionStreams::ActionStreams::Plugin::users_content_nav
     MT::App::CMS::post_add_profile: $ActionStreams::ActionStreams::Plugin::first_profile_update
     post_action_streams_task: $ActionStreams::ActionStreams::Plugin::rebuild_action_stream_blogs
     pre_build_action_streams_event.flickr_favorites:        $ActionStreams::ActionStreams::Fix::flickr_photo_thumbnail
@@ -65,18 +69,21 @@ list_actions:
             order: 100
             js:    finishPluginActionAll
             code:  $ActionStreams::ActionStreams::Plugin::itemset_hide_all_events
-            continue_prompt: 'Are you sure you want to hide EVERY event in EVERY action stream?'
+            continue_prompt_handler: >
+                sub { MT->translate('Are you sure you want to hide EVERY event in EVERY action stream?') }
         show_all:
             label: Show All
             order: 200
             js:    finishPluginActionAll
             code:  $ActionStreams::ActionStreams::Plugin::itemset_show_all_events
-            continue_prompt: 'Are you sure you want to show EVERY event in EVERY action stream?'
+            continue_prompt_handler: >
+                sub { MT->translate('Are you sure you want to show EVERY event in EVERY action stream?') }
         delete:
             label: Delete
             order: 300
             code:  $core::MT::App::CMS::delete
-            continue_prompt: 'Deleted events that are still available from the remote service will be added back in the next scan. Only events that are no longer available from your profile will remain deleted. Are you sure you want to delete the selected event(s)?'
+            continue_prompt_handler: >
+                sub { MT->translate('Deleted events that are still available from the remote service will be added back in the next scan. Only events that are no longer available from your profile will remain deleted. Are you sure you want to delete the selected event(s)?') }
 tags:
     function:
         StreamAction:             $ActionStreams::ActionStreams::Tags::stream_action
@@ -115,8 +122,9 @@ widgets:
         condition: $ActionStreams::ActionStreams::Plugin::widget_blog_dashboard_only
 template_sets:
     streams:
-        label: 'Action Stream'
+        label: Action Stream
         base_path: 'blog_tmpl'
+        base_css: themes-base/blog.css
         order: 100
         templates:
             index:
@@ -132,22 +140,24 @@ template_sets:
                     label: Stylesheet
                     outfile: styles.css
                     rebuild_me: 1
-                atom:
-                    label: Atom
+                feed_recent:
+                    label: Feed - Recent Activity
                     outfile: atom.xml
                     rebuild_me: 1
             module:
-                header:
-                    label: Header
-                footer:
-                    label: Footer
+                html_head:
+                    label: HTML Head
+                banner_header:
+                    label: Banner Header
+                banner_footer:
+                    label: Banner Footer
                 sidebar:
                     label: Sidebar
             widget:
                 elsewhere:
                     label: Find Authors Elsewhere
-                Action:
-                    label: Authors Action Stream
+                actions:
+                    label: Recent Actions
             widgetset:
                 2column_layout_sidebar:
                     label: 2-column layout - Sidebar
@@ -158,7 +168,7 @@ upgrade_functions:
         version_limit: 9
         updater:
             type: author
-            label: 'Enabling default action streams for selected profiles...'
+            label: Enabling default action streams for selected profiles...
             code: $ActionStreams::ActionStreams::Upgrade::enable_existing_streams
     reclass_actions:
         version_limit: 15

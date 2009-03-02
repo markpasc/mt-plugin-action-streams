@@ -35,7 +35,7 @@
 
 <div class="modal_width" id="add-profile">
 
-<p>Add a profile on a social networking or instant messaging service.</p>
+<p><__trans phrase="Add a profile on a social networking or instant messaging service."></p>
 
 <form id="add-network" method="post" action="<mt:var name="script_url">" onsubmit="return validate(this)" target="_top">
     <input type="hidden" name="__mode" value="add_other_profile" />
@@ -88,7 +88,7 @@
             var v = getByID('profile_type');
 
             var data = new Object();
-            data.label = "Username";
+            data.label = "<__trans phrase="Username">";
             data.example = "melody";
             data.prefix = "";
             data.suffix = "";
@@ -168,9 +168,9 @@
     <div id="help-netflix" class="hidden">
     </div>
 
-    <h3>Action Streams</h3>
+    <h3><__trans phrase="Action Streams"></h3>
 
-    <p>Select the action streams to collect from the selected service.</p>
+    <p><__trans phrase="Select the action streams to collect from the selected service."></p>
 
     <mt:loop name="networks">
         <div id="streams-<mt:var name="type" escape="html">" class="hidden">
@@ -184,7 +184,7 @@
                     </mtapp:setting>
                 </mt:loop>
             <mt:else>
-                <mtapp:statusmsg class="info zero-state">No streams are available for this service.</mtapp:statusmsg>
+                <mtapp:statusmsg class="info zero-state"><__trans phrase="No streams are available for this service."></mtapp:statusmsg>
             </mt:if>
         </div>
     </mt:loop>
@@ -193,9 +193,9 @@
         <button
             type="submit"
             accesskey="s"
-            title="<__trans phrase="Add Service (s)">"
+            title="<__trans phrase="Add Profile (s)">"
             class="primary-button"
-            ><__trans phrase="Add Service"></button>
+            ><__trans phrase="Add Profile"></button>
         <button
             onclick="closeDialog(); return false"
             type="submit"

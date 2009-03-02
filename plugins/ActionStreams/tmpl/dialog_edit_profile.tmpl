@@ -35,7 +35,7 @@
 
 <div class="modal_width" id="edit-profile">
 
-<p>Edit a profile on a social networking or instant messaging service.</p>
+<p><__trans phrase="Edit a profile on a social networking or instant messaging service."></p>
 
 <form id="edit-network" method="post" action="<mt:var name="script_url">" onsubmit="return validate(this)" target="_top">
     <input type="hidden" name="__mode" value="edit_other_profile" />
@@ -84,7 +84,7 @@
             var v = getByID('profile_type');
 
             var data = new Object();
-            data.label = "Username";
+            data.label = "<__trans phrase="Username">";
             data.example = "melody";
             data.prefix = "";
             data.suffix = "";
@@ -164,9 +164,9 @@
         <div id="profile_id-hint-inner" class="hint"></div>
     </div>
 
-    <h3>Action Streams</h3>
+    <h3><__trans phrase="Action Streams"></h3>
 
-    <p>Select the action streams to collect from the selected service.</p>
+    <p><__trans phrase="Select the action streams to collect from the selected service."></p>
 
     <mt:loop name="networks">
         <div id="streams-<mt:var name="type" escape="html">" class="hidden">
@@ -180,7 +180,7 @@
                     </mtapp:setting>
                 </mt:loop>
             <mt:else>
-                <mtapp:statusmsg class="info zero-state">No streams are available for this service.</mtapp:statusmsg>
+                <mtapp:statusmsg class="info zero-state"><__trans phrase="No streams are available for this service."></mtapp:statusmsg>
             </mt:if>
         </div>
     </mt:loop>

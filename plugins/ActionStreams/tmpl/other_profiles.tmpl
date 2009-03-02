@@ -1,4 +1,3 @@
-<mt:setvar name="edit_author" value="1">
 <mt:setvar name="other_profiles" value="1">
 <mt:setvarblock name="page_title"><__trans phrase="Other Profiles for [_1]" params="<mt:Var name="edit_author_name">"></mt:setvarblock>
 
@@ -90,7 +89,7 @@ function verifyDelete( delete_item ){
         title="<__trans phrase="Delete selected profiles (x)">"
         ><__trans phrase="Delete"></a>
     <a href="javascript:void(0)"
-        onclick="doForMarkedInThisWindow(getByID('profile-listing-form'), '<__trans phrase="profile">', '<__trans phrase="profiles">', 'id', 'itemset_update_profiles'); return false"
+        onclick="doForMarkedInThisWindow(getByID('profile-listing-form'), '<__trans phrase="profile">', '<__trans phrase="profiles">', 'id', 'itemset_update_profiles', null, '<__trans phrase="to update">'); return false"
         title="<__trans phrase="Scan now for new actions">"
         ><__trans phrase="Update Now"></a>
 </mt:setvarblock>
@@ -98,7 +97,7 @@ function verifyDelete( delete_item ){
 
 <mt:include name="include/header.tmpl">
 
-<mtapp:listing type="profile" loop="profiles" empty_message="No profiles were found." hide_pager="1">
+<mtapp:listing type="profile" loop="profiles" empty_message="<__trans phrase="No profiles were found.">" hide_pager="1">
     <mt:if __first__>
         <thead>
             <tr>

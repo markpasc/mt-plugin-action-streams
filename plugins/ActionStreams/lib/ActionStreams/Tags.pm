@@ -121,10 +121,36 @@ sub _author_ids_for_args {
             join => MT->model('permission')->join_on('author_id',
                 { blog_id => $blog->id }, { unique => 1 }),
         });
-        @author_ids = map { $_->[0]->id }
-            grep { $_->[1]->can_administer_blog || $_->[1]->can_create_post }
-            map  { [ $_, $_->permissions($blog->id) ] }
-            @authors;
+        my $blog_id = $ctx->stash('blog_id');
+        my $blog = MT->model('blog')->load( $blog_id );
+        if ( $args->{no_commenter} ) {
+            @author_ids = map { $_->[0]->id }
+                grep { $_->[1]->can_administer_blog || $_->[1]->can_create_post }
+                map  { [ $_, $_->permissions($blog->id) ] }
+                @authors;
+        }
+        elsif ( $blog->publish_authd_untrusted_commenters ) {
+            @author_ids = map { $_->[0]->id }
+                grep {
+                    $_->[1]->can_administer_blog
+                    || $_->[1]->can_create_post
+                    || $_->[1]->has('comment')
+                    || ( $_->[0]->type == MT::Author::COMMENTER()
+                        && !$_->[0]->is_banned($blog_id) )
+                }
+                map  { [ $_, $_->permissions($blog->id) ] }
+                @authors;
+        }
+        else {
+            @author_ids = map { $_->[0]->id }
+                grep {
+                    $_->[1]->can_administer_blog
+                    || $_->[1]->can_create_post
+                    || $_->[1]->has('comment')
+                }
+                map  { [ $_, $_->permissions($blog->id) ] }
+                @authors;
+        }
     }
 
     return \@author_ids;
@@ -149,6 +175,7 @@ sub action_streams {
 
     if (my $limit = $args->{limit} || $args->{lastn}) {
         $args{limit} = $limit eq 'auto' ? ( $app ? $app->param('limit') : 20 ) : $limit;
+        $args{limit} = 20 unless $args{limit};
     }
     elsif (my $days = $args->{days}) {
         my @ago = offset_time_list(time - 3600 * 24 * $days,
@@ -164,10 +191,14 @@ sub action_streams {
 
     if (my $offset = $args->{offset}) {
         if ($offset eq 'auto') {
-            $args{offset} = $app->param('offset')
-                if $app && $app->param('offset') > 0;
+            if ( $app && $app->param('offset') ) {
+                $offset = $app->param('offset') || 0;
+            }
+            else {
+                $offset = 0;
+            }
         }
-        elsif ($offset =~ m/^\d+$/) {
+        if ($offset =~ m/^\d+$/) {
             $args{offset} = $offset;
         }
     }
@@ -192,6 +223,9 @@ sub action_streams {
     }
 
     my @events = ActionStreams::Event->search(\%terms, \%args);
+    my $number_of_events = $ctx->stash('count');
+    $number_of_events = ActionStreams::Event->count(\%terms, \%args)
+        unless defined $number_of_events;
     return $ctx->_hdlr_pass_tokens_else($args, $cond)
         if !@events;
     if ($args{sort} eq 'created_on') {
@@ -205,6 +239,16 @@ sub action_streams {
     my $res = '';
     my ($count, $total) = (0, scalar @events);
     my $day_date = '';
+
+    # For pagination tags
+    local $ctx->{__stash}{limit}  = $args{limit}
+        if exists($args{limit})  && !exists($ctx->{__stash}{limit});
+    local $ctx->{__stash}{offset} = $args{offset}
+        if exists($args{offset}) && !exists($ctx->{__stash}{offset});
+    local $ctx->{__stash}{count}  = $number_of_events
+        unless exists $ctx->{__stash}{count};
+    $ctx->{__stash}{number_of_events} = $number_of_events;
+
     EVENT: while (my $event = shift @events) {
         my $new_day_date = _event_day($ctx, $event);
         local $cond->{DateHeader} = $day_date ne $new_day_date ? 1 : 0;
@@ -348,7 +392,7 @@ sub other_profiles {
     my $author_id = shift @$author_ids
         or return $ctx->error('No author specified for OtherProfiles');
     my $user = MT->model('author')->load($author_id)
-        or return $ctx->error(MT->trans('No user [_1]', $author_id));
+        or return $ctx->error(MT->translate('No user [_1]', $author_id));
 
     my @profiles = @{ $user->other_profiles() };
     my $services = MT->app->registry('profile_services');
@@ -430,8 +474,23 @@ sub profile_services {
 
     my $app = MT->app;
     my $networks = $app->registry('profile_services');
-    my @network_keys = sort { lc $networks->{$a}->{name} cmp lc $networks->{$b}->{name} }
-        keys %$networks;
+    my @network_keys = keys %$networks;
+    if ( $args->{eligble_to_add} ) {
+        @network_keys = grep { !$networks->{$_}->{deprecated} } @network_keys;
+        my $author = $ctx->stash('author');
+        if ( $author ) {
+            my $other_profiles = $author->other_profiles();
+            my %has_unique_profile;
+            for my $profile ( @$other_profiles ) {
+                if ( !$networks->{$profile->{type}}->{can_many} ) {
+                    $has_unique_profile{$profile->{type}} = 1;
+                }
+            }
+            @network_keys = grep { !$has_unique_profile{$_} } @network_keys;
+        }
+    }
+    @network_keys = sort { lc $networks->{$a}->{name} cmp lc $networks->{$b}->{name} }
+        @network_keys;
 
     my $out = "";
     my $builder = $ctx->stash( 'builder' );
@@ -455,10 +514,15 @@ sub profile_services {
         local @$vars{keys %loop_vars} = values %loop_vars;
 
         my $ndata = $networks->{$type};
-        local @$vars{keys %$ndata} = values %$ndata;
+        local @$vars{ keys %$ndata } = values %$ndata;
+        local $vars->{ident_hint} =
+          MT->component('ActionStreams')->translate( $ndata->{ident_hint} )
+          if $ndata->{ident_hint};
         local $vars->{label} = $ndata->{name};
-        local $vars->{type} = $type;
-        local $vars->{icon_url} = ActionStreams::Plugin->icon_url_for_service($type, $networks->{$type});
+        local $vars->{type}  = $type;
+        local $vars->{icon_url} =
+          ActionStreams::Plugin->icon_url_for_service( $type,
+            $networks->{$type} );
         local $ctx->{__stash}{profile_service} = $ndata;
         $out .= $builder->build( $ctx, $tokens, $cond );
     }

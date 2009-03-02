@@ -1,31 +1,67 @@
-<MTSetVar name="body_class" value="mt-main-index">
-<MTSetVar name="main_template" value="1">
-<MTSetVar name="main_index" value="1">
-<MTSetVar name="sidebar" value="1">
-<MTSetVarBlock name="title"><$MTBlogName encode_html="1"$></MTSetVarBlock>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" id="sixapart-standard">
+<head>
+    <$mt:Include module="<__trans phrase="HTML Head">"$>
+    <title><$mt:BlogName encode_html="1"$></title>
+</head>
+<body id="<$mt:BlogTemplateSetID$>" class="mt-main-index <$mt:Var name="page_layout"$>">
+    <div id="container">
+        <div id="container-inner">
 
-<$MTInclude module="Header"$>
 
-<div class="action-stream hfeed">
-    <mt:ActionStreams days="30">
-        <mt:DateHeader>
-            <h2 class="action-stream-header asset-name">
-                <mt:StreamActionDate format="%B %e">
-            </h2>
-            <ul class="action-stream-list">
-        </mt:DateHeader>
+            <$mt:Include module="<__trans phrase="Banner Header">"$>
 
-        <li class="hentry service-icon service-<mt:var name="service_type">">
-            <span class="entry-title"><mt:StreamAction remove_html="1"></span>
-            <span class="entry-content"><mt:StreamAction smarty_pants="1"></span>
-            <span class="updated"><mt:StreamActionModifiedDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
-            <span class="published"><mt:StreamActionDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
-        </li>
 
-        <mt:DateFooter>
-            </ul>
-        </mt:DateFooter>
-    </mt:ActionStreams>
-</div>
+            <div id="content">
+                <div id="content-inner">
 
-<$MTInclude module="Footer"$>
+
+                    <div id="alpha">
+                        <div id="alpha-inner">
+                            <div class="action-stream hfeed">
+                                <mt:ActionStreams days="30">
+                                    <mt:DateHeader>
+                                        <h2 class="action-stream-header asset-name">
+                                            <mt:setvarblock name="this_date"><mt:StreamActionDate format="%B %e"></mt:setvarblock>
+                                            <mt:if name="$today_date" eq="$this_date">
+                                                Today
+                                            <mt:else>
+                                                <mt:var name="this_date">
+                                            </mt:if>
+                                        </h2>
+                                        <ul class="action-stream-list">
+                                    </mt:DateHeader>
+
+                                    <li class="hentry service-icon service-<mt:var name="service_type">">
+                                        <span class="entry-title"><mt:StreamAction remove_html="1"></span>
+                                        <span class="entry-content"><mt:StreamAction smarty_pants="1"></span>
+                                        <span class="updated"><mt:StreamActionModifiedDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
+                                        <span class="published"><mt:StreamActionDate utc="1" format="%Y-%m-%dT%H:%M:%SZ"></span>
+                                    </li>
+
+                                    <mt:DateFooter>
+                                        </ul>
+                                    </mt:DateFooter>
+                                </mt:ActionStreams>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                    <$mt:Include module="<__trans phrase="Sidebar">"$>
+
+
+                </div>
+            </div>
+
+
+            <$mt:Include module="<__trans phrase="Banner Footer">"$>
+
+
+        </div>
+    </div>
+</body>
+</html>

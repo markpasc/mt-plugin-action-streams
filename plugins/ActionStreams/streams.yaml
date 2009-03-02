@@ -259,7 +259,7 @@ gnews:
         html_params:
             - url
             - title
-        url: 'http://news.google.com/news?num=100&q=%22{{ident}}%22&output=atom'
+        url: 'http://news.google.com/news?num=30&q=%22{{ident}}%22&output=atom'
         identifier: url
         atom: 1
 goodreads:
@@ -810,6 +810,17 @@ steam:
             - gamecode
             - game
         class: Steam
+technoratisearch:
+    posts:
+        name: Posts
+        description: Blog posts about your search term
+        html_form: 'Technorati blog search result: <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: http://feeds.technorati.com/search/{{ident}}
+        identifier: url
+        rss: 1
 tumblr:
     events:
         name: Stuff
@@ -846,6 +857,17 @@ twitter:
         atom:
             created_on: ''
             modified_on: ''
+twittersearch:
+    posts:
+        name: Tweets
+        description: Tweets about your search term
+        html_form: 'Twitter Search result: <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://search.twitter.com/search.atom?q={{ident}}'
+        identifier: url
+        atom: 1
 typepad:
     comments:
         name: Comments

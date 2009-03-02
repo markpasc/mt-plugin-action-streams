@@ -75,11 +75,13 @@ gblogs:
     url: http://blogsearch.google.com/blogsearch?q=%s
 #    icon: http://www.google.com/mobile/images/news-24x24.gif
     ident_label: Search term
+    can_many: 1
 gnews:
     name: Google News
     url: http://news.google.com/news?q=%s
 #    icon: http://www.google.com/mobile/images/news-24x24.gif
     ident_label: Search for
+    can_many: 1
 goodreads:
     name: Goodreads
     url: http://www.goodreads.com/user/show/{{ident}}
@@ -222,6 +224,7 @@ pownce:
     name: Pownce
     url: http://pownce.com/{{ident}}/
     service_type: status
+    deprecated: 1
 reddit:
     name: Reddit
     url: http://reddit.com/user/{{ident}}/
@@ -254,6 +257,14 @@ tabblo:
 technorati:
     name: Technorati
     url: http://technorati.com/people/technorati/{{ident}}
+technoratisearch:
+    name: Technorati Search
+    url: http://technorati.com/search/{{ident}}
+    icon: images/services/technorati.png
+    ident_label: Search term
+    ident_example: Movable+Type
+    ident_hint: Blank should be replaced by positive sign (+).
+    can_many: 1
 tribe:
     name: Tribe
     url: http://people.tribe.net/{{ident}}
@@ -271,6 +282,11 @@ twitter:
     name: Twitter
     url: http://twitter.com/{{ident}}
     service_type: status
+twittersearch:
+    name: TwitterSearch
+    url: http://search.twitter.com/search?q={{ident}}
+    ident_label: Search term
+    can_many: 1
 typepad:
     name: TypePad
     ident_prefix: http://profile.typepad.com/
