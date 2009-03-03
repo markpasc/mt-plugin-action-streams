@@ -329,7 +329,7 @@ sub _build_service_data {
     TYPE: for my $type (@network_keys) {
         my $ndata = $networks->{$type}
             or next TYPE;
-        next TYPE if $info{no_deprecated} && $ndata->{deprecated};
+        next TYPE if !$info{include_deprecated} && $ndata->{deprecated};
 
         my @streams;
         if ($streams) {
@@ -439,7 +439,6 @@ sub dialog_add_edit_profile {
             networks      => $app->registry('profile_services'),
             streams       => $app->registry('action_streams'),
             author        => $author,
-            no_deprecated => 1,
         ),
         %edit_profile,
     });
