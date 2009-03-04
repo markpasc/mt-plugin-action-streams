@@ -475,7 +475,7 @@ sub profile_services {
     my $app = MT->app;
     my $networks = $app->registry('profile_services');
     my @network_keys = keys %$networks;
-    if ( $args->{eligble_to_add} ) {
+    if ( $args->{eligible_to_add} ) {
         @network_keys = grep { !$networks->{$_}->{deprecated} } @network_keys;
         my $author = $ctx->stash('author');
         if ( $author ) {
