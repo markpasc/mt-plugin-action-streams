@@ -241,12 +241,28 @@ sub action_streams {
     my $day_date = '';
 
     # For pagination tags
-    local $ctx->{__stash}{limit}  = $args{limit}
-        if exists($args{limit})  && !exists($ctx->{__stash}{limit});
-    local $ctx->{__stash}{offset} = $args{offset}
-        if exists($args{offset}) && !exists($ctx->{__stash}{offset});
-    local $ctx->{__stash}{count}  = $number_of_events
-        unless exists $ctx->{__stash}{count};
+    my ( $l, $o, $c ); 
+    if ( exists $ctx->{__stash}{limit} ) {
+        $l = $ctx->{__stash}{limit};
+    }
+    elsif ( exists $args{limit} ){
+        $l = $args{limit};
+    }
+    local $ctx->{__stash}{limit}  = $l if defined $l;
+    if ( exists $ctx->{__stash}{offset} ) {
+        $o = $ctx->{__stash}{offset};
+    }
+    elsif ( exists $args{offset} ){
+        $o = $args{offset};
+    }
+    local $ctx->{__stash}{offset}  = $o if defined $o;
+    if ( exists $ctx->{__stash}{count} ) {
+        $c = $ctx->{__stash}{count};
+    }
+    else {
+        $c = $number_of_events;
+    }
+    local $ctx->{__stash}{count} = $c if defined $c;
     $ctx->{__stash}{number_of_events} = $number_of_events;
 
     EVENT: while (my $event = shift @events) {

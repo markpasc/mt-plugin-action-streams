@@ -67,6 +67,10 @@ sub update_events {
                 modified_on  => 'pubDate/child::text()',
             },
         );
+        for my $item (@$items) {
+            $item->{identifier} ||= $item->{url} || $item->{title};
+        }
+        @$items = grep { $_->{identifier} } @$items;
     }
 	return if !$items;
 

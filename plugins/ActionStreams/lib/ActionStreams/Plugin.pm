@@ -342,9 +342,14 @@ sub _build_service_data {
                 keys %$streamdata;
         }
 
+        ## we must translate from original. or garbles on FastCGI environment.
+        if ( !exists $ndata->{__ident_hint_original} ) {
+            $ndata->{__ident_hint_original} = $ndata->{ident_hint};
+        }
+
         $ndata->{ident_hint}
-            = MT->component('ActionStreams')->translate( $ndata->{ident_hint} )
-            if $ndata->{ident_hint};
+            = MT->component('ActionStreams')->translate( $ndata->{__ident_hint_original} )
+            if $ndata->{__ident_hint_original};
 
         my $ret = {
             type => $type,
@@ -354,10 +359,18 @@ sub _build_service_data {
         };
         if (@streams) {
             for my $stream (@streams) {
+                ## we must translate from original. or garbles on FastCGI environment.
+                if ( !exists $stream->{__name_original} ) {
+                    $stream->{__name_original} = $stream->{name};
+                }
+                if ( !exists $stream->{__description_original} ) {
+                    $stream->{__description_original} = $stream->{description};
+                }
+
                 $stream->{name}
-                    = MT->component('ActionStreams')->translate( $stream->{name} );
+                    = MT->component('ActionStreams')->translate( $stream->{__name_original} );
                 $stream->{description}
-                    = MT->component('ActionStreams')->translate( $stream->{description} );
+                    = MT->component('ActionStreams')->translate( $stream->{__description_original} );
             }
             $ret->{streams} = \@streams if @streams;
         }

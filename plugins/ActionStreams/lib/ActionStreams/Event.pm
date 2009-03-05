@@ -786,9 +786,15 @@ Given a profile service ID (that is, a key from the C<profile_services> section
 of the registry), returns a list of stream classes for scanning that service's
 streams.
 
-=head2 C<$class-E<GT>backup_terms_args
+=head2 C<$class-E<gt>backup_terms_args($blog_ids)>
 
-Used in backup/restore.  See I<MT::BackupRestore> for more detail.
+Used in backup.  Backup function calls the method to generate $terms and
+$args for the class to load objects.  ActionStream::Event does not have
+blog_id and does use class_column, the nature the class has to tell
+backup function to properly load all the target objects of the class
+to be backed up. 
+
+See I<MT::BackupRestore> for more detail.
 
 =head1 NOTE ON WEB::SCRAPER
 
