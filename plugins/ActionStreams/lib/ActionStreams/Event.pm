@@ -6,7 +6,7 @@ use base qw( MT::Object MT::Taggable MT::Scorable );
 our @EXPORT_OK = qw( classes_for_type );
 use HTTP::Date qw( str2time );
 
-use MT::Util qw( encode_html remove_html encode_url );
+use MT::Util qw( encode_html encode_url );
 use MT::I18N;
 
 use ActionStreams::Scraper;
@@ -67,7 +67,7 @@ sub datasource {
 sub encode_field_for_html {
     my $event = shift;
     my ($field) = @_;
-    return encode_html( remove_html( $event->$field() ) );
+    return encode_html( $event->$field() );
 }
 
 sub as_html {
