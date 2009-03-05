@@ -52,8 +52,6 @@
 .service-flickr { background-image: url(../images/services/flickr.png); }
 .service-friendfeed { background-image: url(../images/services/friendfeed.png); }
 .service-gametap { background-image: url(../images/services/gametap.png); }
-.service-gblogs { background-image: url(../images/services/gblogs.png); }
-.service-gnews { background-image: url(../images/services/gnews.png); }
 .service-goodreads { background-image: url(../images/services/goodreads.png); }
 .service-googlereader { background-image: url(../images/services/googlereader.png); }
 .service-gtalk { background-image: url(../images/services/gtalk.png); }
@@ -96,10 +94,8 @@
 .service-stumbleupon { background-image: url(../images/services/stumbleupon.png); }
 .service-tabblo { background-image: url(../images/services/tabblo.png); }
 .service-technorati { background-image: url(../images/services/technorati.png); }
-.service-technoratisearch { background-image: url(../images/services/technorati.png); }
 .service-tribe { background-image: url(../images/services/tribe.png); }
 .service-twitter { background-image: url(../images/services/twitter.png); }
-.service-twittersearch { background-image: url(../images/services/twitter.png); }
 .service-tumblr { background-image: url(../images/services/tumblr.gif); }
 .service-typepad { background-image: url(../images/services/typepad.png); }
 .service-uncrate { background-image: url(../images/services/uncrate.png); }
@@ -114,5 +110,4 @@
 .service-yelp { background-image: url(../images/services/yelp.png); }
 .service-youtube { background-image: url(../images/services/youtube.png); }
 .service-zooomr { background-image: url(../images/services/zooomr.png); }
-.service-twittersearch { background-image: url(../images/services/twitter.png); }
 
