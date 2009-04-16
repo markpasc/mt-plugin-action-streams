@@ -207,13 +207,17 @@ sub action_streams {
     if ($service && $stream) {
         $terms{class} = join q{_}, $service, $stream;
     }
+    elsif ($service && $service =~ s{ \A not \s* }{}xmsi) {
+        $terms{class} = { op => 'not like', value => $service . '_%' };
+    }
     elsif ($service) {
-        $terms{class} = $service . '_%';
-        $args{like} = { class => 1 };
+        $terms{class} = { op => 'like', value => $service . '_%' };
+    }
+    elsif ($stream && $stream =~ s{ \A not \s* }{}xmsi) {
+        $terms{class} = { op => 'not like', value => '%_' . $stream };
     }
     elsif ($stream) {
-        $terms{class} = '%_' . $stream;
-        $args{like} = { class => 1 };
+        $terms{class} = { op => 'like', value => '%_' . $stream };
     }
 
     # Make sure all classes are loaded.
