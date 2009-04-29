@@ -126,15 +126,11 @@ delicious:
         html_params:
             - url
             - title
-        url: 'http://feeds.delicious.com/rss/{{ident}}'
+        url: 'http://feeds.delicious.com/v2/rss/{{ident}}?plain'
         identifier: url
-        xpath:
-            foreach: //item
-            get:
-                created_on: dc:date
-                title: title
-                url: link
-                note: description
+        rss:
+            note: description
+            tags: category/child::text()
 digg:
     links:
         name: Dugg
