@@ -698,7 +698,12 @@ sub rebuild_action_stream_blogs {
 
         require MT::TheSchwartz;
         require TheSchwartz::Job;
-        for my $fi (@fileinfos) {
+        FINFO: for my $fi (@fileinfos) {
+            # Only publish if the matching template has an output file.
+            my $tmpl = MT->model('template')->load($fi->template_id)
+                or next FINFO;
+            next FINFO if !$tmpl->outfile;
+
             my $job = TheSchwartz::Job->new();
             $job->funcname('MT::Worker::Publish');
             $job->uniqkey($fi->id);
