@@ -262,10 +262,17 @@ sub classes_for_type {
         next if 'HASH' ne ref $stream;
         next if !$stream->{class} && !$stream->{url};
 
+        # This check intentionally fails a lot, so ignore any DIE handler we
+        # might have.
+        my $has_props = sub {
+            my $pkg = shift;
+            return eval { local $SIG{__DIE__}; $pkg->properties };
+        };
+
         my $pkg;
         if ($pkg = $stream->{class}) {
             $pkg = join q{::}, $class, $pkg if $pkg && $pkg !~ m{::}xms;
-            if (!eval { $pkg->properties }) {
+            if (!$has_props->($pkg)) {
                 if (!eval "require $pkg; 1") {
                     my $error = $@ || q{};
                     my $pl = MT->component('ActionStreams');
@@ -278,8 +285,8 @@ sub classes_for_type {
         else {
             $pkg = join q{::}, $class, 'Auto', ucfirst $type,
                 ucfirst $stream_id;
-            if (!eval { $pkg->properties }) {
-                eval "package $pkg; use base qw( $class ); 1" or next;
+            if (!$has_props->($pkg)) {
+                eval "package $pkg; use base qw( $class ); 1" or next PACKAGE;
 
                 my $class_type = join q{_}, $type, $stream_id;
                 $pkg->install_properties({ class_type => $class_type });
