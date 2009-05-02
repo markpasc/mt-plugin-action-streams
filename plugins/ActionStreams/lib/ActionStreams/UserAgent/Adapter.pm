@@ -98,7 +98,7 @@ sub AUTOLOAD {
 
     my $fn = sub {
         my $self = shift;
-        return shift->{ua}->$funcname(@_) if ref $self;
+        return $self->{ua}->$funcname(@_) if ref $self;
 
         if (eval { require LWPx::ParanoidAgent; 1 }) {
             return LWPx::ParanoidAgent->$funcname(@_);
