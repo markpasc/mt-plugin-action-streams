@@ -652,7 +652,7 @@ p0pulist:
         html_params:
             - url
             - title
-        url: 'http://p0pulist.com/list/hot_list/{{ident}}.rss'
+        url: 'http://p0p.com/list/hot_list/{{ident}}.rss'
         rss:
             thumbnail: image/url
 pownce:
@@ -838,10 +838,10 @@ uncrate:
         html_params:
             - url
             - title
-        url: 'http://uncrate.com/stuff/{{ident}}'
+        url: 'http://www.uncrate.com/stuff/{{ident}}'
         identifier: url
         scraper:
-            foreach: '#widget h2'
+            foreach: '#profile-recent-actions h2'
             get:
                 title:
                   - a
