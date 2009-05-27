@@ -1,6 +1,7 @@
 # Action Streams Plugin for Movable Type
-# Authors: Mark Paschal, Bryan Tighe, Brad Choate, Alex Bain
-# Copyright 2008 Six Apart, Ltd.
+# Authors: Mark Paschal, Akira Sawada, Fumiaki Yoshimatsu, Bryan Tighe,
+#          Brad Choate, Alex Bain
+# Copyright 2009 Six Apart, Ltd.
 # License: Artistic, licensed under the same terms as Perl itself
 
 
@@ -85,7 +86,18 @@ template tags.
 
 CHANGES
 
-2.0   30 January 2009
+2.2   in development
+      Improved Delicious stream.
+      Fixed error when rebuilding blogs with deactivated templates.
+      Support for "not" operator in mt:ActionStreams "service" and "stream"
+      tag attributes when used individually.
+      Quieter operation when used with Log4MT.
+      Fixed bug that prevented use of methods other than get() with the HTTP
+      caching system.
+
+2.1   17 March 2009
+      Localized into several pleasing world languages. (Thanks, Six Apart
+      Motion Team!)
       Wrote documentation (see plugin's doc/ directory or web site).
       Provided editing of external profiles that have already been added.
       Added "Update Now" button to profiles list.
