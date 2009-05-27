@@ -1,7 +1,6 @@
 package Web::Scraper;
 use strict;
 use warnings;
-use 5.8.1;
 use Carp;
 use Scalar::Util qw(blessed);
 use List::Util qw(first);
@@ -11,7 +10,7 @@ use HTML::TreeBuilder::XPath;
 use HTML::Selector::XPath;
 use UNIVERSAL::require;
 
-our $VERSION = '0.26';
+our $VERSION = '0.24';
 
 sub import {
     my $class = shift;
@@ -55,25 +54,23 @@ sub scrape {
     my($html, $tree);
 
     if (blessed($stuff) && $stuff->isa('URI')) {
-        my $ua  = $self->user_agent;
-        my $res = $ua->get($stuff);
-        return $self->scrape($res, $stuff->as_string);
-    } elsif (blessed($stuff) && $stuff->isa('HTTP::Response')) {
         require Encode;
         require HTTP::Response::Encoding;
-        if ($stuff->is_success) {
+        my $ua  = $self->user_agent;
+        my $res = $ua->get($stuff);
+        if ($res->is_success) {
             my @encoding = (
-                $stuff->encoding,
+                $res->encoding,
                 # could be multiple because HTTP response and META might be different
-                ($stuff->header('Content-Type') =~ /charset=([\w\-]+)/g),
+                ($res->header('Content-Type') =~ /charset=([\w\-]+)/g),
                 "latin-1",
             );
             my $encoding = first { defined $_ && Encode::find_encoding($_) } @encoding;
-            $html = Encode::decode($encoding, $stuff->content);
+            $html = Encode::decode($encoding, $res->content);
         } else {
-            croak "GET " . $stuff->request->uri . " failed: ", $stuff->status_line;
+            croak "GET $stuff failed: ", $res->status_line;
         }
-        $current ||= $stuff->request->uri;
+        $current = $stuff->as_string;
     } elsif (blessed($stuff) && $stuff->isa('HTML::Element')) {
         $tree = $stuff->clone;
     } elsif (ref($stuff) && ref($stuff) eq 'SCALAR') {
@@ -235,8 +232,7 @@ sub run_filter {
     }
 
     no warnings 'uninitialized';
-    # sub { s/foo/bar/ } returns number or PL_sv_no which is stringified to ''
-    if (($retval =~ /^\d+$/ and $_ ne $value) or (defined($retval) and $retval eq '')) {
+    if (($retval =~ /^\d+$/ and $_ ne $value) or (defined $retval and !$retval)) {
         $value = $_;
     } else {
         $value = $retval;

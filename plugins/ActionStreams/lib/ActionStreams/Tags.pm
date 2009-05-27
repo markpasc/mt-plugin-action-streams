@@ -86,7 +86,7 @@ sub stream_action_via {
 sub other_profile_var {
     my( $ctx, $args ) = @_;
     my $profile = $ctx->stash( 'other_profile' )
-        or return $ctx->error( 'No profile defined in ProfileVar' );
+        or return '';
     my $var = $args->{name} || 'uri';
     return defined $profile->{ $var } ? $profile->{ $var } : '';
 }
@@ -297,10 +297,10 @@ sub _build_about_event {
 
     my $type = $event->class_type;
     my ($service, $stream_id) = split /_/, $type, 2;
-    # TODO: find from the event which other_profile is really associated
-    # instead of guessing it's the first one.
-    my $profiles = $author->other_profiles($service) || [];
-    local ($ctx->{__stash}{other_profile}) = @$profiles;
+    my $profile = $author->other_profiles($service);
+    $profile = $profile->[0]
+        if ( defined $profile && 'ARRAY' eq ref $profile );
+    local $ctx->{__stash}{other_profile} = $profile;
 
     my $vars = $ctx->{__stash}{vars} ||= {};
     local $vars->{action_type} = $type;
@@ -409,7 +409,8 @@ sub other_profiles {
     my $user = MT->model('author')->load($author_id)
         or return $ctx->error(MT->translate('No user [_1]', $author_id));
 
-    my @profiles = @{ $user->other_profiles() };
+    my @profiles = sort { lc $a->{type} cmp lc $b->{type} }
+        @{ $user->other_profiles() };
     my $services = MT->app->registry('profile_services');
     if (my $filter_type = $args->{type}) {
         my $filter_except = $filter_type =~ s{ \A NOT \s+ }{}xmsi ? 1 : 0;
@@ -420,10 +421,6 @@ sub other_profiles {
             $filter_except ? $service_type ne $filter_type : $service_type eq $filter_type;
         } @profiles;
     }
-    @profiles = map { $_->[1] }
-        sort { $a->[0] cmp $b->[0] }
-        map { [ lc (($services->{ $_->{type} } || {})->{name} || q{}), $_ ] }
-        @profiles;
 
     my $populate_icon = sub {
         my ($item, $row) = @_;

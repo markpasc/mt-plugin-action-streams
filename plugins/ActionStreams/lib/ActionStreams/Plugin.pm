@@ -102,34 +102,16 @@ sub icon_url_for_service {
     return $icon_url;
 }
 
-sub _edit_author {
-    my $arg = 'HASH' eq ref($_[0]) ? shift : { id => shift };
-
-    my $app = MT->instance;
-    my $trans_error = sub {
-        return $app->error($app->translate(@_)) unless $arg->{no_error};
-    };
-
-    $arg->{id} or return $trans_error->('No id');
-    
-    my $class = MT->model('author');
-    my $author = $class->load( $arg->{id} )
-        or return $trans_error->("No such [_1].", lc( $class->class_label ));
-
-    return $trans_error->("Permission denied.")
-        if ! $app->user
-        or $app->user->id != $arg->{id} && !$app->user->is_superuser();
-
-    return $author;
-}
-
 sub list_profileevent {
     my $app = shift;
     my %param = @_;
 
     $app->return_to_dashboard( redirect => 1 ) if $app->param('blog_id');
 
-    my $author = _edit_author( $app->param('id') ) or return;
+    my $author_id = $app->param('id')
+        or return;
+    return $app->error('Not permitted to view')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
 
     my %service_styles;
     my @service_styles_loop;
@@ -195,7 +177,7 @@ sub list_profileevent {
 
     my %terms = (
         class => '*',
-        author_id => $author->id,
+        author_id => $author_id,
     );
     my %args = (
         sort => 'created_on',
@@ -217,8 +199,7 @@ sub list_profileevent {
         }
     }
 
-    $params{id}   = $params{edit_author_id} = $author->id;
-    $params{name} = $params{edit_author_name} = $author->name;
+    $params{id} = $params{edit_author_id} = $author_id;
     $params{service_styles} = \@service_styles_loop;
     $app->listing({
         type     => 'profileevent',
@@ -278,12 +259,14 @@ sub _itemset_hide_show_all_events {
     my $event = $event_class->load($event_id)
         or return $app->error($app->translate('No such event [_1]', $event_id));
 
-    my $author = _edit_author( $event->author_id ) or return;
+    my $author_id = $event->author_id;
+    return $app->error('Not permitted to modify')
+        if $author_id != $app->user->id && !$app->user->is_superuser();
 
     my $driver = $event_class->driver;
     my $stmt = $driver->prepare_statement($event_class, {
         # TODO: include filter value when we have filters
-        author_id => $author->id,
+        author_id => $author_id,
         visible   => $new_visible ? 0 : 1,
     });
 
@@ -396,22 +379,24 @@ sub other_profiles {
 
     $app->return_to_dashboard( redirect => 1 ) if $app->param('blog_id');
 
-    my $author = _edit_author( $app->param('id') ) or return;
+    my $author_id = $app->param('id')
+        or return $app->error('Author id is required');
+    my $user = MT->model('author')->load($author_id)
+        or return $app->error('Author id is invalid');
+    return $app->error('Not permitted to view')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
 
     my $plugin = MT->component('ActionStreams');
     my $tmpl = $plugin->load_tmpl( 'other_profiles.tmpl' );
 
     my @profiles = sort { lc $a->{label} cmp lc $b->{label} }
-        @{ $author->other_profiles || [] };
-
-    my %params = map { $_ => $author->$_ } qw( id name );
-    $params{edit_author_id}   = $params{id};
-    $params{edit_author_name} = $params{name};
+        @{ $user->other_profiles || [] };
 
     my %messages = map { $_ => $app->param($_) ? 1 : 0 }
         (qw( added removed updated edited ));
     return $app->build_page( $tmpl, {
-        %params,
+        id             => $user->id,
+        edit_author_id => $user->id,
         profiles       => \@profiles,
         listing_screen => 1,
         _build_service_data(
@@ -424,7 +409,10 @@ sub other_profiles {
 sub dialog_add_edit_profile {
     my ($app) = @_;
 
-    my $author = _edit_author( $app->param('author_id') ) or return;
+    return $app->error('Not permitted to view')
+        if $app->user->id != $app->param('author_id') && !$app->user->is_superuser();
+    my $author = MT->model('author')->load($app->param('author_id'))
+        or return $app->error('No such author [_1]', $app->param('author_id'));
 
     my %edit_profile;
     my $tmpl_name = 'dialog_add_profile.tmpl';
@@ -447,7 +435,7 @@ sub dialog_add_edit_profile {
     my $tmpl = $plugin->load_tmpl($tmpl_name);
 
     return $app->build_page($tmpl, {
-        edit_author_id => $author->id,
+        edit_author_id => $app->param('author_id'),
         _build_service_data(
             networks      => $app->registry('profile_services'),
             streams       => $app->registry('action_streams'),
@@ -461,11 +449,17 @@ sub edit_other_profile {
     my $app = shift;
     $app->validate_magic() or return;
 
-    my $author     = _edit_author( $app->param('author_id') ) or return;
-    my $type       = $app->param('profile_type');
+    my $author_id = $app->param('author_id')
+        or return $app->error('Author id is required');
+    my $user = MT->model('author')->load($author_id)
+        or return $app->error('Author id is invalid');
+    return $app->error('Not permitted to edit')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
+
+    my $type = $app->param('profile_type');
     my $orig_ident = $app->param('original_ident');
 
-    $author->remove_profile($type, $orig_ident);
+    $user->remove_profile($type, $orig_ident);
 
     $app->forward('add_other_profile', success_msg => 'edited');
 }
@@ -475,7 +469,12 @@ sub add_other_profile {
     my %param = @_;
     $app->validate_magic or return;
 
-    my $author = _edit_author( $app->param('author_id') ) or return;
+    my $author_id = $app->param('author_id')
+        or return $app->error('Author id is required');
+    my $user = MT->model('author')->load($author_id)
+        or return $app->error('Author id is invalid');
+    return $app->error('Not permitted to add')
+        if $app->user->id != $author_id && !$app->user->is_superuser();
 
     my( $ident, $uri, $label, $type );
     if ( $type = $app->param( 'profile_type' ) ) {
@@ -519,14 +518,14 @@ sub add_other_profile {
         keys %{ $app->registry('action_streams', $type) || {} };
     $profile->{streams} = \%streams if %streams;
 
-    $app->run_callbacks('pre_add_profile.'  . $type, $app, $author, $profile);
-    $author->add_profile($profile);
-    $app->run_callbacks('post_add_profile.' . $type, $app, $author, $profile);
+    $app->run_callbacks('pre_add_profile.'  . $type, $app, $user, $profile);
+    $user->add_profile($profile);
+    $app->run_callbacks('post_add_profile.' . $type, $app, $user, $profile);
 
     my $success_msg = $param{success_msg} || 'added';
     return $app->redirect($app->uri(
         mode => 'other_profiles',
-        args => { id => $author->id, $success_msg => 1 },
+        args => { id => $author_id, $success_msg => 1 },
     ));
 }
 
@@ -539,13 +538,14 @@ sub remove_other_profile {
     PROFILE: for my $profile ($app->param('id')) {
         my ($author_id, $type, $ident) = split /:/, $profile, 3;
 
-        $users{$author_id} ||= _edit_author({ id       => $author_id,
-                                              no_error => 1 });
-        my $author = $users{$author_id} or next PROFILE;
+        my $user = ($users{$author_id} ||= MT->model('author')->load($author_id))
+            or next PROFILE;
+        next PROFILE
+            if $app->user->id != $author_id && !$app->user->is_superuser();
 
-        $app->run_callbacks('pre_remove_profile.' . $type, $app, $author, $type, $ident);
-        $author->remove_profile( $type, $ident );
-        $app->run_callbacks('post_remove_profile.' . $type, $app, $author, $type, $ident);
+        $app->run_callbacks('pre_remove_profile.'  . $type, $app, $user, $type, $ident);
+        $user->remove_profile( $type, $ident );
+        $app->run_callbacks('post_remove_profile.' . $type, $app, $user, $type, $ident);
         $page_author_id = $author_id;
     }
 
@@ -632,17 +632,18 @@ sub itemset_update_profiles {
     PROFILE: for my $profile ($app->param('id')) {
         my ($author_id, $type, $ident) = split /:/, $profile, 3;
 
-        $users{$author_id} ||= _edit_author({ id       => $author_id,
-                                              no_error => 1 });
-        my $author = $users{$author_id} or next PROFILE;
+        my $user = ($users{$author_id} ||= MT->model('author')->load($author_id))
+            or next PROFILE;
+        next PROFILE
+            if $app->user->id != $author_id && !$app->user->is_superuser();
 
-        my $profiles = $author->other_profiles($type);
+        my $profiles = $user->other_profiles($type);
         if (!$profiles) {
             next PROFILE;
         }
         my @profiles = grep { $_->{ident} eq $ident } @$profiles;
         for my $author_profile (@profiles) {
-            update_events_for_profile($author, $author_profile,
+            update_events_for_profile($user, $author_profile,
                 synchronous => 1);
         }
 

@@ -250,6 +250,7 @@ gblogs:
             - title
         url: 'http://blogsearch.google.com/blogsearch_feeds?q=%22{{ident}}%22&ie=utf-8&num=10&output=atom&scoring=d'
         identifier: url
+        class: GoogleBlogSearch
         atom: 1
 gnews:
     stories:
@@ -261,6 +262,7 @@ gnews:
             - title
         url: 'http://news.google.com/news?num=30&q=%22{{ident}}%22&output=atom'
         identifier: url
+        class: GoogleNews
         atom: 1
 goodreads:
     toread:
