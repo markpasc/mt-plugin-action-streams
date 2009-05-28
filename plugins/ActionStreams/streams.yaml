@@ -553,6 +553,16 @@ netvibes:
             - title
         url: 'http://www2.netvibes.com/rest/account/{{ident}}/timeline?format=atom'
         atom: 1
+nytimes:
+    links:
+        name: Recommendations
+        description: Recommendations in your TimesPeople activities
+        html_form: '[_1] recommended <a href="[_2]">[_3]</a>'
+        html_params:
+            - url
+            - title
+        url: 'http://timespeople.nytimes.com/view/user/{{ident}}/rss.xml'
+        rss: 1
 ohloh:
     kudos:
         name: Kudos

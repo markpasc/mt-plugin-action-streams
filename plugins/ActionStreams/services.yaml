@@ -186,6 +186,12 @@ ning:
     ident_suffix: .ning.com/
     ident_prefix: http://
     ident_label: Social Network URL
+nytimes:
+    name: New York Times (TimesPeople)
+    url: http://timespeople.nytimes.com/view/user/{{ident}}/activities.html
+    service_type: links
+    ident_label: Activity URL
+    ident_example: http://timespeople.nytimes.com/view/user/57963079/activities.html
 ohloh:
     name: Ohloh
     url: http://ohloh.net/accounts/{{ident}}

@@ -431,6 +431,10 @@ sub build_results {
 
         $event ||= $class->new;
 
+        $mt->run_callbacks('filter_action_streams_event.'
+            . $class->class_type, $mt, $item, $event, $author, $profile)
+            or return;
+
         $mt->run_callbacks('pre_build_action_streams_event.'
             . $class->class_type, $mt, $item, $event, $author, $profile);
 

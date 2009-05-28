@@ -82,6 +82,11 @@ sub netflix_queue_prefix_thumb {
     }
 }
 
+sub nytimes_links_titles {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    return $item->{title} =~ s{ \A [^:]* recommended [^:]* : \s* }{}xms ? 1 : 0;
+}
+
 sub p0pulist_stuff_urls {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     $item->{url} =~ s{ \A / }{http://p0pulist.com/}xms;

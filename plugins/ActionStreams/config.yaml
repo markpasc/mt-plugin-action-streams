@@ -58,6 +58,7 @@ callbacks:
     pre_build_action_streams_event.twitter_statuses:        $ActionStreams::ActionStreams::Fix::twitter_tweet_name
     pre_build_action_streams_event.typepad_comments:        $ActionStreams::ActionStreams::Fix::typepad_comment_titles
     pre_build_action_streams_event.wists_wists:             $ActionStreams::ActionStreams::Fix::wists_thumb
+    filter_action_streams_event.nytimes_links:              $ActionStreams::ActionStreams::Fix::nytimes_links_titles
 object_types:
     profileevent: ActionStreams::Event
     as: ActionStreams::Event
