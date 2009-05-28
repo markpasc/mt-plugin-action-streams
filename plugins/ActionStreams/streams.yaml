@@ -16,6 +16,20 @@ backtype:
         url: 'http://feeds.backtype.com/{{ident}}'
         rss: 1
         identifier: url
+blurst:
+    achievements:
+        name: Achievements
+        description: Achievements earned in Blurst games
+        fields:
+            - game_title
+            - game_url
+        html_form: '[_1] won achievement <a href="[_2]">[_3]</a> in <a href="[_4]">[_5]</a>'
+        html_params:
+            - url
+            - title
+            - game_url
+            - game_title
+        class: BlurstAchievements
 colourlovers:
     colors:
         name: Colors

@@ -17,6 +17,11 @@ bebo:
     name: Bebo
     url: http://www.bebo.com/Profile.jsp?MemberId={{ident}}
     service_type: network
+blurst:
+    name: Blurst
+    url: http://blurst.com/community/p/{{ident}}
+    ident_label: Username
+    ident_example: melody
 catster:
     name: Catster
     url: http://www.catster.com/cats/{{ident}}
