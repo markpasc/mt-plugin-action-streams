@@ -58,6 +58,11 @@ sub iusethis_event_title {
     $item->{title} =~ s{ \A \w+ \s* }{}xms;
 }
 
+sub metafilter_favorites_titles {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    $item->{title} =~ s{ \A [^:]+ : \s* }{}xms;
+}
+
 sub netflix_recent_prefix_thumb {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the 'Shipped:' or 'Received:' prefix.

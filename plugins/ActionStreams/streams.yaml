@@ -518,6 +518,17 @@ magnolia:
         atom:
             tags: "category[@scheme='http://ma.gnolia.com/tags']/@term"
             note: content
+metafilter:
+    favorites:
+        name: Favorites
+        description: Posts you saved as favorites
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite'
+        html_params:
+            - url
+            - title
+        url: 'http://www.metafilter.com/favorites/{{ident}}/posts/rss'
+        rss:
+            created_on: ''
 netflix:
     queue:
         name: Queue

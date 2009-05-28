@@ -150,6 +150,11 @@ magnolia:
     url: http://ma.gnolia.com/people/{{ident}}
     service_type: links
     deprecated: 1
+metafilter:
+    name: MetaFilter
+    url: http://www.metafilter.com/user/{{ident}}
+    ident_label: User Number
+    ident_example: 11039
 mog:
     name: MOG
     url: http://mog.com/{{ident}}
