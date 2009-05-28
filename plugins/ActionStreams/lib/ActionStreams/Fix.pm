@@ -52,6 +52,12 @@ sub iminta_link_title {
     $item->{title} =~ s{ (?: \s* :: [^:]+ ){2} \z }{}xms;
 }
 
+sub instructables_favorites_thumbnails {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    $item->{thumbnail} = URI->new_abs($item->{thumbnail}, 'http://www.instructables.com/')
+        if $item->{thumbnail};
+}
+
 sub iusethis_event_title {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the username for when we add it back in later.

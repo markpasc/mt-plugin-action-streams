@@ -48,6 +48,7 @@ callbacks:
     pre_build_action_streams_event.gametap_scores:          $ActionStreams::ActionStreams::Fix::gametap_score_stuff
     pre_build_action_streams_event.identica_statuses:       $ActionStreams::ActionStreams::Fix::twitter_tweet_name
     pre_build_action_streams_event.iminta_links:            $ActionStreams::ActionStreams::Fix::iminta_link_title
+    pre_build_action_streams_event.instructables_favorites: $ActionStreams::ActionStreams::Fix::instructables_favorites_thumbnails
     pre_build_action_streams_event.iusethis_events:         $ActionStreams::ActionStreams::Fix::iusethis_event_title
     pre_build_action_streams_event.kongregate_achievements: $ActionStreams::ActionStreams::Fix::kongregate_achievement_title_thumb
     pre_build_action_streams_event.magnolia_links:          $ActionStreams::ActionStreams::Fix::magnolia_link_notes

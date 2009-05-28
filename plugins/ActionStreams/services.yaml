@@ -103,6 +103,11 @@ identica:
 iminta:
     name: Iminta
     url: http://iminta.com/people/{{ident}}
+instructables:
+    name: Instructables
+    url: http://www.instructables.com/member/{{ident}}/
+    ident_label: Username
+    ident_example: melody
 istockphoto:
     name: iStockphoto
     url: http://www.istockphoto.com/user_view.php?id={{ident}}

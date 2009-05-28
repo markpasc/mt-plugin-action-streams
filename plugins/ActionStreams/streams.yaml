@@ -349,6 +349,19 @@ iminta:
             - title
         url: 'http://iminta.com/people/{{ident}}/rss.xml?inta_source_id=11'
         rss: 1
+instructables:
+    favorites:
+        name: Favorites
+        description: Instructables you saved as favorites
+        html_form: '[_1] saved <a href="[_2]">[_3]</a> as a favorite'
+        html_params:
+            - url
+            - title
+        url: http://www.instructables.com/member/{{ident}}/rss.xml?show=good
+        rss:
+            created_on: ''
+            modified_on: ''
+            thumbnail: imageThumb
 istockphoto:
     photos:
         name: Photos
