@@ -384,7 +384,7 @@ sub fetch_xpath {
                 my @outvals = $item->findnodes($val)
                     or next VALUE;
 
-                $item_data{$key} = [ map { MT::I18N::utf8_off( $_->getNodeValue ) } @outvals ];
+                $item_data{$key} = [ grep map { MT::I18N::utf8_off( $_->getNodeValue ) } @outvals ];
             }
             else {
                 my $outval = $item->findvalue($val)
@@ -393,8 +393,16 @@ sub fetch_xpath {
                 $outval = MT::I18N::utf8_off("$outval");
                 if ($outval && ($key eq 'created_on' || $key eq 'modified_on')) {
                     # try both RFC 822/1123 and ISO 8601 formats
-                    $outval = MT::Util::epoch2ts(undef, str2time($outval))
-                        || MT::Util::iso2ts(undef, $outval);
+                    my $out_timestamp;
+                    if (my $epoch = str2time($outval)) {
+                        $out_timestamp = MT::Util::epoch2ts(undef, $epoch);
+                    }
+                    # The epoch2ts may have failed too.
+                    if (!defined $out_timestamp) {
+                        $out_timestamp = MT::Util::iso2ts(undef, $outval);
+                    }
+                    # Whether it's defined or not, that's our new outval.
+                    $outval = $out_timestamp;
                 }
 
                 $item_data{$key} = $outval if $outval;
@@ -444,7 +452,7 @@ sub build_results {
             identifier => $identifier,
             %$item,
         });
-        $event->tags(@$tags) if $tags;
+        $event->tags(@$tags) if $tags && @$tags;
         if ($hide_timeless && !$event->created_on) {
             $event->visible(0);
         }
@@ -496,8 +504,11 @@ sub fetch_scraper {
             if ($field eq 'tags') {
                 $item->{$field} = [ map { MT::I18N::utf8_off( "$_" ) } @{ $item->{$field} } ];
             }
-            else {
+            elsif (defined $item->{$field}) {
                 $item->{$field} = MT::I18N::utf8_off( q{} . $item->{$field} );
+            }
+            else {
+                delete $item->{$field};
             }
         }
     }
