@@ -109,7 +109,7 @@ sub kongregate_achievement_title_thumb {
     $item->{title} =~ s{ \( [^)]* \) \z }{}xms;
 
     # Pick the actual achievement badge out of the inline CSS.
-    my $thumb = delete $item->{thumbnail};
+    my $thumb = delete $item->{thumbnail} || q{};
     if ($thumb =~ m{ background-image: \s* url\( ([^)]+) }xms) {
         $item->{thumbnail} = $1;
     }
