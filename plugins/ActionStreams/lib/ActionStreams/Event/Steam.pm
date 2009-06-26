@@ -58,16 +58,19 @@ sub update_events {
     );
     return if !$games;
 
-    for my $url (@$games) {
+    URL: for my $url (@$games) {
         my $gamecode = "$url";
         $gamecode =~ s{ \A .* / }{}xms;
 
         $url = "$url?tab=achievements";  # TF2's stats page has tabs
+
+        next URL if $url !~ m{ \Q$ident\E }xms;
+
         my $items = $class->fetch_scraper(
             url     => $url,
             scraper => $achv_scraper,
         );
-        next if !$items;
+        next URL if !$items;
 
         my ($title, $achvs) = @$items{qw( title achvs )};
         $title =~ s{ \s* Stats \z }{}xmsi;
