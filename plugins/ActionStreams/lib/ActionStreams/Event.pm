@@ -384,7 +384,7 @@ sub fetch_xpath {
                 my @outvals = $item->findnodes($val)
                     or next VALUE;
 
-                $item_data{$key} = [ grep map { MT::I18N::utf8_off( $_->getNodeValue ) } @outvals ];
+                $item_data{$key} = [ grep { $_ } map { MT::I18N::utf8_off($_->getNodeValue) } @outvals ];
             }
             else {
                 my $outval = $item->findvalue($val)
