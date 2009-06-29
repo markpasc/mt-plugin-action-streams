@@ -315,13 +315,26 @@ googlereader:
     links:
         name: Shared
         description: Your shared items
+        fields:
+            - note
+            - source_title
+            - source_url
+            - summary
         html_form: '[_1] shared <a href="[_2]">[_3]</a> from <a href="[_4]">[_5]</a>'
         html_params:
             - url
             - title
             - source_url
             - source_title
-        class: GoogleReader
+        url: "http://www.google.com/reader/public/atom/user/{{ident}}/state/com.google/broadcast"
+        atom:
+            summary: summary
+            enclosure: "link[@rel='enclosure']/@href"
+            source_title: source/title
+            source_url: "source/link[@rel='alternate']/@href"
+            note: gr:annotation/content
+            created_on: ''
+            modified_on: ''
 iconbuffet:
     icons:
         name: Deliveries

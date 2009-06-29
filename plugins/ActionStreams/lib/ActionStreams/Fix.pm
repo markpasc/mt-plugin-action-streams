@@ -46,6 +46,13 @@ sub flickr_photo_thumbnail {
     }
 }
 
+sub googlereader_link_links {
+    my ($cb, $app, $item, $event, $author, $profile) = @_;
+    my $enclosure = delete $item->{enclosure};
+    $item->{url} ||= $enclosure || q{};
+    $item->{identifier} = $item->{url} if $item->{url};
+}
+
 sub iminta_link_title {
     my ($cb, $app, $item, $event, $author, $profile) = @_;
     # Remove the username for when we add it back in later.

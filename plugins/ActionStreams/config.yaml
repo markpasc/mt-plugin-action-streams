@@ -46,6 +46,7 @@ callbacks:
     pre_build_action_streams_event.flickr_favorites:        $ActionStreams::ActionStreams::Fix::flickr_photo_thumbnail
     pre_build_action_streams_event.flickr_photos:           $ActionStreams::ActionStreams::Fix::flickr_photo_thumbnail
     pre_build_action_streams_event.gametap_scores:          $ActionStreams::ActionStreams::Fix::gametap_score_stuff
+    pre_build_action_streams_event.googlereader_links:      $ActionStreams::ActionStreams::Fix::googlereader_link_links
     pre_build_action_streams_event.identica_statuses:       $ActionStreams::ActionStreams::Fix::twitter_tweet_name
     pre_build_action_streams_event.iminta_links:            $ActionStreams::ActionStreams::Fix::iminta_link_title
     pre_build_action_streams_event.instructables_favorites: $ActionStreams::ActionStreams::Fix::instructables_favorites_thumbnails
