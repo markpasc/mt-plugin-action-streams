@@ -40,7 +40,9 @@ sub update_events {
     my $achv_scraper = scraper {
         process q{div#BG_top h2},
             'title' => 'TEXT';
-        process q{//div[@class='achievementClosed']},
+		process q{html},
+			'html' => 'HTML';
+        process q{//div[@class='achieveTxtHolder']},
             'achvs[]' => scraper {
                 process 'h3',  'title'       => 'TEXT';
                 process 'h5',  'description' => 'TEXT';
@@ -72,10 +74,24 @@ sub update_events {
         );
         next URL if !$items;
 
-        my ($title, $achvs) = @$items{qw( title achvs )};
+        my ($title, $html, $achvs) = @$items{qw( title html achvs )};
         $title =~ s{ \s* Stats \z }{}xmsi;
 
-        for my $item (@$achvs) {
+		next URL if ($title =~ /Global Gameplay/i);
+
+		# So we have the full source code in $html; we need to count how many achievements are before
+		# the critical <br /><br /><br /> line dividing achieved from unachieved.
+		
+		next URL if ($html !~ /\<br\ \/\>\<br\ \/\>\<br\ \/\>.+/); # If the line isn't there, they don't have any achievements yet.
+		
+		$html =~ s/\<br\ \/\>\<br\ \/\>\<br\ \/\>.+//;
+		my $count = scalar split(/achieveTxtHolder/, $html);
+		$count = $count - 2; #This method ends up with one too many, always, and we want the last valid *INDEX* number.
+
+		my @achievements = @$achvs;
+		$#achievements = $count; # Truncates the array
+
+        for my $item (@achievements) {
             $item->{gametitle} = $title;
             $item->{ident}     = $ident;
             $item->{gamecode}  = $gamecode;
@@ -87,7 +103,7 @@ sub update_events {
 
         $class->build_results(
             author     => $author,
-            items      => $achvs,
+            items      => \@achievements,
             identifier => 'ident,gamecode,title',
         );
     }
