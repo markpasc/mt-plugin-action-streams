@@ -85,7 +85,8 @@ sub update_events {
 		next URL if ($html !~ /\<br\ \/\>\<br\ \/\>\<br\ \/\>.+/); # If the line isn't there, they don't have any achievements yet.
 		
 		$html =~ s/\<br\ \/\>\<br\ \/\>\<br\ \/\>.+//;
-		my $count = scalar split(/achieveTxtHolder/, $html);
+        my @splitlist = split(/achieveTxtHolder/, $html);
+		my $count = scalar @splitlist;
 		$count = $count - 2; #This method ends up with one too many, always, and we want the last valid *INDEX* number.
 
 		my @achievements = @$achvs;
