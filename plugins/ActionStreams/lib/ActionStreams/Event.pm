@@ -433,7 +433,7 @@ sub build_results {
             $identifier = "$identifier";
             ($event) = $class->search({
                 author_id  => $author->id,
-                identifier => $identifier,
+                identifier => substr($identifier, 0, 200),
             });
         }
 
@@ -449,7 +449,7 @@ sub build_results {
         my $tags = delete $item->{tags};
         $event->set_values({
             author_id  => $author->id,
-            identifier => $identifier,
+            identifier => substr($identifier, 0, 200),
             %$item,
         });
         $event->tags(@$tags) if $tags && @$tags;
