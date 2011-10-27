@@ -140,7 +140,7 @@ delicious:
         html_params:
             - url
             - title
-        url: 'http://feeds.delicious.com/v2/rss/{{ident}}?plain'
+        url: 'http://delicious.com/v2/rss/{{ident}}'
         identifier: url
         rss:
             note: description
